@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Logo from "../../../public/images/devcollab-logo.png";
 import Link from "next/link";
@@ -13,6 +14,15 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const toggleMenu = () => setMenuOpen((prev) => !prev);
+
+  const router = useRouter();
+  const handleSignUpPageClick = () => {
+    router.push("/signup");
+  };
+
+  const handleBackHomeClick = () => {
+    router.push("/");
+  };
   return (
     <>
       <div className="flex justify-between w-full flex-row bg-white shadow-md items-center  py-3">
@@ -24,6 +34,7 @@ export default function Navbar() {
               width={55}
               height={55}
               className="ml-4 md:ml-7"
+              onClick={handleBackHomeClick}
             />
             <div
               className={`capitalize flex flex-col md:flex-row gap-[50px] top-20 absolute z-10 md:static mx-auto md:mx-0 w-full md:w-fit bg-gray-50 md:bg-white text-center md:text-left
@@ -34,31 +45,31 @@ export default function Navbar() {
             >
               <Link
                 href="/dashboard"
-                className="md:hover:border-blue-600 md:hover:border-b-2 px-2 hover:bg-gray-100 rounded-sm md:bg-none"
+                className="md:hover:border-blue-600 md:hover:border-b-2 px-2 md:hover:bg-white md:hover:rounded-none hover:bg-gray-100 rounded-sm"
               >
                 dashboard
               </Link>
               <Link
                 href="/projects"
-                className="md:hover:border-blue-600 md:hover:border-b-2 px-2 hover:bg-gray-100 rounded-sm md:bg-none"
+                className="md:hover:border-blue-600 md:hover:border-b-2 px-2 md:hover:bg-white md:hover:rounded-none hover:bg-gray-100 rounded-sm"
               >
                 projects
               </Link>
               <Link
                 href="/tasks"
-                className="md:hover:border-blue-600 md:hover:border-b-2 px-2 hover:bg-gray-100 rounded-sm md:bg-none"
+                className="md:hover:border-blue-600 md:hover:border-b-2 px-2 md:hover:bg-white md:hover:rounded-none hover:bg-gray-100 rounded-sm"
               >
                 tasks
               </Link>
               <Link
                 href="/team"
-                className="md:hover:border-blue-600 md:hover:border-b-2 px-2 hover:bg-gray-100 rounded-sm md:bg-none"
+                className="md:hover:border-blue-600 md:hover:border-b-2 px-2 md:hover:bg-white md:hover:rounded-none hover:bg-gray-100 rounded-sm"
               >
                 team
               </Link>
               <Link
                 href="/docs"
-                className="md:hover:border-blue-600 md:hover:border-b-2 px-2 hover:bg-gray-100 rounded-sm md:bg-none"
+                className="md:hover:border-blue-600 md:hover:border-b-2 px-2 md:hover:bg-white md:hover:rounded-none hover:bg-gray-100 rounded-sm"
               >
                 docs
               </Link>
@@ -80,6 +91,7 @@ export default function Navbar() {
           <button
             type="button"
             className="bg-blue-600 md:flex items-center gap-2 text-white py-3.5 px-5 cursor-pointer rounded-sm hidden "
+            onClick={handleSignUpPageClick}
           >
             Get Started
             <Image
@@ -91,13 +103,14 @@ export default function Navbar() {
           </button>
           <button
             type="button"
-            className="block md:hidden hover:bg-gray-50 p-2 rounded-sm"
+            className="block md:hidden hover:bg-gray-50 p-2 rounded-sm cursor-pointer"
           >
             <Image
               alt="User Icon for Settings and Getting Started"
               src={User}
               width={25}
               height={25}
+              onClick={handleSignUpPageClick}
             />
           </button>
           <button
