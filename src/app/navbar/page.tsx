@@ -9,6 +9,11 @@ import Notification from "../../../public/notification.svg";
 import Bars from "../../../public/bars.svg";
 import Cancel from "../../../public/cancel.svg";
 import User from "../../../public/user.svg";
+import DashboardIcon from "../../../public/dashboard.svg";
+import ProjectsIcon from "../../../public/projects.svg";
+import TasksIcon from "../../../public/tasks.svg";
+import TeamIcon from "../../../public/team.svg";
+import DocsIcon from "../../../public/docs.svg";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -45,32 +50,52 @@ export default function Navbar() {
             >
               <Link
                 href="/dashboard"
-                className="md:hover:border-blue-600 md:hover:border-b-2 px-2 md:hover:bg-white md:hover:rounded-none hover:bg-gray-100 rounded-sm"
+                className="flex items-center gap-2 mx-auto md:hover:border-blue-600 md:hover:border-b-2 px-2 md:hover:bg-white md:hover:rounded-none hover:bg-gray-100 rounded-sm py-2"
               >
+                <Image
+                  alt="Dashboard Icon"
+                  src={DashboardIcon}
+                  width={22}
+                  height={22}
+                />
                 dashboard
               </Link>
               <Link
                 href="/projects"
-                className="md:hover:border-blue-600 md:hover:border-b-2 px-2 md:hover:bg-white md:hover:rounded-none hover:bg-gray-100 rounded-sm"
+                className=" flex items-center gap-2 mx-auto md:hover:border-blue-600 md:hover:border-b-2 px-2 md:hover:bg-white md:hover:rounded-none hover:bg-gray-100 rounded-sm py-2"
               >
+                <Image
+                  alt="Projects Icon"
+                  src={ProjectsIcon}
+                  width={22}
+                  height={22}
+                />
                 projects
               </Link>
               <Link
                 href="/tasks"
-                className="md:hover:border-blue-600 md:hover:border-b-2 px-2 md:hover:bg-white md:hover:rounded-none hover:bg-gray-100 rounded-sm"
+                className="flex items-center gap-2 mx-auto md:hover:border-blue-600 md:hover:border-b-2 px-2 md:hover:bg-white md:hover:rounded-none hover:bg-gray-100 rounded-sm py-2"
               >
+                <Image
+                  alt="Tasks Icon"
+                  src={TasksIcon}
+                  width={22}
+                  height={22}
+                />
                 tasks
               </Link>
               <Link
                 href="/team"
-                className="md:hover:border-blue-600 md:hover:border-b-2 px-2 md:hover:bg-white md:hover:rounded-none hover:bg-gray-100 rounded-sm"
+                className="flex items-center gap-2 mx-auto md:hover:border-blue-600 md:hover:border-b-2 px-2 md:hover:bg-white md:hover:rounded-none hover:bg-gray-100 rounded-sm py-2"
               >
+                <Image alt="Team Icon" src={TeamIcon} width={22} height={22} />
                 team
               </Link>
               <Link
                 href="/docs"
-                className="md:hover:border-blue-600 md:hover:border-b-2 px-2 md:hover:bg-white md:hover:rounded-none hover:bg-gray-100 rounded-sm"
+                className="flex items-center gap-2 mx-auto md:hover:border-blue-600 md:hover:border-b-2 px-2 md:hover:bg-white md:hover:rounded-none hover:bg-gray-100 rounded-sm py-2"
               >
+                <Image alt="Docs Icon" src={DocsIcon} width={22} height={22} />
                 docs
               </Link>
             </div>
