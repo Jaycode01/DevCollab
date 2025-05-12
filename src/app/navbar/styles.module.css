@@ -1,0 +1,23 @@
+@media screen and (max-width: 600px) {
+  .image {
+    width: 100%;
+    height: 80px;
+  }
+  .navigation {
+    width: 100%;
+    padding: 0;
+  }
+}
+
+.navigation {
+  width: 80%;
+}
+
+.image {
+  width: 80px;
+  height: 80px;
+}
+
+.imageWrapper {
+  width: fit-content;
+}
