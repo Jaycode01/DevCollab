@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
-import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import {
+  useCreateUserWithEmailAndPassword,
   useSignInWithGoogle,
   useSignInWithGithub,
 } from "react-firebase-hooks/auth";
@@ -30,9 +30,10 @@ export default function SignUp() {
     try {
       const response = await signInWithGithub();
       console.log("GitHub Sign-In Response:", response);
-    } catch (err: any) {
-      console.error("GitHub sign-in error:", err);
-      alert("GitHub Sign-In failed: " + err.message);
+    } catch (err: unknown) {
+      const error = err as { message: string };
+      console.error("GitHub sign-in error:", error);
+      alert("GitHub Sign-In failed: " + error.message);
     }
   };
 
@@ -51,6 +52,7 @@ export default function SignUp() {
 
     try {
       const result = await createUserWithEmailAndPassword(email, password);
+      console.log("Firebase Auth result:", result);
 
       if (!result || !result.user) {
         console.error("No user returned from Firebase:", result);
@@ -59,12 +61,10 @@ export default function SignUp() {
 
       const user = result.user;
 
-      // Update display name
       await updateProfile(user, {
         displayName: `${firstName} ${lastName}`,
       });
 
-      // Save user info in Firestore
       await setDoc(doc(db, "users", user.uid), {
         uid: user.uid,
         firstName,
@@ -83,17 +83,18 @@ export default function SignUp() {
       setUsername("");
 
       alert("Signup successful!");
-    } catch (err: any) {
-      console.error("Signup error:", err);
+    } catch (err: unknown) {
+      const error = err as { code?: string; message: string };
+      console.error("Signup error:", error);
 
-      if (err.code === "auth/email-already-in-use") {
+      if (error.code === "auth/email-already-in-use") {
         alert("This email is already in use.");
-      } else if (err.code === "auth/weak-password") {
+      } else if (error.code === "auth/weak-password") {
         alert("Password should be at least 6 characters.");
-      } else if (err.code === "auth/invalid-email") {
+      } else if (error.code === "auth/invalid-email") {
         alert("Please enter a valid email address.");
       } else {
-        alert("Signup failed: " + err.message);
+        alert("Signup failed: " + error.message);
       }
     }
   };
@@ -127,7 +128,7 @@ export default function SignUp() {
               id="lastName"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
-              className="border-gray-900 border-2 w-full py-3  md:py-5 px-3 text-sm outline-none text-[0.7rem] md:text-sm"
+              className="border-gray-900 border-2 w-full py-3 md:py-5 px-3 text-sm outline-none text-[0.7rem] md:text-sm"
             />
           </div>
         </div>
@@ -138,7 +139,7 @@ export default function SignUp() {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="border-2 border-gray-900  py-3 md:py-5 px-3 text-[0.7rem] md:text-sm"
+            className="border-2 border-gray-900 py-3 md:py-5 px-3 text-[0.7rem] md:text-sm"
           />
         </div>
 
@@ -148,7 +149,7 @@ export default function SignUp() {
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            className="border-2 border-gray-900 py-3 md:py-5 px-3  text-[0.7rem] md:text-sm"
+            className="border-2 border-gray-900 py-3 md:py-5 px-3 text-[0.7rem] md:text-sm"
           />
         </div>
 
@@ -169,7 +170,7 @@ export default function SignUp() {
             type="password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            className="border-2 border-gray-900 py-3  md:py-5 px-3 text-[0.7rem] md;text-sm"
+            className="border-2 border-gray-900 py-3 md:py-5 px-3 text-[0.7rem] md:text-sm"
           />
         </div>
 
