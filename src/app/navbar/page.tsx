@@ -50,7 +50,7 @@ export default function Navbar() {
             >
               <Link
                 href="/dashboard"
-                className="flex items-center gap-2 mx-auto md:hover:border-blue-600 md:hover:border-b-2 px-2 md:hover:bg-white md:hover:rounded-none hover:bg-gray-100 rounded-sm py-2"
+                className="flex items-center gap-2 mx-auto md:hover:border-blue-600 md:hover:border-b-2 px-2 md:hover:bg-white md:hover:rounded-none hover:bg-gray-100 rounded-sm md:py-2"
               >
                 <Image
                   alt="Dashboard Icon"
@@ -62,7 +62,7 @@ export default function Navbar() {
               </Link>
               <Link
                 href="/projects"
-                className=" flex items-center gap-2 mx-auto md:hover:border-blue-600 md:hover:border-b-2 px-2 md:hover:bg-white md:hover:rounded-none hover:bg-gray-100 rounded-sm py-2"
+                className=" flex items-center gap-2 mx-auto md:hover:border-blue-600 md:hover:border-b-2 px-2 md:hover:bg-white md:hover:rounded-none hover:bg-gray-100 rounded-sm md:py-2"
               >
                 <Image
                   alt="Projects Icon"
@@ -74,7 +74,7 @@ export default function Navbar() {
               </Link>
               <Link
                 href="/tasks"
-                className="flex items-center gap-2 mx-auto md:hover:border-blue-600 md:hover:border-b-2 px-2 md:hover:bg-white md:hover:rounded-none hover:bg-gray-100 rounded-sm py-2"
+                className="flex items-center gap-2 mx-auto md:hover:border-blue-600 md:hover:border-b-2 px-2 md:hover:bg-white md:hover:rounded-none hover:bg-gray-100 rounded-sm md:py-2"
               >
                 <Image
                   alt="Tasks Icon"
@@ -86,14 +86,14 @@ export default function Navbar() {
               </Link>
               <Link
                 href="/team"
-                className="flex items-center gap-2 mx-auto md:hover:border-blue-600 md:hover:border-b-2 px-2 md:hover:bg-white md:hover:rounded-none hover:bg-gray-100 rounded-sm py-2"
+                className="flex items-center gap-2 mx-auto md:hover:border-blue-600 md:hover:border-b-2 px-2 md:hover:bg-white md:hover:rounded-none hover:bg-gray-100 rounded-sm md:py-2"
               >
                 <Image alt="Team Icon" src={TeamIcon} width={22} height={22} />
                 team
               </Link>
               <Link
                 href="/docs"
-                className="flex items-center gap-2 mx-auto md:hover:border-blue-600 md:hover:border-b-2 px-2 md:hover:bg-white md:hover:rounded-none hover:bg-gray-100 rounded-sm py-2"
+                className="flex items-center gap-2 mx-auto md:hover:border-blue-600 md:hover:border-b-2 px-2 md:hover:bg-white md:hover:rounded-none hover:bg-gray-100 rounded-sm md:py-2"
               >
                 <Image alt="Docs Icon" src={DocsIcon} width={22} height={22} />
                 docs
