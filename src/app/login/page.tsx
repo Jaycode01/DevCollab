@@ -5,8 +5,14 @@ import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import { FirebaseError } from "firebase/app";
-import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
-import { auth } from "@/app/auth/config";
+import {
+  useSignInWithEmailAndPassword,
+  useSignInWithGoogle,
+  useSignInWithGithub,
+} from "react-firebase-hooks/auth";
+import { auth, db } from "@/app/auth/config";
+import { useRouter } from "next/navigation";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -14,6 +20,10 @@ export default function Login() {
 
   const [signInWithEmailAndPassword, , loading] =
     useSignInWithEmailAndPassword(auth);
+  const [signInWithGoogle] = useSignInWithGoogle(auth);
+  const [signInWithGitHub] = useSignInWithGithub(auth);
+
+  const router = useRouter();
 
   const handleAuthError = (code: string) => {
     switch (code) {
@@ -49,6 +59,69 @@ export default function Login() {
       } else {
         console.error("Unexpected error:", err);
       }
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signInWithGoogle();
+      if (!result || !result.user) {
+        console.log("Google Login Failed");
+        return;
+      }
+
+      const user = result.user;
+      const userRef = doc(db, "users", user.uid);
+      const docSnap = await getDoc(userRef);
+
+      if (!docSnap.exists()) {
+        await setDoc(userRef, {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName,
+          photoURL: user.photoURL,
+          provider: "google",
+          createdAt: new Date().toISOString(),
+        });
+      }
+
+      alert("Google Login Successful");
+      router.push("/dashboard");
+    } catch (err: unknown) {
+      const error = err as { message: string };
+      alert("Google Login Failed: " + error.message);
+    }
+  };
+
+  //Handle GItHub Login
+  const handleGitHubLogin = async () => {
+    try {
+      const result = await signInWithGitHub();
+      if (!result || !result.user) {
+        console.log("GitHub Login failed");
+        return;
+      }
+
+      const user = result.user;
+      const userRef = doc(db, "users", user.uid);
+      const docSnap = await getDoc(userRef);
+
+      if (!docSnap.exists()) {
+        await setDoc(userRef, {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName,
+          photoURL: user.photoURL,
+          provider: "github",
+          createdAt: new Date().toISOString(),
+        });
+      }
+
+      alert("GitHub Login Successful");
+      router.push("/dashboard");
+    } catch (err: unknown) {
+      const error = err as { message: string };
+      alert("GitHub Login Failed: " + error.message);
     }
   };
 
@@ -105,8 +178,16 @@ export default function Login() {
       </div>
 
       <div className="flex items-center mt-5 gap-5">
-        <FcGoogle size={32} className="cursor-pointer" />
-        <FaGithub size={30} className="cursor-pointer" />
+        <FcGoogle
+          size={32}
+          className="cursor-pointer"
+          onClick={handleGoogleLogin}
+        />
+        <FaGithub
+          size={30}
+          className="cursor-pointer"
+          onClick={handleGitHubLogin}
+        />
       </div>
 
       <p className="mt-5 text-sm md:text-[1rem]">

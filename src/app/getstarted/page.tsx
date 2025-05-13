@@ -74,7 +74,6 @@ export default function SignUp() {
         createdAt: new Date().toISOString(),
       });
 
-      // Clear form
       setEmail("");
       setPassword("");
       setConfirmPassword("");
