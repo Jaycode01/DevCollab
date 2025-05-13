@@ -27,7 +27,7 @@ export default function SignUp() {
   const [createUserWithEmailAndPassword] =
     useCreateUserWithEmailAndPassword(auth);
 
-  const handleSignUp = async (e) => {
+  const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!email || !password || !firstName || !lastName || !username) {
@@ -41,8 +41,13 @@ export default function SignUp() {
     }
 
     try {
-      const res = await createUserWithEmailAndPassword(email, password);
-      const user = res.user;
+      const result = await createUserWithEmailAndPassword(email, password);
+
+      if (!result || !result.user) {
+        throw new Error("User creation failed");
+      }
+
+      const user = result.user;
 
       await updateProfile(user, {
         displayName: `${firstName} ${lastName}`,
@@ -67,7 +72,7 @@ export default function SignUp() {
       alert("Signup successful!");
     } catch (err) {
       console.error(err);
-      alert(err.message);
+      alert(err);
     }
   };
 
