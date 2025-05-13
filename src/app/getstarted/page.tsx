@@ -24,6 +24,16 @@ export default function SignUp() {
   const [signInWithGoogle] = useSignInWithGoogle(auth);
   const [signInWithGithub] = useSignInWithGithub(auth);
 
+  const handleGitHubSignIn = async () => {
+    try {
+      const response = await signInWithGithub();
+      console.log("GitHub Sign-In Response:", response);
+    } catch (error) {
+      console.error("GitHub sign-in failed:", error.message);
+      alert("Error during sign-in: " + error.message);
+    }
+  };
+
   const [createUserWithEmailAndPassword] =
     useCreateUserWithEmailAndPassword(auth);
 
@@ -177,8 +187,8 @@ export default function SignUp() {
         />
         <FaGithub
           size={30}
+          onClick={handleGitHubSignIn}
           className="cursor-pointer"
-          onClick={() => signInWithGithub()}
         />
       </div>
 
