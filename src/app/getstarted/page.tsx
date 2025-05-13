@@ -29,8 +29,8 @@ export default function SignUp() {
       const response = await signInWithGithub();
       console.log("GitHub Sign-In Response:", response);
     } catch (error) {
-      console.error("GitHub sign-in failed:", error.message);
-      alert("Error during sign-in: " + error.message);
+      console.error("GitHub sign-in failed:", error);
+      alert("Error during sign-in: " + error);
     }
   };
 
