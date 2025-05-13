@@ -60,6 +60,7 @@ export default function signUp() {
               name="password"
               id="password"
               className="border-2 border-gray-900 py-5 px-3"
+              placeholder="e.g W20='/2348sjdgy"
             />
           </div>
 
