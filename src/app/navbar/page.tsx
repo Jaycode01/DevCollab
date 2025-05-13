@@ -22,7 +22,7 @@ export default function Navbar() {
 
   const router = useRouter();
   const handleSignUpPageClick = () => {
-    router.push("/signup");
+    router.push("/getstarted");
   };
 
   const handleBackHomeClick = () => {

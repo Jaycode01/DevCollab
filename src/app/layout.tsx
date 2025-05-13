@@ -12,7 +12,7 @@ const aclonica = Aclonica({
 export const metadata: Metadata = {
   title: {
     default: "DevCollab",
-    template: "%s | DevCollab",
+    template: "DevCollab | %s",
   },
   description: "Created and Idea by Nexon",
 };
