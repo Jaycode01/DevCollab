@@ -16,6 +16,7 @@ import ProjectsIcon from "../../../public/projects.svg";
 import TasksIcon from "../../../public/tasks.svg";
 import TeamIcon from "../../../public/team.svg";
 import DocsIcon from "../../../public/docs.svg";
+import UserQuickBox from "../components/user-quick-box";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -33,7 +34,11 @@ export default function Navbar() {
 
   const router = useRouter();
   const handleSignUpPageClick = () => {
-    router.push("/getstarted");
+    if (!user) {
+      router.push("/getstarted");
+    } else {
+      <UserQuickBox />;
+    }
   };
 
   const handleBackHomeClick = () => {
@@ -125,59 +130,64 @@ export default function Navbar() {
           </div>
         </nav>
         <div className="flex min-w-fit items-center gap-2 md:gap-5 mr-4 md:mr-7 ">
-          <button
-            type="button"
-            className="cursor-pointer hover:bg-gray-50 p-3 rounded-sm"
-          >
-            <Image
-              alt="Notification bell Icon"
-              src={Notification}
-              width={23}
-              height={23}
-            />
-          </button>
-
-          {!user && (
+          {user && (
             <button
               type="button"
-              className="bg-blue-600 md:flex items-center gap-2 text-white py-3.5 px-5 cursor-pointer rounded-sm hidden "
-              onClick={handleSignUpPageClick}
+              className="cursor-pointer hover:bg-gray-50 p-3 rounded-sm"
             >
-              Get Started
               <Image
-                alt="getting started button"
-                src={ArrowRight}
-                width={20}
-                height={20}
+                alt="Notification bell Icon"
+                src={Notification}
+                width={23}
+                height={23}
               />
             </button>
           )}
 
-          <button
-            type="button"
-            className="block md:hidden hover:bg-gray-50 p-2 rounded-sm cursor-pointer"
-          >
-            <Image
-              alt="User Icon for Settings and Getting Started"
-              src={UserIcon}
-              width={23}
-              height={23}
-              onClick={handleSignUpPageClick}
-            />
-          </button>
-          <button
-            type="button"
-            className="md:hidden block cursor-pointer"
-            aria-label="Toggle Menu"
-            onClick={toggleMenu}
-          >
-            <Image
-              src={menuOpen ? Cancel : Bars}
-              alt="Hamburger Menu "
-              width={25}
-              height={25}
-            />
-          </button>
+          {!user && (
+            <>
+              <button
+                type="button"
+                className="bg-blue-600 md:flex items-center gap-2 text-white py-3.5 px-5 cursor-pointer rounded-sm hidden "
+                onClick={handleSignUpPageClick}
+              >
+                Get Started
+                <Image
+                  alt="getting started button"
+                  src={ArrowRight}
+                  width={20}
+                  height={20}
+                />
+              </button>
+              <button
+                type="button"
+                className="block md:hidden hover:bg-gray-50 p-2 rounded-sm cursor-pointer"
+              >
+                <Image
+                  alt="User Icon for Settings and Getting Started"
+                  src={UserIcon}
+                  width={23}
+                  height={23}
+                  onClick={handleSignUpPageClick}
+                />
+              </button>
+            </>
+          )}
+          {user && (
+            <button
+              type="button"
+              className="md:hidden block cursor-pointer"
+              aria-label="Toggle Menu"
+              onClick={toggleMenu}
+            >
+              <Image
+                src={menuOpen ? Cancel : Bars}
+                alt="Hamburger Menu "
+                width={25}
+                height={25}
+              />
+            </button>
+          )}
         </div>
       </div>
     </>
