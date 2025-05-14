@@ -1,0 +1,12 @@
+@keyframes marqueeScroll {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.marqueeScroll {
+  animation: marqueeScroll 10s linear infinite;
+}
