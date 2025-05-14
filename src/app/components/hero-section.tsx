@@ -1,4 +1,4 @@
-import { space_grotesk } from "../layout";
+import { space_grotesk } from "./fonts";
 import Link from "next/link";
 import Image from "next/image";
 import HeroImage from "../../../public/hero-image.svg";
