@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 
-export const metadat: Metadata = {
+export const metadata: Metadata = {
   title: "Sign In",
   description:
     "Login page for former users to logint o theor profile and continue from where they stop...",
