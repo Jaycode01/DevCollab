@@ -47,8 +47,8 @@ export default function UserQuickBox({ user }: Props) {
             <span className="font-semibold">
               {user.displayName || "No Name"}
             </span>
-            <span className="text-gray-700 flex items-center gap-2 text-sm">
-              <Image src={Online} alt="Online Icon" width={30} height={30} />
+            <span className="text-gray-700 flex items-center  text-sm">
+              <Image src={Online} alt="Online Icon" width={50} height={50} />
               Online
             </span>
           </div>
