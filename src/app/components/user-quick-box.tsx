@@ -1,20 +1,36 @@
 "use client";
 
-// import Link from "next/link";
+import Link from "next/link";
 import { User } from "firebase/auth";
 import Image from "next/image";
-// import cancelBox from "../../../public/cancel.svg";
+import Online from "../../../public/online.svg";
+// import cancelBox from "../../../public/cancel
 
 interface Props {
   user: User;
 }
 
 export default function UserQuickBox({ user }: Props) {
+  const getInitials = () => {
+    if (!user.displayName) return "NN";
+    const names = user.displayName.trim().split(" ");
+    const firstInitial = names[0]?.[0] || "";
+    const lastInitial = names[1]?.[0] || "";
+    return (firstInitial + lastInitial).toUpperCase();
+  };
   return (
     <>
       <div className="absolute top-full right-0 mt-2 w-64 bg-white shadow-md rounded-md p-4 z-50">
+        <div className="">
+          <Link
+            href="/user-profile"
+            className="capitalize text-[13px] underline text-gray-90 hover:text-blue-600"
+          >
+            view profile
+          </Link>
+        </div>
         <div className="flex items-center gap-3">
-          {user.photoURL && (
+          {user.photoURL ? (
             <Image
               src={user.photoURL}
               alt="User Avatar"
@@ -22,12 +38,19 @@ export default function UserQuickBox({ user }: Props) {
               height={40}
               className="rounded-full"
             />
+          ) : (
+            <div className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm">
+              {getInitials()}
+            </div>
           )}
           <div className="flex flex-col text-sm">
             <span className="font-semibold">
               {user.displayName || "No Name"}
             </span>
-            <span className="text-gray-700">{user.email}</span>
+            <span className="text-gray-700 flex items-center gap-2 text-sm">
+              <Image src={Online} alt="Online Icon" width={10} height={10} />
+              Online
+            </span>
           </div>
         </div>
       </div>
