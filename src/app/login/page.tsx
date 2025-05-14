@@ -86,7 +86,10 @@ export default function Login() {
       }
 
       alert("Google Login Successful");
-      router.push("/dashboard");
+      console.log("Redirecting to dashboard");
+      setTimeout(() => {
+        router.push("../dashboard");
+      }, 100);
     } catch (err: unknown) {
       const error = err as { message: string };
       alert("Google Login Failed: " + error.message);
