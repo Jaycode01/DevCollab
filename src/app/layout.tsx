@@ -1,11 +1,17 @@
 import type { Metadata } from "next";
-import { Aclonica } from "next/font/google";
+import { Aclonica, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import Navbar from "./navbar/page";
 
 const aclonica = Aclonica({
   subsets: ["latin"],
   weight: ["400"],
+  variable: "--font-aclonica",
+});
+
+export const space_grotesk = Space_Grotesk({
+  subsets: ["latin"],
+  weight: ["500"],
   variable: "--font-aclonica",
 });
 
