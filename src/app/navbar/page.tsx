@@ -21,6 +21,7 @@ import UserQuickBox from "../components/user-quick-box";
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const [showQuickBox, setShowQuickBox] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
@@ -37,7 +38,6 @@ export default function Navbar() {
     if (!user) {
       router.push("/getstarted");
     } else {
-      <UserQuickBox />;
     }
   };
 
@@ -131,17 +131,19 @@ export default function Navbar() {
         </nav>
         <div className="flex min-w-fit items-center gap-2 md:gap-5 mr-4 md:mr-7 ">
           {user && (
-            <button
-              type="button"
-              className="cursor-pointer hover:bg-gray-50 p-3 rounded-sm"
-            >
-              <Image
-                alt="Notification bell Icon"
-                src={Notification}
-                width={23}
-                height={23}
-              />
-            </button>
+            <>
+              <button
+                type="button"
+                className="cursor-pointer hover:bg-gray-50 p-3 rounded-sm"
+              >
+                <Image
+                  alt="Notification bell Icon"
+                  src={Notification}
+                  width={23}
+                  height={23}
+                />
+              </button>
+            </>
           )}
 
           {!user && (
@@ -172,6 +174,19 @@ export default function Navbar() {
                 />
               </button>
             </>
+          )}
+          {user && (
+            <div className="relative">
+              <button
+                type="button"
+                className="cursor-pointer hover:bg-gray-50 p-2 rounded-sm"
+                onClick={() => setShowQuickBox((prev) => !prev)}
+              >
+                <Image src={UserIcon} alt="User Icon" width={23} height={23} />
+              </button>
+
+              {showQuickBox && <UserQuickBox user={user} />}
+            </div>
           )}
           {user && (
             <button
