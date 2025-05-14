@@ -21,7 +21,7 @@ export default function UserQuickBox({ user }: Props) {
   return (
     <>
       <div className="absolute top-full right-0 mt-2 w-64 bg-white shadow-md rounded-md p-4 z-50">
-        <div className="">
+        <div className="mb-5">
           <Link
             href="/user-profile"
             className="capitalize text-[13px] underline text-gray-90 hover:text-blue-600"
@@ -48,7 +48,7 @@ export default function UserQuickBox({ user }: Props) {
               {user.displayName || "No Name"}
             </span>
             <span className="text-gray-700 flex items-center gap-2 text-sm">
-              <Image src={Online} alt="Online Icon" width={10} height={10} />
+              <Image src={Online} alt="Online Icon" width={30} height={30} />
               Online
             </span>
           </div>
