@@ -1,5 +1,6 @@
 "use client";
-
+import type React from "react";
+import { FirebaseError } from "firebase/app";
 import { useState, useEffect } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
@@ -10,9 +11,13 @@ import {
 } from "react-firebase-hooks/auth";
 import { auth, db } from "@/app/auth/config";
 import { doc, setDoc } from "firebase/firestore";
-import { updateProfile } from "firebase/auth";
+import { updateProfile, User } from "firebase/auth";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+
+interface AuthUser {
+  user: User | null;
+}
 
 export default function SignUp() {
   const router = useRouter();
@@ -30,13 +35,13 @@ export default function SignUp() {
     useSignInWithGoogle(auth);
   const [signInWithGithub, githubUser, githubLoading, githubError] =
     useSignInWithGithub(auth);
-  const [createUserWithEmailAndPassword, user, createError] =
+  const [createUserWithEmailAndPassword, user, , createError] =
     useCreateUserWithEmailAndPassword(auth);
 
   // HAndle Succeccful authentication
   useEffect(() => {
     const handleUser = async (
-      user: any,
+      user: AuthUser | null | undefined,
       firstName?: string,
       lastName?: string,
       username?: string
@@ -99,7 +104,7 @@ export default function SignUp() {
     }
   }, [createError, googleError, githubError]);
 
-  const handleAuthError = (error: any) => {
+  const handleAuthError = (error: FirebaseError) => {
     console.error("Auth error:", error);
 
     if (error.code === "auth/email-already-in-use") {
@@ -153,9 +158,14 @@ export default function SignUp() {
       setLoading(true);
       await createUserWithEmailAndPassword(email, password);
       // The useEffect hook will handle the rest
-    } catch (err: any) {
+    } catch (err) {
       console.error("Sigup error:", err);
-      handleAuthError(err);
+      if (err instanceof Error) {
+        const firebaseError = err as FirebaseError;
+        handleAuthError(firebaseError);
+      } else {
+        setError("An unexpected error occurred");
+      }
     } finally {
       setLoading(false);
     }
