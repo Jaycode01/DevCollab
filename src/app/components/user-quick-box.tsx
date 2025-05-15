@@ -4,7 +4,6 @@ import Link from "next/link";
 import { User } from "firebase/auth";
 import Image from "next/image";
 import Online from "../../../public/online.svg";
-// import cancelBox from "../../../public/cancel
 
 interface Props {
   user: User;
@@ -20,7 +19,7 @@ export default function UserQuickBox({ user }: Props) {
   };
   return (
     <>
-      <div className="absolute top-full right-0 mt-2 w-64 bg-white shadow-md rounded-md p-4 z-50">
+      <div className="absolute top-14 right-0 mt-2 w-64 bg-white shadow-md rounded-md p-4 z-50">
         <div className="mb-5">
           <Link
             href="/user-profile"

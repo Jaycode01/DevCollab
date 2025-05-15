@@ -1,4 +1,5 @@
 import Features from "./components/features";
+import Footer from "./components/footer";
 import HeroSection from "./components/hero-section";
 import MarqueeContent from "./components/marquee-content";
 import Preview from "./components/project-preview";
@@ -15,6 +16,7 @@ export default function Home() {
         <Values />
         <Preview />
         <Testimonials />
+        <Footer />
       </div>
     </>
   );
