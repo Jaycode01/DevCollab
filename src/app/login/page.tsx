@@ -71,7 +71,7 @@ export default function Login() {
           }
 
           // Redirection to the dashboard
-          router.push("../dashboard");
+          router.push("/dashboard");
         } catch (err) {
           console.error("Error handling user data: ", err);
           setError(
