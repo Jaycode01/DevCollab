@@ -17,11 +17,13 @@ import TasksIcon from "../../../public/tasks.svg";
 import TeamIcon from "../../../public/team.svg";
 import DocsIcon from "../../../public/docs.svg";
 import UserQuickBox from "../components/user-quick-box";
+import NotificationQuickBox from "../components/notification-quick-box";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [showQuickBox, setShowQuickBox] = useState(false);
+  const [notificationQuickBox, setNotificationQuickBox] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
@@ -131,19 +133,22 @@ export default function Navbar() {
         </nav>
         <div className="flex min-w-fit items-center gap-2 md:gap-5 mr-4 md:mr-7 ">
           {user && (
-            <>
+            <div className="relative">
               <button
                 type="button"
-                className="cursor-pointer hover:bg-gray-50 p-3 rounded-sm"
+                className="cursor-pointer hover:bg-gray-50 p-2 rounded-sm"
+                onClick={() => setNotificationQuickBox((prev) => !prev)}
               >
                 <Image
-                  alt="Notification bell Icon"
                   src={Notification}
+                  alt="notifiction icon"
                   width={23}
                   height={23}
                 />
               </button>
-            </>
+
+              {notificationQuickBox && <NotificationQuickBox />}
+            </div>
           )}
 
           {!user && (
