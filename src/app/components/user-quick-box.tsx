@@ -36,7 +36,7 @@ export default function UserQuickBox({ user }: Props) {
               alt="User Avatar"
               width={40}
               height={40}
-              className="rounded-full"
+              className="rounded-full text-sm"
             />
           ) : (
             <div className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm">
