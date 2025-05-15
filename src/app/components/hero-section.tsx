@@ -17,7 +17,7 @@ export default function HeroSection() {
       gsap.fromTo(
         fadeIn.current,
         { opacity: 0, y: 150 },
-        { opacity: 1, y: 0, duration: 2 }
+        { opacity: 1, y: 0, duration: 1 }
       );
     }
   }, []);
