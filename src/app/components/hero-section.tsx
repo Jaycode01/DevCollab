@@ -1,3 +1,7 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
 import { space_grotesk } from "./fonts";
 import Link from "next/link";
 import Image from "next/image";
@@ -6,9 +10,23 @@ import PlayIcon from "../../../public/play.svg";
 import AngleRightIcon from "../../../public/angle-right.svg";
 
 export default function HeroSection() {
+  const fadeIn = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (fadeIn.current) {
+      gsap.fromTo(
+        fadeIn.current,
+        { opacity: 0, y: 150 },
+        { opacity: 1, y: 0, duration: 2 }
+      );
+    }
+  }, []);
   return (
     <>
-      <div className="bg-gray-50 flex flex-col md:flex-row items-center justify-center py-4 md:py-14 gap-7 md:gap-0 px-3">
+      <div
+        className="bg-gray-50 flex flex-col md:flex-row items-center justify-center py-4 md:py-14 gap-7 md:gap-0 px-3"
+        ref={fadeIn}
+      >
         <div className="flex flex-col gap-2.5 md:w-2/5 w-full">
           <h1
             className={`${space_grotesk.className} text-4xl md:text-5xl font-bold`}

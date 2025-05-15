@@ -1,3 +1,7 @@
+"use client";
+
+import gsap from "gsap";
+import { useEffect, useRef } from "react";
 import { didact_gothic, montserrat } from "./fonts";
 import Image from "next/image";
 import TeamCollabortion from "../../../public/team-collaboration.svg";
@@ -6,6 +10,17 @@ import ProjectsOrganization from "../../../public/projects-organization.svg";
 import TaskManagement from "../../../public/task-management.svg";
 
 export default function Features() {
+  const fadeIn = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (fadeIn.current) {
+      gsap.fromTo(
+        fadeIn.current,
+        { opacity: 0, y: 200 },
+        { opacity: 1, y: 0, duration: 3 }
+      );
+    }
+  }, []);
   return (
     <>
       <div className=" mx-auto w-11/12 mt-20  ">
@@ -23,7 +38,10 @@ export default function Features() {
           </p>
         </div>
         <div className="flex flex-col md:flex-row itmes-center justify-between gap-8 md:gap-10 md:w-11/12  w-full mx-auto mt-9 ">
-          <div className="h-fit md:py-4 py-2  flex-1 aspect-square md:px-5 px-3 bg-gray-50 flex flex-col md:gap-7 gap-3">
+          <div
+            ref={fadeIn}
+            className="h-fit md:py-4 py-2  flex-1 aspect-square md:px-5 px-3 bg-gray-50 flex flex-col md:gap-7 gap-3"
+          >
             <Image
               alt="Team Collaboration Image"
               src={TeamCollabortion}
@@ -38,7 +56,10 @@ export default function Features() {
               contribute ideas — all within DevCollab.
             </p>
           </div>
-          <div className="h-fit md:py-4 py-2  flex-1 aspect-square md:px-5 px-3 bg-gray-50 flex flex-col md:gap-7 gap-3">
+          <div
+            ref={fadeIn}
+            className="h-fit md:py-4 py-2  flex-1 aspect-square md:px-5 px-3 bg-gray-50 flex flex-col md:gap-7 gap-3"
+          >
             <Image
               src={SmartDashboard}
               alt="Smart Dashboard feature image"
@@ -53,7 +74,10 @@ export default function Features() {
               Understand whats happening — and what needs your attention.
             </p>
           </div>
-          <div className="h-fit md:py-4 py-2  flex-1 aspect-square md:px-5 px-3 bg-gray-50 flex flex-col md:gap-7 gap-3">
+          <div
+            ref={fadeIn}
+            className="h-fit md:py-4 py-2  flex-1 aspect-square md:px-5 px-3 bg-gray-50 flex flex-col md:gap-7 gap-3"
+          >
             <Image
               src={ProjectsOrganization}
               alt="Project organization feature image"
@@ -68,7 +92,10 @@ export default function Features() {
               your team needs stays in one place — visible and under control.
             </p>
           </div>
-          <div className="h-fit md:py-4 py-2  flex-1 aspect-square md:px-5 px-3 bg-gray-50 flex flex-col md:gap-7 gap-3">
+          <div
+            ref={fadeIn}
+            className="h-fit md:py-4 py-2  flex-1 aspect-square md:px-5 px-3 bg-gray-50 flex flex-col md:gap-7 gap-3"
+          >
             <Image
               alt="Tasks management Feature image"
               src={TaskManagement}
