@@ -26,25 +26,25 @@ export default function Values() {
       duration: 1.5,
       ease: "power2.out",
     });
+
+    const sections = gsap.utils.toArray(".value-section");
+
+    sections.forEach((section, index) => {
+      gsap.from(section as HTMLElement, {
+        scrollTrigger: {
+          trigger: section as HTMLElement,
+          start: "top 85%",
+          toggleActions: "play none none reverse",
+          markers: false,
+        },
+        y: 100,
+        opacity: 0,
+        duration: 1,
+        ease: "power2.out",
+        delay: index * 0.3,
+      });
+    }, []);
   });
-
-  const sections = gsap.utils.toArray(".value-section");
-
-  sections.forEach((section, index) => {
-    gsap.from(section as HTMLElement, {
-      scrollTrigger: {
-        trigger: section as HTMLElement,
-        start: "top 85%",
-        toggleActions: "play none none reverse",
-        markers: false,
-      },
-      y: 100,
-      opacity: 0,
-      duration: 1,
-      ease: "power2.out",
-      delay: index * 0.3,
-    });
-  }, []);
 
   const valuesData = [
     {
