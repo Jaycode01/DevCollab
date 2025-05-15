@@ -25,7 +25,7 @@ export default function Testimonials() {
             ))}
           </div>
 
-          <div className="grid gap-6 lg:mt-10">
+          <div className="  grid gap-6 lg:mt-10">
             {testimonials.slice(2, 4).map((testimonial, index) => (
               <TestimonialCard key={index} testimonial={testimonial} />
             ))}
