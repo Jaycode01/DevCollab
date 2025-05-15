@@ -105,7 +105,7 @@ export default function Values() {
                   src={src}
                   alt={alt}
                   className="md:h-[500px] h-[200px]"
-                  priority={i === 0} // prioritize first image loading if you want
+                  priority={i === 0}
                 />
               </div>
 
