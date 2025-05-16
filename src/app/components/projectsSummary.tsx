@@ -52,11 +52,13 @@ export default function ProjectsSummary() {
   ];
 
   return (
-    <>
-      <div className="max-w-full mx-auto p-6">
-        <h1 className="text-2xl font-bold mb-4">Projects Summary</h1>
-        <table className="min-w-full bg-white  text-sm">
-          <thead className="bg-grau-100 text-left">
+    <div className="max-w-full mx-auto md:p-6 p-3">
+      <h1 className="md:text-2xl text-[20px] font-bold mb-4">
+        Projects Summary
+      </h1>
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-white text-sm">
+          <thead className="text-left">
             <tr>
               <th className="py-2 px-4 border-b">#Id</th>
               <th className="py-2 px-4 border-b">Project Name</th>
@@ -68,7 +70,7 @@ export default function ProjectsSummary() {
           <tbody>
             {Projects.map((project) => (
               <tr
-                className="hover:text-blue-600 text-gray-900 hover:border-b"
+                className="hover:text-blue-600 text-gray-900"
                 key={project.id}
               >
                 <td className="py-2 px-4 border-b">{project.id}</td>
@@ -92,6 +94,6 @@ export default function ProjectsSummary() {
           </tbody>
         </table>
       </div>
-    </>
+    </div>
   );
 }
