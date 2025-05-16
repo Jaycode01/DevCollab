@@ -4,6 +4,7 @@ import PendingTasks from "../../../public/pending-tasks.svg";
 import CompletedTasks from "../../../public/completed-tasks.svg";
 import TeamMembers from "../../../public/team-members.svg";
 import ProjectsSummary from "../components/projectsSummary";
+import HoursLogged from "../components/hours-logges";
 
 export default function Dashboard() {
   return (
@@ -79,10 +80,12 @@ export default function Dashboard() {
 
         {/* Second section of the dashboard - I don't want it to look like chinese when i want to make amendment that is my reason for using comments */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 px-4 mt-5">
-          <div className="lg:col-span-2 bg-white rounded-xl shadow p-4">
+          <div className="lg:col-span-2 bg-white rounded-xl shadow p-4 w-full">
             <ProjectsSummary />
           </div>
-          <div className="grid  md:grid-cols-2 lg:grid-cols-1 gap-4 bg-white shadow rounded-md"></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4 bg-white shadow rounded-md w-full p-4">
+            <HoursLogged />
+          </div>
         </div>
       </div>
     </>
