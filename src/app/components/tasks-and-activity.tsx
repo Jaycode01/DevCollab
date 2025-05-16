@@ -49,6 +49,39 @@ export default function TasksAndActivity() {
     return 0;
   });
 
+  const activities = [
+    {
+      id: 1,
+      time: "2 mins ago",
+      user: "Mark",
+      description: "Created a new task: Fix landing page bug",
+    },
+    {
+      id: 2,
+      time: "5 mins ago",
+      user: "Thomas",
+      description: "Updated project Marketing Website status to In Progress",
+    },
+    {
+      id: 3,
+      time: "8 mins ago",
+      user: "Chris",
+      description: "Commented on task Design login page",
+    },
+    {
+      id: 4,
+      time: "32 mins ago",
+      user: "Deven",
+      description: "Completed task Add feature section",
+    },
+    {
+      id: 5,
+      time: "1 hour ago",
+      user: "Sofia",
+      description: "Added new member John Doe to team Frontend Devs",
+    },
+  ];
+
   return (
     <div className="flex flex-col md:flex-row w-full p-4 gap-3 md:gap-5">
       <div className="w-full md:w-1/2 bg-white shadow-md rounded-md md:p-6 p-3">
@@ -130,6 +163,16 @@ export default function TasksAndActivity() {
         <h3 className="md:text-[25px] text-[22px] font-bold">
           Activities Feed
         </h3>
+        {activities.map((activity) => (
+          <div
+            className="flex flex-col pb-3 gap-3 md:gap-0 sm:flex-row justify-between mt-10 border-b-2 hover:text-blue-600"
+            key={activity.id}
+          >
+            <div className="w-full md:w-[30%]">{activity.time}</div>
+            <div className="w-full md:w-[30%]">{activity.user}</div>
+            <div className="w-full md:w-[30%]">{activity.description}</div>
+          </div>
+        ))}
       </div>
     </div>
   );
