@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import TotalProjects from "../../../public/total-projects.svg";
 import PendingTasks from "../../../public/pending-tasks.svg";
@@ -11,10 +12,16 @@ import TasksAndActivity from "../components/tasks-and-activity";
 import TaskPopup from "../components/task-popup";
 
 export default function Dashboard() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
   return (
     <>
       <div className="bg-gray-50 relative">
-        <TaskPopup />
+        <TaskPopup isOpen={isModalOpen} onClose={closeModal}>
+          <></>
+        </TaskPopup>
         <h1 className="capitalize md:text-[30px] sm:text-[25px] text-[22px] p-4">
           Welcome, Nexon!
         </h1>
@@ -93,7 +100,7 @@ export default function Dashboard() {
           </div>
         </div>
         {/* Third Section on the dashbaord page --- let's fucking gooooooo */}
-        <TasksAndActivity />
+        <TasksAndActivity onTrigger={openModal} />
       </div>
     </>
   );
