@@ -1,82 +1,95 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Image from "next/image";
-import TotalProjects from "../../../public/total-projects.svg";
-import PendingTasks from "../../../public/pending-tasks.svg";
-import CompletedTasks from "../../../public/completed-tasks.svg";
-import TeamMembers from "../../../public/team-members.svg";
+import { useEffect, useState } from "react";
+import { doc, getDoc, getFirestore } from "firebase/firestore";
+import type { User } from "firebase/auth";
 import ProjectsSummary from "../components/projectsSummary";
 import HoursLogged from "../components/hours-logges";
+// Import Firebase app instance
+import { getApp, getApps, initializeApp } from "firebase/app";
 
-interface UserProfile {
-  uid: string;
-  email: string | null;
-  firstName: string;
-  lastName: string;
-  username: string;
-  photoURL?: string | null;
-  provider: string;
-  createdAt: string;
+interface Props {
+  user: User;
 }
 
-export default function Dashboard() {
-  const [user, setUser] = useState<UserProfile | null>(null);
-  const [isClient, setIsClient] = useState(false);
+interface UserData {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+}
 
-  // This ensures we only access localStorage on the client side
+// Your Firebase config - make sure this is defined
+const firebaseConfig = {
+  // Your Firebase config should be here
+  // If it's not defined here, make sure it's imported from somewhere else
+};
+
+// Initialize Firebase if it hasn't been initialized yet
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+
+export default function Dashboard({ user }: Props) {
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  useEffect(() => {
-    // Only run this effect on the client side
-    if (!isClient) return;
-
-    try {
-      // Add debugging to see what's happening
-      console.log("Checking localStorage...");
-
-      // Check if localStorage is available
-      if (typeof window !== "undefined" && window.localStorage) {
-        console.log("localStorage is available");
-
-        const storedUserData = localStorage.getItem("userData");
-        console.log("Raw localStorage data:", storedUserData);
-
-        if (storedUserData) {
-          try {
-            const userData = JSON.parse(storedUserData) as UserProfile;
-            console.log("Parsed user data:", userData);
-            setUser(userData);
-          } catch (err) {
-            console.error("Error parsing stored user data:", err);
-          }
-        } else {
-          console.log("No user data found in localStorage");
-        }
-      } else {
-        console.log("localStorage is not available");
+    const fetchUserData = async () => {
+      if (!user?.uid) {
+        setLoading(false);
+        return;
       }
-    } catch (error) {
-      console.error("Error accessing localStorage:", error);
-    }
-  }, [isClient]);
+
+      try {
+        const db = getFirestore(app);
+        const userDocRef = doc(db, "users", user.uid);
+        const userDoc = await getDoc(userDocRef);
+
+        if (userDoc.exists()) {
+          setUserData(userDoc.data() as UserData);
+        } else {
+          const displayName = user.displayName || "";
+          const names = displayName.trim().split(" ");
+          setUserData({
+            firstName: names[0] || "",
+            lastName: names.length > 1 ? names[1] : "",
+            email: user.email || "",
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching user data: ", error);
+        // Fallback to Auth data on error
+        if (user.displayName) {
+          const names = user.displayName.trim().split(" ");
+          setUserData({
+            firstName: names[0] || "",
+            lastName: names.length > 1 ? names[1] : "",
+            email: user.email || "",
+          });
+        } else if (user.email) {
+          setUserData({
+            firstName: user.email.split("@")[0],
+            email: user.email,
+          });
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUserData();
+  }, [user]);
+
+  // Use multiple fallbacks for the name
+  const displayingName =
+    userData?.firstName ||
+    (user?.displayName ? user.displayName.split(" ")[0] : "") ||
+    (user?.email ? user.email.split("@")[0] : "") ||
+    "Guest";
 
   return (
     <>
       <div className="bg-gray-50">
-        {/* Debug section at the top */}
-        <div className="p-4 mb-4 bg-yellow-50 border border-yellow-200 rounded">
-          <h2 className="font-bold">Debug Info:</h2>
-          <p>Client-side rendering: {isClient ? "Yes" : "No"}</p>
-          <p>User data loaded: {user ? "Yes" : "No"}</p>
-          <p>First name: {user?.firstName || "Not available"}</p>
-          <p>User ID: {user?.uid || "Not available"}</p>
-        </div>
-
         <h1 className="capitalize md:text-[30px] sm:text-[25px] text-[22px] p-4">
-          Welcome, {user?.firstName || "Guest"}!
+          Welcome, {loading ? "Loading..." : displayingName}!
         </h1>
 
         {/* Rest of your dashboard UI */}
@@ -85,7 +98,7 @@ export default function Dashboard() {
           <div className="bg-white shadow-md p-3 rounded-md flex flex-row items-center gap-3">
             <div className="bg-blue-200 p-3.5 rounded-full w-fit">
               <Image
-                src={TotalProjects || "/placeholder.svg"}
+                src="/total-projects.svg"
                 alt="total projects icon"
                 width={30}
                 height={30}
@@ -100,7 +113,7 @@ export default function Dashboard() {
           <div className="bg-white shadow-md p-3 rounded-md  flex items-center gap-3">
             <div className="bg-purple-200 w-fit p-3.5 rounded-full">
               <Image
-                src={PendingTasks || "/placeholder.svg"}
+                src="/pending-tasks.svg"
                 alt="pending tasks icon"
                 width={30}
                 height={30}
@@ -115,7 +128,7 @@ export default function Dashboard() {
           <div className="bg-white shadow-md p-3 rounded-md flex flex-row items-center gap-3">
             <div className="bg-orange-100 p-3.5 rounded-full w-fit">
               <Image
-                src={CompletedTasks || "/placeholder.svg"}
+                src="/completed-tasks.svg"
                 alt="completed tasks icon"
                 width={30}
                 height={30}
@@ -130,7 +143,7 @@ export default function Dashboard() {
           <div className="bg-white shadow-md p-3 rounded-md flex flex-row items-center gap-3">
             <div className="bg-red-200 w-fit p-3.5 rounded-full">
               <Image
-                src={TeamMembers || "/placeholder.svg"}
+                src="/team-members.svg"
                 alt="team members icon"
                 width={30}
                 height={30}

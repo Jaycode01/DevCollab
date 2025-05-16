@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { User } from "firebase/auth";
 import Image from "next/image";
 import Online from "../../../public/online.svg";
+import { User } from "firebase/auth";
 
 interface Props {
   user: User;
@@ -17,6 +17,7 @@ export default function UserQuickBox({ user }: Props) {
     const lastInitial = names[1]?.[0] || "";
     return (firstInitial + lastInitial).toUpperCase();
   };
+
   return (
     <>
       <div className="absolute top-14 right-0 mt-2 w-64 bg-white shadow-md rounded-md p-4 z-50">
