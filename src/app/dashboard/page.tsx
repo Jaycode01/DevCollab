@@ -7,6 +7,7 @@ import CompletedTasks from "../../../public/completed-tasks.svg";
 import TeamMembers from "../../../public/team-members.svg";
 import ProjectsSummary from "../components/projectsSummary";
 import HoursLogged from "../components/hours-logges";
+import TasksAndActivity from "../components/tasks-and-activity";
 
 export default function Dashboard() {
   return (
@@ -89,6 +90,8 @@ export default function Dashboard() {
             <HoursLogged />
           </div>
         </div>
+        {/* Third Section on the dashbaord page --- let's fucking gooooooo */}
+        <TasksAndActivity />
       </div>
     </>
   );
