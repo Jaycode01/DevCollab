@@ -8,11 +8,13 @@ import TeamMembers from "../../../public/team-members.svg";
 import ProjectsSummary from "../components/projectsSummary";
 import HoursLogged from "../components/hours-logges";
 import TasksAndActivity from "../components/tasks-and-activity";
+import TaskPopup from "../components/task-popup";
 
 export default function Dashboard() {
   return (
     <>
-      <div className="bg-gray-50">
+      <div className="bg-gray-50 relative">
+        <TaskPopup />
         <h1 className="capitalize md:text-[30px] sm:text-[25px] text-[22px] p-4">
           Welcome, Nexon!
         </h1>
