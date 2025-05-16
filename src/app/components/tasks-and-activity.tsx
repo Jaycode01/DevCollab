@@ -1,7 +1,11 @@
 "use client";
 import { useState } from "react";
 
-export default function TasksAndActivity() {
+type TriggerModalProps = {
+  onTrigger: () => void;
+};
+
+export default function TasksAndActivity({ onTrigger }: TriggerModalProps) {
   const [sorting, setSorting] = useState<string>("");
 
   const taskCards = [
@@ -133,6 +137,7 @@ export default function TasksAndActivity() {
 
               return (
                 <div
+                  onClick={onTrigger}
                   key={taskCard.id}
                   className="flex flex-col shadow-md rounded border p-3 gap-4"
                 >
