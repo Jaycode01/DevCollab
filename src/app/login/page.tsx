@@ -1,10 +1,12 @@
 "use client";
 
+import type React from "react";
+
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
-import { FirebaseError } from "firebase/app";
+import type { FirebaseError } from "firebase/app";
 import {
   useSignInWithEmailAndPassword,
   useSignInWithGoogle,
@@ -13,8 +15,9 @@ import {
 import { auth, db } from "@/app/auth/config";
 import { useRouter } from "next/navigation";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import { UserCredential } from "firebase/auth";
+import type { UserCredential } from "firebase/auth";
 
+// Define the user profile data structure
 interface UserProfile {
   uid: string;
   email: string | null;
@@ -25,6 +28,7 @@ interface UserProfile {
   provider: string;
   createdAt: string;
 }
+
 export default function Login() {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -32,14 +36,15 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // Firebase hooks with loading and error states
   const [signInWithEmailAndPassword, user, emailLoading, emailError] =
     useSignInWithEmailAndPassword(auth);
   const [signInWithGoogle, googleUser, googleLoading, googleError] =
     useSignInWithGoogle(auth);
-  const [signInWithGitHub, githubUser, githubLoading, githubError] =
+  const [signInWithGithub, githubUser, githubLoading, githubError] =
     useSignInWithGithub(auth);
 
-  // Handle successful authentication - we go again....Nexon
+  // Handle successful authentication
   useEffect(() => {
     const handleUser = async (
       userCredential: UserCredential | null | undefined,
@@ -48,34 +53,62 @@ export default function Login() {
       if (userCredential && userCredential.user) {
         try {
           const user = userCredential.user;
+          console.log("Authentication successful, processing user data...");
 
+          // Check if user exists in Firestore
           const userRef = doc(db, "users", user.uid);
           const docSnap = await getDoc(userRef);
 
+          let userData: UserProfile | null = null;
+
+          // If user doesn't exist in Firestore (first social login), create profile
           if (
             !docSnap.exists() &&
             (provider === "google" || provider === "github")
           ) {
-            const userProfile: UserProfile = {
+            console.log("Creating new user profile...");
+            userData = {
               uid: user.uid,
               email: user.email,
               firstName: user.displayName?.split(" ")[0] || "",
               lastName: user.displayName?.split(" ").slice(1).join(" ") || "",
-              username: user.email?.split(" ").slice(1).join(" ") || "",
+              username: user.email?.split("@")[0] || "",
               photoURL: user.photoURL,
               provider: provider,
               createdAt: new Date().toISOString(),
             };
 
-            await setDoc(userRef, userProfile);
+            await setDoc(userRef, userData);
+            console.log("New user profile created in Firestore");
+          } else if (docSnap.exists()) {
+            // User exists, get their data
+            console.log("Existing user found, retrieving profile...");
+            userData = docSnap.data() as UserProfile;
           }
 
-          // Redirection to the dashboard
-          router.push("/");
+          // Store user data in localStorage for use across the app
+          if (userData) {
+            console.log("Saving user data to localStorage:", userData);
+            localStorage.setItem("userData", JSON.stringify(userData));
+
+            // Add a small delay to ensure localStorage is updated
+            // before redirecting
+            setTimeout(() => {
+              console.log(
+                "Checking if localStorage was updated:",
+                localStorage.getItem("userData")
+              );
+              console.log("Redirecting to dashboard...");
+              router.push("/dashboard");
+            }, 300);
+          } else {
+            console.error("No user data available to save");
+            router.push("/dashboard");
+          }
         } catch (err) {
-          console.error("Error handling user data: ", err);
+          console.error("Error handling user data:", err);
           setError(
-            "Login successful but failed to process user data. Please try again"
+            "Login successful but failed to process user data. Please try again."
           );
         }
       }
@@ -90,7 +123,7 @@ export default function Login() {
     }
   }, [user, googleUser, githubUser, router]);
 
-  // Set error message from firebase hooks
+  // Set error message from Firebase hooks
   useEffect(() => {
     if (emailError) {
       handleAuthError(emailError);
@@ -102,14 +135,14 @@ export default function Login() {
   }, [emailError, googleError, githubError]);
 
   const handleAuthError = (error: FirebaseError) => {
-    console.error("Auth error: ", error);
+    console.error("Auth error:", error);
 
     if (error.code === "auth/user-not-found") {
-      setError("No user found with this email address");
+      setError("No user found with this email address.");
     } else if (error.code === "auth/wrong-password") {
-      setError("Incorrect password. Please try again");
+      setError("Incorrect password. Please try again.");
     } else if (error.code === "auth/invalid-email") {
-      setError("Please enter a valid emai address");
+      setError("Please enter a valid email address.");
     } else if (error.code === "auth/popup-closed-by-user") {
       setError("Sign-in popup was closed. Please try again.");
     } else if (error.code === "auth/account-exists-with-different-credential") {
@@ -125,8 +158,9 @@ export default function Login() {
     setError("");
     try {
       await signInWithGoogle();
+      // The useEffect hook will handle the rest
     } catch (err) {
-      console.error("Google Sign-in error: ", err);
+      console.error("Google sign-in error:", err);
       if (err instanceof Error) {
         const firebaseError = err as FirebaseError;
         handleAuthError(firebaseError);
@@ -136,12 +170,13 @@ export default function Login() {
     }
   };
 
-  const handleGitHibLogin = async () => {
+  const handleGitHubLogin = async () => {
     setError("");
     try {
-      await signInWithGitHub();
+      await signInWithGithub();
+      // The useEffect hook will handle the rest
     } catch (err) {
-      console.error("Github Sign-in error: ", err);
+      console.error("GitHub sign-in error:", err);
       if (err instanceof Error) {
         const firebaseError = err as FirebaseError;
         handleAuthError(firebaseError);
@@ -163,8 +198,9 @@ export default function Login() {
     try {
       setLoading(true);
       await signInWithEmailAndPassword(email, password);
+      // The useEffect hook will handle the rest
     } catch (err) {
-      console.error("Login error ", err);
+      console.error("Login error:", err);
       if (err instanceof Error) {
         const firebaseError = err as FirebaseError;
         handleAuthError(firebaseError);
@@ -176,15 +212,17 @@ export default function Login() {
     }
   };
 
+  // Combined loading state
   const isLoading = loading || emailLoading || googleLoading || githubLoading;
 
   return (
     <div className="flex flex-col h-fit justify-center items-center w-full">
       {error && (
-        <div className="bg-red-100 border-red-400 text-red-700 px-4 py-3 rounded w-11/12 md:w-1/3 md-4">
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded w-11/12 md:w-1/3 mb-4">
           {error}
         </div>
       )}
+
       <form
         onSubmit={handleSignIn}
         className="flex flex-col gap-5 w-11/12 md:w-1/3 md:mt-14 mt-7"
@@ -215,11 +253,21 @@ export default function Login() {
             disabled={isLoading}
           />
         </div>
-        <div className="flex flex-row gap-2 items-center">
-          <input type="checkbox" id="rememberMe" disabled={isLoading} />
-          <label htmlFor="rememberMe" className="text-sm">
-            Remember me
-          </label>
+
+        <div className="flex justify-between items-center">
+          <div className="flex flex-row gap-2 items-center">
+            <input type="checkbox" id="rememberMe" disabled={isLoading} />
+            <label htmlFor="rememberMe" className="text-sm">
+              Remember me
+            </label>
+          </div>
+
+          <Link
+            href="/forgot-password"
+            className="text-blue-600 text-sm hover:underline"
+          >
+            Forgot password?
+          </Link>
         </div>
 
         <button
@@ -241,7 +289,6 @@ export default function Login() {
 
       <div className="flex items-center mt-5 gap-5">
         <button
-          type="button"
           onClick={handleGoogleLogin}
           disabled={isLoading}
           className="flex items-center justify-center bg-white p-2 rounded-full shadow-md hover:shadow-lg transition-shadow"
@@ -249,8 +296,7 @@ export default function Login() {
           <FcGoogle size={32} className="cursor-pointer" />
         </button>
         <button
-          type="button"
-          onClick={handleGitHibLogin}
+          onClick={handleGitHubLogin}
           disabled={isLoading}
           className="flex items-center justify-center bg-white p-2 rounded-full shadow-md hover:shadow-lg transition-shadow"
         >
@@ -260,7 +306,7 @@ export default function Login() {
 
       <p className="mt-5 text-sm md:text-[1rem]">
         New to DevCollab?{" "}
-        <Link href="/getstarted" className="text-blue-600 hover:underline">
+        <Link href="/sign-up" className="text-blue-600 hover:underline">
           Sign Up
         </Link>
       </p>
