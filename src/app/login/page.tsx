@@ -53,7 +53,6 @@ export default function Login() {
       if (userCredential && userCredential.user) {
         try {
           const user = userCredential.user;
-          console.log("Authentication successful, processing user data...");
 
           // Check if user exists in Firestore
           const userRef = doc(db, "users", user.uid);
@@ -66,7 +65,6 @@ export default function Login() {
             !docSnap.exists() &&
             (provider === "google" || provider === "github")
           ) {
-            console.log("Creating new user profile...");
             userData = {
               uid: user.uid,
               email: user.email,
@@ -79,32 +77,19 @@ export default function Login() {
             };
 
             await setDoc(userRef, userData);
-            console.log("New user profile created in Firestore");
           } else if (docSnap.exists()) {
             // User exists, get their data
-            console.log("Existing user found, retrieving profile...");
             userData = docSnap.data() as UserProfile;
           }
 
           // Store user data in localStorage for use across the app
           if (userData) {
-            console.log("Saving user data to localStorage:", userData);
             localStorage.setItem("userData", JSON.stringify(userData));
-
-            // Add a small delay to ensure localStorage is updated
-            // before redirecting
-            setTimeout(() => {
-              console.log(
-                "Checking if localStorage was updated:",
-                localStorage.getItem("userData")
-              );
-              console.log("Redirecting to dashboard...");
-              router.push("/dashboard");
-            }, 300);
-          } else {
-            console.error("No user data available to save");
-            router.push("/dashboard");
           }
+
+          // Redirect to dashboard - using the correct path based on your folder structure
+          console.log("Login successful, redirecting to dashboard...");
+          router.push("/dashboard");
         } catch (err) {
           console.error("Error handling user data:", err);
           setError(
