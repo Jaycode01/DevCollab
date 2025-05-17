@@ -28,13 +28,27 @@ export default function Notification() {
       id: 6,
       message: "Peter Pan review your code",
     },
+    {
+      id: 7,
+      message: "Peter Pan review your code",
+    },
+    {
+      id: 8,
+      message: "Peter Pan review your code",
+    },
   ];
   return (
-    <div className="aspect-square bg-white shadow-md rounded-md border">
+    <div className="aspect-square bg-white shadow-md rounded-md border p-4 max-h-fit">
+      <h3 className="text-[20px]">Notifications</h3>
       {notifications.map((notification) => (
-        <div className="" key={notification.id}>
+        <div
+          className="py-1.5 transition-transform duration-300 hover:scale-103"
+          key={notification.id}
+        >
           <ul>
-            <li className="">{notification.message}</li>
+            <li className="p-2.5 border shadow rounded">
+              {notification.message}
+            </li>
           </ul>
         </div>
       ))}
