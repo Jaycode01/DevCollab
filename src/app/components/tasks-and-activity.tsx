@@ -137,7 +137,7 @@ export default function TasksAndActivity({ onTrigger }: TriggerModalProps) {
                 <div
                   onClick={onTrigger}
                   key={taskCard.id}
-                  className="flex flex-col shadow-md rounded border p-3 gap-4"
+                  className="flex flex-col shadow-md rounded border p-3 gap-4 hover:cursor-pointer"
                 >
                   <div className="flex flex-row justify-between items-center">
                     <h3 className="text-[18px]">{taskCard.name}</h3>
@@ -168,7 +168,7 @@ export default function TasksAndActivity({ onTrigger }: TriggerModalProps) {
         </h3>
         {activities.map((activity) => (
           <div
-            className="flex flex-col pb-3 gap-3 md:gap-0 md:flex-row justify-between mt-10 border-b-2 hover:text-blue-600"
+            className="flex flex-col pb-3 gap-3 md:gap-0 md:flex-row justify-between mt-10 border-b-2 hover:text-blue-600 "
             key={activity.id}
           >
             <div className="w-full md:w-[30%]">{activity.time}</div>

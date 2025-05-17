@@ -4,7 +4,7 @@ import Team from "./team";
 
 export default function TeamAndNotifications() {
   return (
-    <div className="grid grid-cols-3 gap-4 px-4 mt-10 justify-between">
+    <div className="grid grid-cols-3 mt-2 gap-4 px-4 justify-between">
       <Team />
       <Notification />
       <Calendar />
