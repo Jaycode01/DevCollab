@@ -1,3 +1,5 @@
+import Styles from "./styles/notifications.module.css";
+
 export default function Notification() {
   const notifications = [
     {
@@ -38,7 +40,9 @@ export default function Notification() {
     },
   ];
   return (
-    <div className="aspect-square bg-white shadow-md rounded-md border p-4 max-h-fit">
+    <div
+      className={`aspect-square bg-white shadow-md rounded-md border p-4 h-[500px] md:h-fit w-full md:overflow-hidden overflow-auto whitespace-nowrap ${Styles.scrollHide}`}
+    >
       <h3 className="text-[20px]">Notifications</h3>
       {notifications.map((notification) => (
         <div
