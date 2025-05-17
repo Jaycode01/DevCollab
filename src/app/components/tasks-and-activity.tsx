@@ -98,9 +98,7 @@ export default function TasksAndActivity({ onTrigger }: TriggerModalProps) {
               className="bg-gray-200 p-2 outline-0 text-sm"
               defaultValue="default"
             >
-              <option value="default" selected>
-                Filter
-              </option>
+              <option value="default">Filter</option>
               <option value="todo">Todo</option>
               <option value="doing">Doing</option>
               <option value="completed">Completed</option>
