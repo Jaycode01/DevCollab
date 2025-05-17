@@ -9,7 +9,7 @@ import Values from "./components/values";
 export default function Home() {
   return (
     <>
-      <div className="_navigation-bar">
+      <div className="_navigation-bar overflow-x-hidden">
         <HeroSection />
         <MarqueeContent />
         <Features />
