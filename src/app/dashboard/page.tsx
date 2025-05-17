@@ -10,6 +10,7 @@ import ProjectsSummary from "../components/projectsSummary";
 import HoursLogged from "../components/hours-logges";
 import TasksAndActivity from "../components/tasks-and-activity";
 import TaskPopup from "../components/task-popup";
+import TeamAndNotifications from "../components/team,notifications-and-stats";
 
 export default function Dashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -102,6 +103,10 @@ export default function Dashboard() {
         </div>
         {/* Third Section on the dashbaord page --- let's fucking gooooooo */}
         <TasksAndActivity onTrigger={openModal} />
+        {/* Fourth section of the dashboard page */}
+        <div className="">
+          <TeamAndNotifications />
+        </div>
       </div>
     </>
   );
