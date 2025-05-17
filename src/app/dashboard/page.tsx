@@ -16,6 +16,7 @@ export default function Dashboard() {
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+
   return (
     <>
       <div className="bg-gray-50 relative">
@@ -23,7 +24,7 @@ export default function Dashboard() {
           <></>
         </TaskPopup>
         <h1 className="capitalize md:text-[30px] sm:text-[25px] text-[22px] p-4">
-          Welcome, Nexon!
+          Welcome!
         </h1>
 
         {/* Rest of your dashboard UI */}
