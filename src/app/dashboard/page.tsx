@@ -12,8 +12,17 @@ import TasksAndActivity from "../components/tasks-and-activity";
 import TaskPopup from "../components/task-popup";
 import TeamAndNotifications from "../components/team,notifications-and-stats";
 
+type Project = {
+  id: number;
+  name: string;
+  update: string;
+  due: string;
+  status: string;
+};
+
 export default function Dashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -21,9 +30,11 @@ export default function Dashboard() {
   return (
     <>
       <div className="bg-gray-50 relative">
-        <TaskPopup isOpen={isModalOpen} onClose={closeModal}>
-          <></>
-        </TaskPopup>
+        <TaskPopup
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          project={selectedProject}
+        />
         <h1 className="capitalize md:text-[30px] sm:text-[25px] text-[22px] p-4">
           Welcome!
         </h1>
@@ -95,14 +106,19 @@ export default function Dashboard() {
         {/* Second section of the dashboard */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 px-4 mt-5">
           <div className="lg:col-span-2 bg-white rounded-xl shadow p-4 w-full">
-            <ProjectsSummary />
+            <ProjectsSummary
+              onProjectClick={(project) => {
+                setSelectedProject(project);
+                openModal();
+              }}
+            />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4 bg-white shadow rounded-md w-full p-4">
             <HoursLogged />
           </div>
         </div>
         {/* Third Section on the dashbaord page --- let's fucking gooooooo */}
-        <TasksAndActivity onTrigger={openModal} />
+        <TasksAndActivity />
         {/* Fourth section of the dashboard page */}
         <div className="">
           <TeamAndNotifications />
