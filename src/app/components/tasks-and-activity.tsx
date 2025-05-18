@@ -15,6 +15,7 @@ export default function TasksAndActivity({ onTrigger }: TriggerModalProps) {
       assignee: "Zach",
       date: "01/06",
       tag: "design",
+      status: "todo",
     },
     {
       id: 2,
@@ -22,6 +23,7 @@ export default function TasksAndActivity({ onTrigger }: TriggerModalProps) {
       assignee: "Thomas",
       date: "01/06",
       tag: "frontend",
+      status: "doing",
     },
     {
       id: 3,
@@ -29,6 +31,7 @@ export default function TasksAndActivity({ onTrigger }: TriggerModalProps) {
       assignee: "Christina",
       date: "01/06",
       tag: "design",
+      status: "completed",
     },
     {
       id: 4,
@@ -36,6 +39,7 @@ export default function TasksAndActivity({ onTrigger }: TriggerModalProps) {
       assignee: "Tom",
       date: "01/06",
       tag: "backend",
+      status: "completed",
     },
     {
       id: 5,
@@ -43,15 +47,23 @@ export default function TasksAndActivity({ onTrigger }: TriggerModalProps) {
       assignee: "Quinn",
       date: "01/06",
       tag: "backend",
+      status: "completed",
     },
   ];
 
-  const sortedCards = [...taskCards].sort((a, b) => {
-    if (!sorting) return 0;
-    if (a.tag === sorting && b.tag !== sorting) return -1;
-    if (a.tag !== sorting && b.tag === sorting) return 1;
-    return 0;
-  });
+  const [filterStatus, setFilterStatus] = useState<string>("");
+
+  const sortedCards = [...taskCards]
+    .filter((card) => {
+      if (!filterStatus) return true;
+      return card.status === filterStatus;
+    })
+    .sort((a, b) => {
+      if (!sorting) return 0;
+      if (a.tag === sorting && b.tag !== sorting) return -1;
+      if (a.tag !== sorting && b.tag === sorting) return 1;
+      return 0;
+    });
 
   const activities = [
     {
@@ -96,13 +108,15 @@ export default function TasksAndActivity({ onTrigger }: TriggerModalProps) {
               name="filter"
               id="filter"
               className="bg-gray-200 p-2 outline-0 text-sm"
-              defaultValue="default"
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
             >
-              <option value="default">Filter</option>
+              <option value="">Filter</option>
               <option value="todo">Todo</option>
               <option value="doing">Doing</option>
               <option value="completed">Completed</option>
             </select>
+
             <select
               name="sort"
               id="sort"
