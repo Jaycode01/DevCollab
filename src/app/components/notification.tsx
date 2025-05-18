@@ -1,61 +1,38 @@
-import Styles from "./styles/notifications.module.css";
+type Notification = {
+  id: number;
+  message: string;
+};
 
-export default function Notification() {
-  const notifications = [
-    {
-      id: 1,
-      message: "New team member added",
-    },
-    {
-      id: 2,
-      message: "You just committed to X project",
-    },
+type NotificationProps = {
+  notifyData: Notification[];
+};
 
-    {
-      id: 3,
-      message: "Peter Pan review your code",
-    },
+export default function Notification({ notifyData }: NotificationProps) {
+  if (!notifyData || notifyData.length === 0) {
+    return (
+      <div className="bg-white shadow-md rounded-md border p-4 w-full">
+        <h3 className="text-xl font-semibold mb-4">All Notifications</h3>
+        <p>No notifications available</p>
+      </div>
+    );
+  }
 
-    {
-      id: 4,
-      message: "Peter Pan review your code",
-    },
-
-    {
-      id: 5,
-      message: "Peter Pan review your code",
-    },
-
-    {
-      id: 6,
-      message: "Peter Pan review your code",
-    },
-    {
-      id: 7,
-      message: "Peter Pan review your code",
-    },
-    {
-      id: 8,
-      message: "Peter Pan review your code",
-    },
-  ];
   return (
-    <div
-      className={`aspect-square bg-white shadow-md rounded-md border p-4 h-[500px] md:h-fit w-full md:overflow-hidden overflow-auto whitespace-nowrap ${Styles.scrollHide}`}
-    >
-      <h3 className="text-[20px]">Notifications</h3>
-      {notifications.map((notification) => (
-        <div
-          className="py-1.5 transition-transform duration-300 hover:scale-103"
-          key={notification.id}
-        >
-          <ul>
-            <li className="p-2.5 border shadow rounded">
-              {notification.message}
-            </li>
-          </ul>
-        </div>
-      ))}
+    <div className="bg-white shadow-md rounded-md border p-4 w-full">
+      <h3 className="text-xl font-semibold mb-4">All Notifications</h3>
+
+      <div className="max-h-[400px] overflow-y-auto pr-2">
+        {notifyData.map((notify) => (
+          <div
+            className="py-2 transition-all duration-300 hover:scale-95 cursor-pointer"
+            key={notify.id}
+          >
+            <div className="p-3 border rounded-md shadow-sm">
+              {notify.message}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

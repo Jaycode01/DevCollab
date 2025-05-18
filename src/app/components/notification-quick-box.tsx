@@ -1,34 +1,40 @@
 import Link from "next/link";
 
-export default function NotificationQuickBox() {
-  return (
-    <>
-      <div className="absolute bg-white w-72 shadow-md rounded-sm left-[-250px] z-50 top-16 py-4 px-3 flex flex-col gap-5">
-        <h4 className="font-semi-bold mb-2 flex flex-row items-center justify-between">
-          Notification{" "}
-          <Link
-            href="/dashboard"
-            className="text-[12px] underline hover:text-blue-600 text-gray-900"
-          >
-            see all
-          </Link>
-        </h4>
+type Notification = {
+  id: number;
+  message: string;
+};
 
-        <ul className="text-sm text-gray-700 flex flex-col gap-2.5">
-          <li className="py-1 border-b cursor-pointer">
-            You have new task assigned
-          </li>
-          <li className="py- border-b cursor-pointer">
-            Project {`"X"`} was updated
-          </li>
-          <li className="py-1 border-b cursor-pointer">
-            New comment on you issue
-          </li>
-          <li className="py-1 cursor-pointer">
-            You have a new invitation from abdulahi.0x
-          </li>
-        </ul>
+type NotificationQuickBoxProps = {
+  topFive: Notification[];
+};
+
+export default function NotificationQuickBox({
+  topFive,
+}: NotificationQuickBoxProps) {
+  return (
+    <div className="absolute bg-white z-50 w-72 shadow-md rounded-md border p-4 right-0 top-16">
+      <div className="flex justify-between items-center mb-4">
+        <h4 className="font-semibold">Recent Notifications</h4>
+        <Link
+          href="/dashboard"
+          className="text-sm underline hover:text-blue-600 text-gray-900"
+        >
+          see all
+        </Link>
       </div>
-    </>
+
+      {topFive.length === 0 ? (
+        <p className="text-sm text-gray-500">No recent notifications</p>
+      ) : (
+        <ul className="text-sm text-gray-700 flex flex-col gap-2.5">
+          {topFive.map((item) => (
+            <li className="border-b pb-2 last:border-0" key={item.id}>
+              {item.message}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }

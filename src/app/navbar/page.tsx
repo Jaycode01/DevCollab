@@ -19,6 +19,17 @@ import DocsIcon from "../../../public/docs.svg";
 import UserQuickBox from "../components/user-quick-box";
 import NotificationQuickBox from "../components/notification-quick-box";
 
+const notifications = [
+  { id: 1, message: "New team member added" },
+  { id: 2, message: "Project committed" },
+  { id: 3, message: "PR reviewed" },
+  { id: 4, message: "Meeting scheduled" },
+  { id: 5, message: "New comment" },
+  { id: 6, message: "Code deployed" },
+];
+
+const topFive = notifications.slice(0, 5);
+
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
@@ -147,7 +158,9 @@ export default function Navbar() {
                 />
               </button>
 
-              {notificationQuickBox && <NotificationQuickBox />}
+              {notificationQuickBox && (
+                <NotificationQuickBox topFive={topFive} />
+              )}
             </div>
           )}
 
