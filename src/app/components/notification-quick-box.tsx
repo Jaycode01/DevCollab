@@ -13,7 +13,7 @@ export default function NotificationQuickBox({
   topFive,
 }: NotificationQuickBoxProps) {
   return (
-    <div className="absolute bg-white z-50 w-72 shadow-md rounded-md border p-4 right-0 left-4 top-16">
+    <div className="absolute bg-white z-50 w-72 shadow-md rounded-md border p-4 right-0 top-16">
       <div className="flex justify-between items-center mb-4">
         <h4 className="font-semibold">Recent Notifications</h4>
         <Link

@@ -1,8 +1,5 @@
 "use client";
 
-import React, { useState } from "react";
-import TaskPopup from "./task-popup"; // adjust the path if necessary
-
 type Project = {
   id: number;
   name: string;
@@ -11,7 +8,13 @@ type Project = {
   status: string;
 };
 
-export default function ProjectsSummary() {
+type ProjectsSummaryProps = {
+  onProjectClick: (project: Project) => void;
+};
+
+export default function ProjectsSummary({
+  onProjectClick,
+}: ProjectsSummaryProps) {
   const Projects: Project[] = [
     {
       id: 1,
@@ -64,19 +67,6 @@ export default function ProjectsSummary() {
     },
   ];
 
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const openModal = (project: Project) => {
-    setSelectedProject(project);
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setSelectedProject(null);
-    setIsModalOpen(false);
-  };
-
   return (
     <div className="max-w-full mx-auto md:p-6 p-3">
       <h1 className="md:text-2xl text-[20px] font-bold mb-4">
@@ -97,7 +87,7 @@ export default function ProjectsSummary() {
             {Projects.map((project) => (
               <tr
                 key={project.id}
-                onClick={() => openModal(project)}
+                onClick={() => onProjectClick(project)}
                 className="hover:text-blue-600 cursor-pointer text-gray-900"
               >
                 <td className="py-2 px-4 border-b">{project.id}</td>
@@ -121,12 +111,6 @@ export default function ProjectsSummary() {
           </tbody>
         </table>
       </div>
-
-      <TaskPopup
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        project={selectedProject}
-      />
     </div>
   );
 }
