@@ -41,7 +41,7 @@ export default function Values() {
         opacity: 0,
         duration: 1,
         ease: "power2.out",
-        delay: index * 0.3,
+        delay: index * 0.1,
       });
     }, []);
   });
