@@ -180,9 +180,11 @@ export default function TasksAndActivity() {
             className="flex flex-col pb-3 gap-3 md:gap-0 md:flex-row justify-between mt-10 border-b-2 hover:text-blue-600 "
             key={activity.id}
           >
-            <div className="w-full md:w-[30%]">{activity.time}</div>
-            <div className="w-full md:w-[30%]">{activity.user}</div>
-            <div className="w-full md:w-[30%]">{activity.description}</div>
+            <div className="w-full md:w-[30%] text-sm">{activity.time}</div>
+            <div className="w-full md:w-[30%] text-sm">{activity.user}</div>
+            <div className="w-full md:w-[30%] text-sm">
+              {activity.description}
+            </div>
           </div>
         ))}
       </div>
