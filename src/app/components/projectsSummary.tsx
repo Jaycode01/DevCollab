@@ -1,5 +1,18 @@
+"use client";
+
+import React, { useState } from "react";
+import TaskPopup from "./task-popup"; // adjust the path if necessary
+
+type Project = {
+  id: number;
+  name: string;
+  update: string;
+  due: string;
+  status: string;
+};
+
 export default function ProjectsSummary() {
-  const Projects = [
+  const Projects: Project[] = [
     {
       id: 1,
       name: "Moviemaniac",
@@ -51,6 +64,19 @@ export default function ProjectsSummary() {
     },
   ];
 
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = (project: Project) => {
+    setSelectedProject(project);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setSelectedProject(null);
+    setIsModalOpen(false);
+  };
+
   return (
     <div className="max-w-full mx-auto md:p-6 p-3">
       <h1 className="md:text-2xl text-[20px] font-bold mb-4">
@@ -58,7 +84,7 @@ export default function ProjectsSummary() {
       </h1>
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white text-sm">
-          <thead className="text-left">
+          <thead className="text-left bg-gray-100">
             <tr>
               <th className="py-2 px-4 border-b">#Id</th>
               <th className="py-2 px-4 border-b">Project Name</th>
@@ -70,8 +96,9 @@ export default function ProjectsSummary() {
           <tbody>
             {Projects.map((project) => (
               <tr
-                className="hover:text-blue-600 text-gray-900"
                 key={project.id}
+                onClick={() => openModal(project)}
+                className="hover:text-blue-600 cursor-pointer text-gray-900"
               >
                 <td className="py-2 px-4 border-b">{project.id}</td>
                 <td className="py-2 px-4 border-b">{project.name}</td>
@@ -94,6 +121,12 @@ export default function ProjectsSummary() {
           </tbody>
         </table>
       </div>
+
+      <TaskPopup
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        project={selectedProject}
+      />
     </div>
   );
 }
