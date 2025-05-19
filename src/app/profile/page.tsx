@@ -58,6 +58,8 @@ export default function UsersProfile() {
           <Image
             src={userImage}
             alt="user pic"
+            width={250}
+            height={250}
             className="md:w-[250px] w-[170px] md:h-[250px] h-[170px] rounded-full relative"
           />
           <div className="">
