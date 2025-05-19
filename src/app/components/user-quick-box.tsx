@@ -4,6 +4,8 @@ import Link from "next/link";
 import Image from "next/image";
 import Online from "../../../public/online.svg";
 import { User } from "firebase/auth";
+import { signOut } from "firebase/auth";
+import { auth } from "../auth/config";
 
 interface Props {
   user: User;
@@ -18,16 +20,31 @@ export default function UserQuickBox({ user }: Props) {
     return (firstInitial + lastInitial).toUpperCase();
   };
 
+  const handleogout = async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
+  };
+
   return (
     <>
       <div className="absolute top-14 right-0 mt-2 w-64 bg-white shadow-md rounded-md p-4 z-50">
-        <div className="mb-5">
+        <div className="mb-5 flex items-center justify-between">
           <Link
-            href="/user-profile"
+            href="/profile"
             className="capitalize text-[13px] underline text-gray-90 hover:text-blue-600"
           >
             view profile
           </Link>
+          <button
+            type="button"
+            onClick={handleogout}
+            className="text-sm text-red-600 hoveer:border-b border-red-600"
+          >
+            Log out
+          </button>
         </div>
         <div className="flex items-center gap-3">
           {user.photoURL ? (
