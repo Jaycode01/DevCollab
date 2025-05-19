@@ -1,64 +1,117 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import FakePic from "../../../public/images/fakeUserPic.jpg";
 import Image from "next/image";
-import EditPen from "../../../public/edit-pen.svg";
 import GitHub from "../../../public/github.svg";
 import LinkedIn from "../../../public/linkedin.svg";
 import Twitter from "../../../public/twitter.svg";
 import Globe from "../../../public/globe.svg";
+import Settings from "../../../public/settings.svg";
 import Link from "next/link";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { app } from "../auth/config";
+
+type CustomUser = {
+  name: string;
+  email: string | null;
+  photo: string | null;
+  uid: string;
+};
 
 export default function UsersProfile() {
+  const [user, setUser] = useState<CustomUser | null>(null);
+
+  const userImage = user?.photo ? user.photo : FakePic;
+
+  useEffect(() => {
+    const auth = getAuth(app);
+
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        setUser({
+          name: firebaseUser.displayName ?? "No Name",
+          email: firebaseUser.email,
+          photo: firebaseUser.photoURL ?? null,
+          uid: firebaseUser.uid,
+        });
+      } else {
+        console.log("User is signed out");
+        setUser(null);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   return (
     <div className="">
-      <div className="">
-        <div className="">
-          <Image src={FakePic} alt="user pic" />
-          <Image src={EditPen} alt="edit pen" />
+      <div className="flex flex-col gap-7 w-11/12 md:w-1/2 mx-auto mt-7 border p-5 rounded-md">
+        <Link
+          href="/"
+          className="flex items-center justify-end gap-1 text-sm hover:text-blue-600 text-gray-900"
+        >
+          <Image src={Settings} alt="settings icon" />
+          <span className="">Settings</span>
+        </Link>
+        <div className="flex gap-5 items-center border justify-center py-3 rounded px-2">
+          <Image
+            src={userImage}
+            alt="user pic"
+            className="md:w-[250px] w-[170px] md:h-[250px] h-[170px] rounded-full relative"
+          />
+          <div className="">
+            <p className="text-[20px]">{user?.name || "Guest User"}</p>
+            <p className="text-[14px]">{user?.email || "Not logged in"}</p>
+            <p className="text-gray-500 text-sm md:text-[17px]">
+              +234 9060748887
+            </p>
+            <button
+              type="button"
+              className="py-2  px-4 bg-blue-600 text-sm text-white rounded mt-3"
+            >
+              Edit Profile
+            </button>
+          </div>
         </div>
-        <div className="">
-          <p className="">Joseph Lamidi (Nexon)</p>
-          <p className="">me@test.com</p>
-          <p className="">+234 9060748887</p>
-          <p className="">Role: Admin</p>
-        </div>
-        <div className="">
-          <p className="">
+
+        <div className=" flex flex-col gap-2.5 border rounded p-4">
+          <p className="text-sm">
             Lorem ipsum dolor sit amet, consectetur adipisicing elit.
             Dignissimos tenetur ratione recusandae libero distinctio
             necessitatibus iste vero. Voluptate fugit laudantium ducimus esse,
             quia sit modi laborum, qui, assumenda dignissimos excepturi.
           </p>
+
+          <p className="text-sm">Location: Lagos, Nigeria</p>
+          <p className="text-sm">Time: 9:15PM (GMT)</p>
+          <ul className="flex flex-col gap-4 text-sm mt-5">
+            <li className="">
+              <Link href="/" className="flex items-center gap-1.5">
+                <Image src={GitHub} alt="github" />
+                GitHub
+              </Link>
+            </li>
+            <li className="">
+              <Link href="/" className="flex items-center gap-1.5">
+                <Image src={LinkedIn} alt="globe" />
+                LinkedIn
+              </Link>
+            </li>
+            <li className="">
+              <Link href="/" className="flex items-center gap-1.5">
+                <Image src={Twitter} alt="globe" />
+                Twitter/X
+              </Link>
+            </li>
+            <li className="">
+              <Link href="/ " className="flex items-center gap-1.5">
+                <Image src={Globe} alt="globe" />
+                Portfolio
+              </Link>
+            </li>
+          </ul>
         </div>
-        <div className="">
-          <p className="">Location: Lagos, Nigeria</p>
-          <p className="">Time: 9:15PM (GMT)</p>
-        </div>
-        <ul>
-          <li className="">
-            <Link href="/">
-              <Image src={GitHub} alt="github" />
-              GitHub
-            </Link>
-          </li>
-          <li className="">
-            <Link href="/">
-              <Image src={LinkedIn} alt="globe" />
-              LinkedIn
-            </Link>
-          </li>
-          <li className="">
-            <Link href="/">
-              <Image src={Twitter} alt="globe" />
-              Twitter/X
-            </Link>
-          </li>
-          <li className="">
-            <Link href="/">
-              <Image src={Globe} alt="globe" />
-              Portfolio
-            </Link>
-          </li>
-        </ul>
       </div>
     </div>
   );
