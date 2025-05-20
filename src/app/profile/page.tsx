@@ -23,6 +23,10 @@ type CustomUser = {
   uid: string;
   tel?: string;
   bio?: string;
+  githubUrl?: string;
+  linkedinUrl?: string;
+  twitterUrl?: string;
+  websiteUrl?: string;
 };
 
 export default function UsersProfile() {
@@ -37,19 +41,16 @@ export default function UsersProfile() {
         const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
         const userData = userDoc.exists() ? userDoc.data() : {};
         setUser({
-          name:
-            userData.name && userData.name.trim() !== ""
-              ? userData.name
-              : `${userData.firstName ?? ""} ${
-                  userData.lastName ?? ""
-                }`.trim() ||
-                firebaseUser.displayName ||
-                "Guest User",
+          name: firebaseUser.displayName ?? userData.name ?? "Guest User",
           email: firebaseUser.email,
           photo: firebaseUser.photoURL ?? null,
           uid: firebaseUser.uid,
           tel: userData.tel ?? "",
           bio: userData.bio ?? "",
+          githubUrl: userData.githubUrl ?? "",
+          linkedinUrl: userData.linkedinUrl ?? "",
+          twitterUrl: userData.twitterUrl ?? "",
+          websiteUrl: userData.websiteUrl ?? "",
         });
       } else {
         setUser(null);
@@ -101,30 +102,59 @@ export default function UsersProfile() {
           <LocalTime />
           <UserLocation />
           <ul className="flex flex-col gap-4 text-sm mt-5">
-            <li className="">
-              <Link href="/" className="flex items-center gap-1.5">
-                <Image src={GitHub} alt="github" />
-                GitHub
-              </Link>
-            </li>
-            <li className="">
-              <Link href="/" className="flex items-center gap-1.5">
-                <Image src={LinkedIn} alt="globe" />
-                LinkedIn
-              </Link>
-            </li>
-            <li className="">
-              <Link href="/" className="flex items-center gap-1.5">
-                <Image src={Twitter} alt="globe" />
-                Twitter/X
-              </Link>
-            </li>
-            <li className="">
-              <Link href="/ " className="flex items-center gap-1.5">
-                <Image src={Globe} alt="globe" />
-                Portfolio
-              </Link>
-            </li>
+            {user?.githubUrl && (
+              <li>
+                <Link
+                  href={user.githubUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5"
+                >
+                  <Image src={GitHub} alt="GitHub icon" />
+                  GitHub
+                </Link>
+              </li>
+            )}
+
+            {user?.linkedinUrl && (
+              <li>
+                <Link
+                  href={user.linkedinUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5"
+                >
+                  <Image src={LinkedIn} alt="Linkedin Icon" />
+                  LinkedIn
+                </Link>
+              </li>
+            )}
+            {user?.twitterUrl && (
+              <li>
+                <Link
+                  href={user.twitterUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5"
+                >
+                  <Image src={Twitter} alt="Linkedin Icon" />
+                  Twiter/X
+                </Link>
+              </li>
+            )}
+            {user?.websiteUrl && (
+              <li>
+                <Link
+                  href={user.websiteUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5"
+                >
+                  <Image src={Globe} alt="Linkedin Icon" />
+                  Website
+                </Link>
+              </li>
+            )}
           </ul>
         </div>
       </div>

@@ -2,16 +2,24 @@
 
 import { useEffect, useState } from "react";
 import { doc, getDoc, updateDoc, setDoc } from "firebase/firestore";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth, onAuthStateChanged, User } from "firebase/auth";
 import { app, db } from "../auth/config";
 import { useRouter } from "next/navigation";
 
 export default function EditProfile() {
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [authUser, setAuthUser] = useState<User | null>(null);
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     tel: "",
     bio: "",
+    githubUrl: "",
+    linkedinUrl: "",
+    twitterUrl: "",
+    websiteUrl: "",
   });
 
   const [uid, setUid] = useState("");
@@ -22,7 +30,8 @@ export default function EditProfile() {
     const unsub = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setUid(user.uid);
-        const docRef = doc(db, "users, user.uid");
+        setAuthUser(user);
+        const docRef = doc(db, "users", user.uid);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           setFormData((prev) => ({
@@ -35,6 +44,9 @@ export default function EditProfile() {
             email: user.email ?? "",
             tel: "",
             bio: "",
+            githubUrl: "",
+            twitterUrl: "",
+            websiteUrl: "",
           });
         }
       }
@@ -60,6 +72,10 @@ export default function EditProfile() {
       email: formData.email,
       tel: formData.tel,
       bio: formData.bio,
+      githubUrl: formData.githubUrl,
+      linkedinUrl: formData.linkedinUrl,
+      twitterUrl: formData.twitterUrl,
+      websiteUrl: formData.websiteUrl,
     });
     router.push("/profile");
   };
@@ -113,6 +129,54 @@ export default function EditProfile() {
             value={formData.tel}
             className="border  border-gray-900 px-4 py-2 text-sm outline-0 text-gray-900"
             placeholder="update your phone number"
+          />
+        </div>
+        <div className="flex  flex-col gap-1.5 md:w-3/5 w-11/12 mx-auto">
+          <label htmlFor="tel">Github:</label>
+          <input
+            type="url"
+            name="githubUrl"
+            id="github-url"
+            onChange={handleChange}
+            value={formData.githubUrl}
+            className="border  border-gray-900 px-4 py-2 text-sm outline-0 text-gray-900"
+            placeholder="update your github url"
+          />
+        </div>
+        <div className="flex  flex-col gap-1.5 md:w-3/5 w-11/12 mx-auto">
+          <label htmlFor="tel">LinkedIn:</label>
+          <input
+            type="url"
+            name="linkedinUrl"
+            id="linkedin-url"
+            onChange={handleChange}
+            value={formData.linkedinUrl}
+            className="border  border-gray-900 px-4 py-2 text-sm outline-0 text-gray-900"
+            placeholder="update your linkedin url"
+          />
+        </div>
+        <div className="flex  flex-col gap-1.5 md:w-3/5 w-11/12 mx-auto">
+          <label htmlFor="tel">Twitter/X:</label>
+          <input
+            type="url"
+            name="twitterUrl"
+            id="twitter-url"
+            onChange={handleChange}
+            value={formData.twitterUrl}
+            className="border  border-gray-900 px-4 py-2 text-sm outline-0 text-gray-900"
+            placeholder="update your twitter url"
+          />
+        </div>
+        <div className="flex  flex-col gap-1.5 md:w-3/5 w-11/12 mx-auto">
+          <label htmlFor="tel">Website:</label>
+          <input
+            type="url"
+            name="websiteUrl"
+            id="website-url"
+            onChange={handleChange}
+            value={formData.websiteUrl}
+            className="border  border-gray-900 px-4 py-2 text-sm outline-0 text-gray-900"
+            placeholder="update your website url"
           />
         </div>
         <div className="flex flex-col md:w-3/5 w-11/12 mx-auto">
