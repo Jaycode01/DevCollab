@@ -1,17 +1,25 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { doc, getDoc, updateDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, setDoc, deleteDoc } from "firebase/firestore";
 import {
   getAuth,
+  deleteUser,
   onAuthStateChanged,
+  reauthenticateWithPopup,
   User,
   EmailAuthProvider,
   reauthenticateWithCredential,
   updatePassword,
+  GithubAuthProvider,
+  GoogleAuthProvider,
 } from "firebase/auth";
 import { app, db } from "../auth/config";
 import { useRouter } from "next/navigation";
+
+interface FirebaseError extends Error {
+  code: string;
+}
 
 export default function EditProfile() {
   const [oldPassword, setOldPassword] = useState("");
@@ -104,6 +112,62 @@ export default function EditProfile() {
     } catch (error) {
       console.error("Password update failed:", error);
       alert("Old Password is incorrect or something went wrong");
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    const auth = getAuth(app);
+    const user = auth.currentUser;
+
+    if (!user) return alert("No user is currently logged in");
+
+    try {
+      const providerId = user.providerData[0].providerId;
+
+      if (providerId === "password") {
+        const confirmPassword = prompt(
+          "Please confirm your password to delete account"
+        );
+
+        if (!confirmPassword) {
+          return alert("Password is required for account deletion");
+        }
+
+        const credential = EmailAuthProvider.credential(
+          user.email!,
+          confirmPassword
+        );
+        await reauthenticateWithCredential(user, credential);
+      } else if (providerId === "github.com") {
+        const provider = new GithubAuthProvider();
+        await reauthenticateWithPopup(user, provider);
+      } else if (providerId === "google.com") {
+        const provider = new GoogleAuthProvider();
+        await reauthenticateWithPopup(user, provider);
+      } else {
+        alert("Reauthentication method for this provider is not implemented.");
+      }
+
+      const userDocRef = doc(db, "users", user.uid);
+      await deleteDoc(userDocRef);
+
+      await deleteUser(user);
+      alert("Your account has been deleted successfully.");
+      window.location.href = "/";
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        const firebaseError = error as FirebaseError;
+
+        console.error("Error deleting account:", firebaseError.message);
+        if (firebaseError.code === "auth/requires-recent-login") {
+          alert("Please reauthenticate before deleting your account.");
+        } else {
+          alert("Something went wrong. Try again.");
+        }
+      } else {
+        console.error("Unknown error occurred:", error);
+        alert("An unknown error occurred.");
+      }
     }
   };
 
@@ -267,6 +331,7 @@ export default function EditProfile() {
             </p>
             <button
               type="button"
+              onClick={handleDeleteAccount}
               className="w-ful p-2 rounded-sm bg-red-600 hover:bg-red-500 text-white mt-3 text-sm float-right"
             >
               Delete Account
