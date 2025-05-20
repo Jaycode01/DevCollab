@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import FakePic from "../../../public/images/fakeUserPic.jpg";
+import FakePic from "../../../public/images/fakeUserPic.png";
 import Image from "next/image";
 import GitHub from "../../../public/github.svg";
 import LinkedIn from "../../../public/linkedin.svg";
