@@ -10,6 +10,8 @@ import Globe from "../../../public/globe.svg";
 import Settings from "../../../public/settings.svg";
 import Link from "next/link";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../auth/config";
 import { app } from "../auth/config";
 
 type CustomUser = {
@@ -17,6 +19,8 @@ type CustomUser = {
   email: string | null;
   photo: string | null;
   uid: string;
+  tel?: string;
+  bio?: string;
 };
 
 export default function UsersProfile() {
@@ -26,17 +30,19 @@ export default function UsersProfile() {
 
   useEffect(() => {
     const auth = getAuth(app);
-
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
+        const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
+        const userData = userDoc.exists() ? userDoc.data() : {};
         setUser({
-          name: firebaseUser.displayName ?? "No Name",
+          name: userData.name ?? firebaseUser.displayName ?? "No Name",
           email: firebaseUser.email,
           photo: firebaseUser.photoURL ?? null,
           uid: firebaseUser.uid,
+          tel: userData.tel ?? "",
+          bio: userData.bio ?? "",
         });
       } else {
-        console.log("User is signed out");
         setUser(null);
       }
     });
@@ -66,7 +72,7 @@ export default function UsersProfile() {
             <p className="text-[20px]">{user?.name || "Guest User"}</p>
             <p className="text-[14px]">{user?.email || "Not logged in"}</p>
             <p className="text-gray-500 text-sm md:text-[17px]">
-              +234 9060748887
+              {user?.tel || "No Phone Yet"}
             </p>
             <button
               type="button"
@@ -78,12 +84,7 @@ export default function UsersProfile() {
         </div>
 
         <div className=" flex flex-col gap-2.5 border rounded p-4">
-          <p className="text-sm">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-            Dignissimos tenetur ratione recusandae libero distinctio
-            necessitatibus iste vero. Voluptate fugit laudantium ducimus esse,
-            quia sit modi laborum, qui, assumenda dignissimos excepturi.
-          </p>
+          <p className="text-sm">{user?.bio || "No bio yet"}</p>
 
           <p className="text-sm">Location: Lagos, Nigeria</p>
           <p className="text-sm">Time: 9:15PM (GMT)</p>
