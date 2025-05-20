@@ -13,6 +13,8 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../auth/config";
 import { app } from "../auth/config";
+import LocalTime from "../components/local-time";
+import UserLocation from "../components/user-location";
 
 type CustomUser = {
   name: string;
@@ -35,7 +37,14 @@ export default function UsersProfile() {
         const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
         const userData = userDoc.exists() ? userDoc.data() : {};
         setUser({
-          name: userData.name ?? firebaseUser.displayName ?? "No Name",
+          name:
+            userData.name && userData.name.trim() !== ""
+              ? userData.name
+              : `${userData.firstName ?? ""} ${
+                  userData.lastName ?? ""
+                }`.trim() ||
+                firebaseUser.displayName ||
+                "Guest User",
           email: firebaseUser.email,
           photo: firebaseUser.photoURL ?? null,
           uid: firebaseUser.uid,
@@ -89,9 +98,8 @@ export default function UsersProfile() {
 
         <div className=" flex flex-col gap-2.5 border rounded p-4">
           <p className="text-sm">{user?.bio || "No bio yet"}</p>
-
-          <p className="text-sm">Location: Lagos, Nigeria</p>
-          <p className="text-sm">Time: 9:15PM (GMT)</p>
+          <LocalTime />
+          <UserLocation />
           <ul className="flex flex-col gap-4 text-sm mt-5">
             <li className="">
               <Link href="/" className="flex items-center gap-1.5">
