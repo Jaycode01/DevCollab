@@ -50,6 +50,7 @@ export default function UsersProfile() {
     return () => unsubscribe();
   }, []);
 
+  const handleEditProfileBtn = () => {};
   return (
     <div className="">
       <div className="flex flex-col gap-7 w-11/12 md:w-1/2 mx-auto mt-7 border p-5 rounded-md">
@@ -71,15 +72,18 @@ export default function UsersProfile() {
           <div className="">
             <p className="text-[20px]">{user?.name || "Guest User"}</p>
             <p className="text-[14px]">{user?.email || "Not logged in"}</p>
-            <p className="text-gray-500 text-sm md:text-[17px]">
+            <p className="text-gray-500 text-[12px] md:text-[14px]">
               {user?.tel || "No Phone Yet"}
             </p>
-            <button
-              type="button"
-              className="py-2  px-4 bg-blue-600 text-sm text-white rounded mt-3"
-            >
-              Edit Profile
-            </button>
+            <Link href="/edit-profile">
+              <button
+                type="button"
+                onClick={handleEditProfileBtn}
+                className="py-2  px-4 bg-blue-600 text-sm text-white rounded mt-3"
+              >
+                Edit Profile
+              </button>
+            </Link>
           </div>
         </div>
 
