@@ -2,7 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { doc, getDoc, updateDoc, setDoc } from "firebase/firestore";
-import { getAuth, onAuthStateChanged, User } from "firebase/auth";
+import {
+  getAuth,
+  onAuthStateChanged,
+  User,
+  EmailAuthProvider,
+  reauthenticateWithCredential,
+  updatePassword,
+} from "firebase/auth";
 import { app, db } from "../auth/config";
 import { useRouter } from "next/navigation";
 
@@ -78,6 +85,26 @@ export default function EditProfile() {
       websiteUrl: formData.websiteUrl,
     });
     router.push("/profile");
+  };
+
+  const handlePasswordChange = async () => {
+    if (!authUser || !oldPassword || !newPassword) return;
+
+    try {
+      const credential = EmailAuthProvider.credential(
+        authUser.email!,
+        oldPassword
+      );
+      await reauthenticateWithCredential(authUser, credential);
+      await updatePassword(authUser, newPassword);
+
+      alert("Password updated successfully!");
+      setOldPassword("");
+      setNewPassword("");
+    } catch (error) {
+      console.error("Password update failed:", error);
+      alert("Old Password is incorrect or something went wrong");
+    }
   };
 
   return (
@@ -197,10 +224,17 @@ export default function EditProfile() {
             <h3 className="text-xl text-gray-900 md:w-[65%] w-full px-2 mx-auto">
               Change Password
             </h3>
+            <p className="text-[12px] text-gray-900 border bg-amber-200  border-amber-400 md:w-[65%] w-full px-3 py-2 mx-auto rounded">
+              Note that the change password ony work for users who signup/login
+              with email and password, users who login with gihub, and google
+              provider {`can't`} change password.
+            </p>
             <div className="md:w-[65%] w-full mx-auto flex flex-col gap-1.5 px-2 md:px-0">
               <label htmlFor="">Old Password</label>
               <input
                 type="password"
+                value={oldPassword}
+                onChange={(e) => setOldPassword(e.target.value)}
                 className="border border-gray-900 outline-0 px-4 py-2 text-sm text-gray-900"
               />
             </div>
@@ -209,10 +243,19 @@ export default function EditProfile() {
               <input
                 type="password"
                 name="newPassword"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
                 id=""
                 className="border border-gray-900 outline-0 px-4 py-2 text-sm text-gray-900"
               />
             </div>
+            <button
+              type="button"
+              onClick={handlePasswordChange}
+              className="bg-blue-600 text-sm py-2 px-4 w-fit mx-auto text-white"
+            >
+              update password
+            </button>
           </div>
           <div className="bg-red-200 w-11/12 mx-auto p-4 border border-red-700 rounded-md shadow-md">
             <h3 className="text-gray-900 text-xl">Danger Zone</h3>
