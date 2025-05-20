@@ -1,10 +1,76 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { doc, getDoc, updateDoc, setDoc } from "firebase/firestore";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { app, db } from "../auth/config";
+import { useRouter } from "next/navigation";
+
 export default function EditProfile() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    tel: "",
+    bio: "",
+  });
+
+  const [uid, setUid] = useState("");
+  const router = useRouter();
+
+  useEffect(() => {
+    const auth = getAuth(app);
+    const unsub = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        setUid(user.uid);
+        const docRef = doc(db, "users, user.uid");
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setFormData((prev) => ({
+            ...prev,
+            ...docSnap.data(),
+          }));
+        } else {
+          await setDoc(docRef, {
+            name: user.displayName ?? "",
+            email: user.email ?? "",
+            tel: "",
+            bio: "",
+          });
+        }
+      }
+    });
+    return () => unsub();
+  }, []);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async () => {
+    if (!uid) return;
+    const docRef = doc(db, "users", uid);
+    await updateDoc(docRef, {
+      name: formData.name,
+      email: formData.email,
+      tel: formData.tel,
+      bio: formData.bio,
+    });
+    router.push("/profile");
+  };
+
   return (
     <div className="flex flex-col   h-fit justify-center items-center mt-5 w-full md:w-1/2  px-4 md:px-0 mx-auto md:gap-10 gap-6">
       <div className="flex fex-row justify-between items-center w-full">
         <h2 className="md:text-[23px] text-[20px]">Edit Your Profile</h2>
         <button
           type="button"
+          onClick={handleSubmit}
           className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-sm text-sm md:text-[17px]"
         >
           Save Changes
@@ -17,6 +83,8 @@ export default function EditProfile() {
             type="text"
             name="name"
             id="name"
+            value={formData.name}
+            onChange={handleChange}
             className="border border-gray-900 px-4 py-2 text-sm outline-0 text-gray-900"
             placeholder="update your name"
           />
@@ -28,6 +96,8 @@ export default function EditProfile() {
           <input
             type="email"
             name="email"
+            onChange={handleChange}
+            value={formData.email}
             id="email"
             className="border border-gray-900 px-4 py-2 text-sm outline-0 text-gray-900"
             placeholder="update your email"
@@ -39,6 +109,8 @@ export default function EditProfile() {
             type="tel"
             name="tel"
             id="tel"
+            onChange={handleChange}
+            value={formData.tel}
             className="border  border-gray-900 px-4 py-2 text-sm outline-0 text-gray-900"
             placeholder="update your phone number"
           />
@@ -48,6 +120,8 @@ export default function EditProfile() {
           <textarea
             name="bio"
             id="bio"
+            value={formData.bio}
+            onChange={handleChange}
             className="border border-gray-900 px-4 py-2 outline-0 text-sm text-gray-900"
             placeholder="update your bio"
           ></textarea>
