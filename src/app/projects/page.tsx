@@ -1,5 +1,7 @@
 import Search from "../../../public/search.svg";
 import AddIcon from "../../../public/add.svg";
+import ProjectTestImage from "../../../public/square-3-stack.svg";
+import Link from "next/link";
 import Image from "next/image";
 
 export default function Projects() {
@@ -34,6 +36,20 @@ export default function Projects() {
           >
             Add New <Image src={AddIcon} alt="add icon" />{" "}
           </button>
+        </div>
+      </div>
+      <div className="">
+        <div className="">
+          <div className="">
+            <Image src={ProjectTestImage} alt="project image" />
+            <div className="">
+              <p className="">Project Name</p>
+              <Link href="google.com">https://google.com/</Link>
+            </div>
+          </div>
+          <div className="">
+            <Image />
+          </div>
         </div>
       </div>
     </div>
