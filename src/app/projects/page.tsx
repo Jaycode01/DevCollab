@@ -12,9 +12,21 @@ import { projects } from "../../lib/projectsData";
 
 export default function Projects() {
   const [sortOption, setSortOption] = useState("a-z");
+  const [searchItem, setSearchItem] = useState("");
 
   const sortedProjects = useMemo(() => {
-    return [...projects].sort((a, b) => {
+    let filtered = [...projects];
+
+    if (searchItem.trim()) {
+      const term = searchItem.toLowerCase();
+      filtered = filtered.filter(
+        (projects) =>
+          projects.name.toLowerCase().includes(term) ||
+          projects.url.toLowerCase().includes(term)
+      );
+    }
+
+    filtered.sort((a, b) => {
       if (sortOption === "a-z") {
         return a.name.localeCompare(b.name);
       }
@@ -25,12 +37,15 @@ export default function Projects() {
       }
       if (sortOption === "last updated") {
         return (
-          new Date(b.createdAt).getTime() - new Date(a.updatedAt).getTime()
+          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
         );
       }
+
       return 0;
     });
-  }, [sortOption]);
+
+    return filtered;
+  }, [searchItem, sortOption]);
 
   return (
     <div className="w-full bg-gray-50 pb-5">
@@ -38,6 +53,9 @@ export default function Projects() {
         <div className="md:w-3/5 w-full flex flex-row md:gap-3 gap-2 items-center">
           <input
             type="search"
+            placeholder="search projects..."
+            value={searchItem}
+            onChange={(e) => setSearchItem(e.target.value)}
             className="border border-gray-900 p-4 w-full text-sm outline-none"
           />
           <button
@@ -138,6 +156,11 @@ export default function Projects() {
           </div>
         ))}
       </div>
+      {sortedProjects.length === 0 && (
+        <p className="text-center text-gray-900 mt-10">
+          No matching projects found.
+        </p>
+      )}
     </div>
   );
 }
