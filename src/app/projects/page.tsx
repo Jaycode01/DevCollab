@@ -33,7 +33,7 @@ export default function Projects() {
   }, [sortOption]);
 
   return (
-    <div className="w-full bg-gray-50 pb-5">
+    <div className="w-full bg-gray-50 pb-5 min-h-screen">
       <div className="mt-5 flex md:flex-row flex-col justify-between items-center border-b-2 border-gray-900 py-3 w-full md:px-5 px-2 gap-3.5 md:gap-0 bg-white">
         <div className="md:w-3/5 w-full flex flex-row md:gap-3 gap-2 items-center">
           <input
