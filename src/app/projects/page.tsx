@@ -1,3 +1,6 @@
+"use client";
+
+import { useState, useMemo } from "react";
 import Search from "../../../public/search.svg";
 import AddIcon from "../../../public/add.svg";
 import ProjectTestImage from "../../../public/square-3-stack.svg";
@@ -8,6 +11,27 @@ import Image from "next/image";
 import { projects } from "../../lib/projectsData";
 
 export default function Projects() {
+  const [sortOption, setSortOption] = useState("a-z");
+
+  const sortedProjects = useMemo(() => {
+    return [...projects].sort((a, b) => {
+      if (sortOption === "a-z") {
+        return a.name.localeCompare(b.name);
+      }
+      if (sortOption === "date created") {
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+      }
+      if (sortOption === "last updated") {
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.updatedAt).getTime()
+        );
+      }
+      return 0;
+    });
+  }, [sortOption]);
+
   return (
     <div className="w-full bg-gray-50 pb-5">
       <div className="mt-5 flex md:flex-row flex-col justify-between items-center border-b-2 border-gray-900 py-3 w-full md:px-5 px-2 gap-3.5 md:gap-0 bg-white">
@@ -26,7 +50,9 @@ export default function Projects() {
         </div>
         <div className="flex flex-row items-center gap-5 w-full md:w-auto">
           <select
-            name=""
+            name="sort projects"
+            value={sortOption}
+            onChange={(e) => setSortOption(e.target.value)}
             className=" py-4 px-2 bg-gray-100 outline-none border border-gray-900 text-sm"
           >
             <option value="a-z">A - Z</option>
@@ -42,7 +68,7 @@ export default function Projects() {
         </div>
       </div>
       <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-5">
-        {projects.map((project) => (
+        {sortedProjects.map((project) => (
           <div
             key={project.id}
             className=" bg-white border border-gray-900 rounded-md p-4 shadow-lg flex flex-col gap-3 cursor-pointer hover:scale-98 transition-all duration-300 ease-in-out"
