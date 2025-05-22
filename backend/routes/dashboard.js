@@ -1,42 +1,31 @@
 import express from "express";
 import { authenticateToken } from "../middleware/auth.js";
-import { db } from "../firebase.js";
 
 const router = express.Router();
 
 router.get("/", authenticateToken, async (req, res) => {
-  const userId = req.user.uid;
-
   try {
-    const dashboardRef = db.collection("dashboard").doc(userId);
-    const dashboardDoc = await dashboardRef.get();
+    // const userId = req.user.uid;
 
-    if (!dashboardDoc.exists) {
-      await dashboardRef.set({
-        totalProjects: 0,
-        pendingTasks: 0,
-        completedTasks: 0,
-        teamMembers: 0,
-        createdAt: new Date().toISOString(),
-      });
-      return res.status(201).json({
-        message: "Dashboard created successfully!",
-        dashboard: {
-          totalProjects: 0,
-          pendingTasks: 0,
-          completedTasks: 0,
-          teamMembers: 0,
-        },
-      });
-    }
+    const dashboardData = {
+      totalProjects: 12,
+      pendingTasks: 8,
+      completedTasks: 4,
+      teamMembers: 6,
+    };
 
-    return res.status(200).json({
-      message: "Dashboard fetched",
-      dashboard: dashboardDoc.data(),
+    res.json({
+      success: true,
+      dashboard: dashboardData,
+      message: "Dashboard data retrieved successfully",
     });
   } catch (error) {
-    console.error("Error fetching dashboard data: ", error);
-    return res.status(500).json({ message: "Internal server error" });
+    console.error("Dashboard error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to retrieve dashboard data",
+      errorr: error.message,
+    });
   }
 });
 

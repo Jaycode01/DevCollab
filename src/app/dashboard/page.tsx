@@ -11,6 +11,7 @@ import HoursLogged from "../components/hours-logges";
 import TasksAndActivity from "../components/tasks-and-activity";
 import TaskPopup from "../components/task-popup";
 import TeamAndNotifications from "../components/team,notifications-and-stats";
+import { useRouter } from "next/navigation";
 
 type Project = {
   id: number;
@@ -28,35 +29,51 @@ type DashboardData = {
 };
 
 export default function Dashboard() {
+  const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(
     null
   );
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
   useEffect(() => {
     const fetchDashboard = async () => {
+      setIsLoading(true);
+      setError(null);
+
       try {
         const token = localStorage.getItem("token");
         if (!token) {
           console.log("No token found in localStorage");
+          router.push("/login");
           return;
         }
 
-        const res = await fetch("http://localhost:5000/dashboard", {
+        const res = await fetch("http://localhost:5000/src/app/dashboard", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
+
+          cache: "no-store",
         });
 
         if (!res.ok) {
           console.log("Fetch error, status:", res.status);
           const errorData = await res.json();
           console.log("Error message:", errorData.message);
-          return;
+
+          if (res.status === 401) {
+            localStorage.removeItem("token");
+            router.push("/login");
+            return;
+          }
+
+          throw new Error(errorData.message || "Failed to fetc dasboard data");
         }
 
         const data = await res.json();
@@ -64,15 +81,38 @@ export default function Dashboard() {
         setDashboardData(data.dashboard);
       } catch (error) {
         console.error("Fetch failed:", error);
+        setError(
+          error instanceof Error
+            ? error.message
+            : "Failed to load dashboard data"
+        );
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchDashboard();
-  }, []);
+
+    const refreshInterval = setInterval(() => {
+      fetchDashboard();
+    }, 5 * 60 * 1000);
+
+    return () => clearInterval(refreshInterval);
+  }, [router]);
+
+  const retryLoading = () => {
+    setIsLoading(true);
+    setError(null);
+
+    const token = localStorage.getItem("token");
+    if (token) {
+      localStorage.setItem("token", token);
+    }
+  };
 
   return (
     <>
-      <div className="bg-gray-50 relative">
+      <div className="bg-gray-50 relative min-h-screen">
         <TaskPopup
           isOpen={isModalOpen}
           onClose={closeModal}
@@ -82,7 +122,7 @@ export default function Dashboard() {
           Welcome!
         </h1>
 
-        {/* Rest of your dashboard UI */}
+        {/* Dashboard stats */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4">
           {/* First box of the grid */}
           <div className="bg-white shadow-md p-3 rounded-md flex flex-row items-center gap-3">
@@ -95,14 +135,22 @@ export default function Dashboard() {
               />
             </div>
             <div className="">
-              <p className="text-gray-900 text-[20px]">
-                {dashboardData?.totalProjects ?? "Loading..."}
-              </p>
+              {isLoading ? (
+                <p className="text-gray-900 text-[20px] animate-pulse">
+                  Loading...
+                </p>
+              ) : error ? (
+                <p className="text-red-500 text-sm">Error loading data</p>
+              ) : (
+                <p className="text-gray-900 text-[20px]">
+                  {dashboardData?.totalProjects || 0}
+                </p>
+              )}
               <p className="text-gray-400 text-sm">Total Projects</p>
             </div>
           </div>
           {/* Second box of the grid */}
-          <div className="bg-white shadow-md p-3 rounded-md  flex items-center gap-3">
+          <div className="bg-white shadow-md p-3 rounded-md flex items-center gap-3">
             <div className="bg-purple-200 w-fit p-3.5 rounded-full">
               <Image
                 src={PendingTasks || "/placeholder.svg"}
@@ -112,9 +160,17 @@ export default function Dashboard() {
               />
             </div>
             <div className="">
-              <p className="text-gray-900 text-[20px]">
-                {dashboardData?.pendingTasks ?? "Loading..."}
-              </p>
+              {isLoading ? (
+                <p className="text-gray-900 text-[20px] animate-pulse">
+                  Loading...
+                </p>
+              ) : error ? (
+                <p className="text-red-500 text-sm">Error loading data</p>
+              ) : (
+                <p className="text-gray-900 text-[20px]">
+                  {dashboardData?.pendingTasks || 0}
+                </p>
+              )}
               <p className="text-gray-400 text-sm">Pending Tasks</p>
             </div>
           </div>
@@ -129,9 +185,17 @@ export default function Dashboard() {
               />
             </div>
             <div className="">
-              <p className="text-gray-900 text-[20px]">
-                {dashboardData?.completedTasks ?? "Loading..."}
-              </p>
+              {isLoading ? (
+                <p className="text-gray-900 text-[20px] animate-pulse">
+                  Loading...
+                </p>
+              ) : error ? (
+                <p className="text-red-500 text-sm">Error loading data</p>
+              ) : (
+                <p className="text-gray-900 text-[20px]">
+                  {dashboardData?.completedTasks || 0}
+                </p>
+              )}
               <p className="text-gray-400 text-sm">Completed Tasks</p>
             </div>
           </div>
@@ -146,13 +210,34 @@ export default function Dashboard() {
               />
             </div>
             <div className="">
-              <p className="text-gray-900 text-[20px]">
-                {dashboardData?.teamMembers ?? "Loading..."}
-              </p>
+              {isLoading ? (
+                <p className="text-gray-900 text-[20px] animate-pulse">
+                  Loading...
+                </p>
+              ) : error ? (
+                <p className="text-red-500 text-sm">Error loading data</p>
+              ) : (
+                <p className="text-gray-900 text-[20px]">
+                  {dashboardData?.teamMembers || 0}
+                </p>
+              )}
               <p className="text-gray-400 text-sm">Team Members</p>
             </div>
           </div>
         </div>
+
+        {/* Error message and retry button */}
+        {error && (
+          <div className="mx-4 p-4 bg-red-50 border border-red-200 rounded-md">
+            <p className="text-red-600 mb-2">{error}</p>
+            <button
+              onClick={retryLoading}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+            >
+              Retry
+            </button>
+          </div>
+        )}
 
         {/* Second section of the dashboard */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 px-4 mt-5">
@@ -168,7 +253,7 @@ export default function Dashboard() {
             <HoursLogged />
           </div>
         </div>
-        {/* Third Section on the dashbaord page --- let's fucking gooooooo */}
+        {/* Third Section on the dashbaord page */}
         <TasksAndActivity />
         {/* Fourth section of the dashboard page */}
         <div className="">

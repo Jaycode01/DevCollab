@@ -4,7 +4,9 @@ export async function authenticateToken(req, res, next) {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ message: "Unauthorized: No token provided" });
+    return res
+      .status(401)
+      .json({ message: "Unauthorized: No token provided", success: false });
   }
 
   const idToken = authHeader.split("Bearer ")[1];
@@ -14,7 +16,9 @@ export async function authenticateToken(req, res, next) {
     req.user = decodedToken;
     next();
   } catch (err) {
-    res.status(401).json({ message: "Unauthorized: Invalid token" });
-    console.log(err);
+    console.error("Token verification error:", err);
+    res
+      .status(401)
+      .json({ success: false, message: "Unauthorized: Invalid token" });
   }
 }
