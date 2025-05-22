@@ -1,51 +1,9 @@
 "use client";
 import { useState } from "react";
+import { taskCards } from "@/lib/tasks";
 
 export default function TasksAndActivity() {
   const [sorting, setSorting] = useState<string>("");
-
-  const taskCards = [
-    {
-      id: 1,
-      name: "Project Title",
-      assignee: "Zach",
-      date: "01/06",
-      tag: "design",
-      status: "todo",
-    },
-    {
-      id: 2,
-      name: "Project Title",
-      assignee: "Thomas",
-      date: "01/06",
-      tag: "frontend",
-      status: "doing",
-    },
-    {
-      id: 3,
-      name: "Project Title",
-      assignee: "Christina",
-      date: "01/06",
-      tag: "design",
-      status: "completed",
-    },
-    {
-      id: 4,
-      name: "Project Title",
-      assignee: "Tom",
-      date: "01/06",
-      tag: "backend",
-      status: "completed",
-    },
-    {
-      id: 5,
-      name: "Project Title",
-      assignee: "Quinn",
-      date: "01/06",
-      tag: "backend",
-      status: "completed",
-    },
-  ];
 
   const [filterStatus, setFilterStatus] = useState<string>("");
 
@@ -97,7 +55,7 @@ export default function TasksAndActivity() {
   return (
     <div className="flex flex-col md:flex-row w-full p-4 gap-3 md:gap-5">
       <div className="w-full md:w-1/2 bg-white shadow-md rounded-md md:p-6 p-3">
-        <h3 className="md:text-[25px] text-[22px] font-bold">Tasks</h3>
+        <h3 className="md:text-[25px] text-[22px] font-bold">Recent Tasks</h3>
         <div>
           <div className="flex flex-row justify-between mt-3">
             <select
@@ -128,7 +86,7 @@ export default function TasksAndActivity() {
           </div>
 
           <div className="flex flex-col gap-5 mt-7">
-            {sortedCards.map((taskCard) => {
+            {sortedCards.slice(0, 5).map((taskCard) => {
               let bgColor = "";
               let textColor = "#000";
 
