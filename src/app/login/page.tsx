@@ -87,6 +87,22 @@ export default function Login() {
 
           // Redirect to dashboard - using the correct path based on your folder structure
           console.log("Login successful, redirecting to dashboard...");
+
+          const idToken = await user.getIdToken();
+          const response = await fetch("http://localhost:5000/dashboard", {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${idToken}`,
+            },
+          });
+
+          if (!response.ok) {
+            console.error("Failed to fetch dashboard data");
+          } else {
+            const dashboardData = await response.json();
+            console.log("Dashboard:", dashboardData);
+          }
+
           router.push("/dashboard");
         } catch (err) {
           console.error("Error handling user data:", err);
