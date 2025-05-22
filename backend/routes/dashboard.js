@@ -1,5 +1,5 @@
 import express from "express";
-import { authenticateToken } from "../middleware/auth";
+import { authenticateToken } from "../middleware/auth.js";
 import { db } from "../firebase.js";
 
 const router = express.Router();
