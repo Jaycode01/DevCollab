@@ -89,6 +89,7 @@ export default function Login() {
           console.log("Login successful, redirecting to dashboard...");
 
           const idToken = await user.getIdToken();
+          localStorage.setItem("token", idToken);
           const response = await fetch("http://localhost:5000/dashboard", {
             method: "GET",
             headers: {

@@ -5,9 +5,11 @@ const serviceAccount = JSON.parse(
   fs.readFileSync("./serviceAccountKey.json", "utf-8")
 );
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+  });
+}
 
 const db = admin.firestore();
 
