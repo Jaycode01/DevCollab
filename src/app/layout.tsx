@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Aclonica } from "next/font/google";
 import "./globals.css";
 import Navbar from "./navbar/page";
+import { AuthProvider } from "./auth/auth-provider";
 
 const aclonica = Aclonica({
   subsets: ["latin"],
@@ -26,7 +27,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={aclonica.className}>
         <Navbar />
-        {children}
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );
