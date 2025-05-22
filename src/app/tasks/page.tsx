@@ -1,5 +1,7 @@
 import Image from "next/image";
 import SearchIcon from "../../../public/search.svg";
+import Dots from "../../../public/dots.svg";
+import { taskCards } from "@/lib/tasks";
 
 export default function Tasks() {
   return (
@@ -44,7 +46,37 @@ export default function Tasks() {
           </select>
         </div>
       </div>
-      Hello
+      <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-5">
+        {taskCards.map((taskCard) => (
+          <div
+            key={taskCard.id}
+            className="bg-white flex flex-row items-center p-4 gap-5 rounded-md shadow-lg cursor-pointer hover:scale-102 transition-all duration-300 ease-in-out"
+          >
+            <input
+              type="radio"
+              name=""
+              id=""
+              className="scale-200 accent-blue-600"
+            />
+            <div className="flex flex-col gap-0.5 w-full">
+              <p className="flex flex-row items-center justify-between">
+                <span className="text-[15px] text-gray-900">
+                  {taskCard.name}
+                </span>
+                <button type="button" className="">
+                  <Image src={Dots} alt="dots" />
+                </button>
+              </p>
+              <p className="flex justify-between items-center w-full">
+                <span className="text-[12px] text-gray-700">
+                  {taskCard.date}
+                </span>
+                <span className="text-[11px]">{taskCard.tag}</span>
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
