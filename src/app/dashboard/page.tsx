@@ -39,15 +39,32 @@ export default function Dashboard() {
 
   useEffect(() => {
     const fetchDashboard = async () => {
-      const token = await localStorage.getItem("token");
-      const res = await fetch("htp://localhost:5000/dashboard", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          console.log("No token found in localStorage");
+          return;
+        }
 
-      const data = await res.json();
-      setDashboardData(data.dashboard);
+        const res = await fetch("http://localhost:5000/dashboard", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!res.ok) {
+          console.log("Fetch error, status:", res.status);
+          const errorData = await res.json();
+          console.log("Error message:", errorData.message);
+          return;
+        }
+
+        const data = await res.json();
+        console.log("Dashboard data received:", data);
+        setDashboardData(data.dashboard);
+      } catch (error) {
+        console.error("Fetch failed:", error);
+      }
     };
 
     fetchDashboard();
@@ -79,7 +96,7 @@ export default function Dashboard() {
             </div>
             <div className="">
               <p className="text-gray-900 text-[20px]">
-                {dashboardData?.totalProjects ?? 1}
+                {dashboardData?.totalProjects ?? "Loading..."}
               </p>
               <p className="text-gray-400 text-sm">Total Projects</p>
             </div>
@@ -95,7 +112,9 @@ export default function Dashboard() {
               />
             </div>
             <div className="">
-              <p className="text-gray-900 text-[20px]">602</p>
+              <p className="text-gray-900 text-[20px]">
+                {dashboardData?.pendingTasks ?? "Loading..."}
+              </p>
               <p className="text-gray-400 text-sm">Pending Tasks</p>
             </div>
           </div>
@@ -110,7 +129,9 @@ export default function Dashboard() {
               />
             </div>
             <div className="">
-              <p className="text-gray-900 text-[20px]">23</p>
+              <p className="text-gray-900 text-[20px]">
+                {dashboardData?.completedTasks ?? "Loading..."}
+              </p>
               <p className="text-gray-400 text-sm">Completed Tasks</p>
             </div>
           </div>
@@ -125,7 +146,9 @@ export default function Dashboard() {
               />
             </div>
             <div className="">
-              <p className="text-gray-900 text-[20px]">7</p>
+              <p className="text-gray-900 text-[20px]">
+                {dashboardData?.teamMembers ?? "Loading..."}
+              </p>
               <p className="text-gray-400 text-sm">Team Members</p>
             </div>
           </div>
