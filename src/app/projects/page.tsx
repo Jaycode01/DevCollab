@@ -12,23 +12,6 @@ import { projects } from "../../lib/projectsData";
 
 export default function Projects() {
   const [sortOption, setSortOption] = useState("a-z");
-<<<<<<< HEAD
-  const [searchItem, setSearchItem] = useState("");
-
-  const sortedProjects = useMemo(() => {
-    let filtered = [...projects];
-
-    if (searchItem.trim()) {
-      const term = searchItem.toLowerCase();
-      filtered = filtered.filter(
-        (projects) =>
-          projects.name.toLowerCase().includes(term) ||
-          projects.url.toLowerCase().includes(term)
-      );
-    }
-
-    filtered.sort((a, b) => {
-=======
   const [menuOpen, setMenuOpen] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -53,7 +36,6 @@ export default function Projects() {
     );
 
     return [...filtered].sort((a, b) => {
->>>>>>> main
       if (sortOption === "a-z") {
         return a.name.localeCompare(b.name);
       }
@@ -67,16 +49,9 @@ export default function Projects() {
           new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
         );
       }
-
       return 0;
     });
-<<<<<<< HEAD
-
-    return filtered;
-  }, [searchItem, sortOption]);
-=======
   }, [sortOption, searchQuery]);
->>>>>>> main
 
   return (
     <div className="w-full bg-gray-50 pb-5 min-h-screen">
@@ -84,15 +59,9 @@ export default function Projects() {
         <div className="md:w-3/5 w-full flex flex-row md:gap-3 gap-2 items-center">
           <input
             type="search"
-<<<<<<< HEAD
-            placeholder="search projects..."
-            value={searchItem}
-            onChange={(e) => setSearchItem(e.target.value)}
-=======
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search projects..."
->>>>>>> main
             className="border border-gray-900 p-4 w-full text-sm outline-none"
           />
           <button
@@ -123,6 +92,7 @@ export default function Projects() {
           </button>
         </div>
       </div>
+
       <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-5">
         {filteredAndSortedProjects.map((project) => (
           <div
@@ -179,44 +149,21 @@ export default function Projects() {
             </div>
 
             <div className="flex relative">
-              <Image
-                src={Avatar}
-                alt="collaborator image"
-                className="top-0 absolute left-0 rounded-full border border-gray-900"
-                width={30}
-                height={30}
-              />
-              <Image
-                src={Avatar}
-                alt="collaborator image"
-                className="top-0 absolute left-5 rounded-full border border-gray-900"
-                width={30}
-                height={30}
-              />
-              <Image
-                src={Avatar}
-                alt="collaborator image"
-                className="top-0 absolute left-10 rounded-full border border-gray-900"
-                width={30}
-                height={30}
-              />
-              <Image
-                src={Avatar}
-                alt="collaborator image"
-                className="top-0 absolute left-15 rounded-full border border-gray-900"
-                width={30}
-                height={30}
-              />
+              {[0, 5, 10, 15, 20].map((left, i) => (
+                <Image
+                  key={i}
+                  src={Avatar}
+                  alt="collaborator"
+                  width={30}
+                  height={30}
+                  className={`absolute left-${left} top-0 border border-gray-900 rounded-full`}
+                />
+              ))}
             </div>
             <p className="mt-6 text-sm text-gray-900">{project.updatedAt}</p>
           </div>
         ))}
       </div>
-      {sortedProjects.length === 0 && (
-        <p className="text-center text-gray-900 mt-10">
-          No matching projects found.
-        </p>
-      )}
     </div>
   );
 }
