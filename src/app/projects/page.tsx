@@ -93,9 +93,22 @@ export default function Projects() {
                   </Link>
                 </div>
               </div>
-              <button type="button" className="">
-                <Image src={Dots} alt="project action icon" />
-              </button>
+              <div className="relative">
+                <button type="button" className="">
+                  <Image src={Dots} alt="project action icon" />
+                </button>
+                <ul className="absolute bg-white right-0 shadow-xl rounded-md border border-gray-500 py-2.5 px-5 w-64 text-sm">
+                  <li className="hover:border-b w-fit border-gray-700">
+                    <a href="">view details</a>
+                  </li>
+                  <li className="hover:border-b w-fit border-gray-700">
+                    <a href="">edit</a>
+                  </li>
+                  <li className="text-red-600 hover:border-b  w-fit border-red-600">
+                    <a href="">delete</a>
+                  </li>
+                </ul>
+              </div>
             </div>
             <div className="flex relative">
               <Image
