@@ -92,6 +92,7 @@ export default function Projects() {
           </button>
         </div>
       </div>
+
       <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-5">
         {filteredAndSortedProjects.map((project) => (
           <div
@@ -148,34 +149,16 @@ export default function Projects() {
             </div>
 
             <div className="flex relative">
-              <Image
-                src={Avatar}
-                alt="collaborator image"
-                className="top-0 absolute left-0 rounded-full border border-gray-900"
-                width={30}
-                height={30}
-              />
-              <Image
-                src={Avatar}
-                alt="collaborator image"
-                className="top-0 absolute left-5 rounded-full border border-gray-900"
-                width={30}
-                height={30}
-              />
-              <Image
-                src={Avatar}
-                alt="collaborator image"
-                className="top-0 absolute left-10 rounded-full border border-gray-900"
-                width={30}
-                height={30}
-              />
-              <Image
-                src={Avatar}
-                alt="collaborator image"
-                className="top-0 absolute left-15 rounded-full border border-gray-900"
-                width={30}
-                height={30}
-              />
+              {[0, 5, 10, 15, 20].map((left, i) => (
+                <Image
+                  key={i}
+                  src={Avatar}
+                  alt="collaborator"
+                  width={30}
+                  height={30}
+                  className={`absolute left-${left} top-0 border border-gray-900 rounded-full`}
+                />
+              ))}
             </div>
             <p className="mt-6 text-sm text-gray-900">{project.updatedAt}</p>
           </div>
