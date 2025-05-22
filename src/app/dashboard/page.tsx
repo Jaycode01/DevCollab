@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import TotalProjects from "../../../public/total-projects.svg";
 import PendingTasks from "../../../public/pending-tasks.svg";
@@ -20,12 +20,38 @@ type Project = {
   status: string;
 };
 
+type DashboardData = {
+  totalProjects: number;
+  pendingTasks: number;
+  completedTasks: number;
+  teamMembers: number;
+};
+
 export default function Dashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(
+    null
+  );
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+
+  useEffect(() => {
+    const fetchDashboard = async () => {
+      const token = await localStorage.getItem("token");
+      const res = await fetch("htp://localhost:5000/dashboard", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+      setDashboardData(data.dashboard);
+    };
+
+    fetchDashboard();
+  }, []);
 
   return (
     <>
@@ -52,7 +78,9 @@ export default function Dashboard() {
               />
             </div>
             <div className="">
-              <p className="text-gray-900 text-[20px]">1,201</p>
+              <p className="text-gray-900 text-[20px]">
+                {dashboardData?.totalProjects ?? 1}
+              </p>
               <p className="text-gray-400 text-sm">Total Projects</p>
             </div>
           </div>
