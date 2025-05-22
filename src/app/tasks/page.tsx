@@ -1,6 +1,6 @@
+"use client";
 import Image from "next/image";
 import SearchIcon from "../../../public/search.svg";
-import Dots from "../../../public/dots.svg";
 import { taskCards } from "@/lib/tasks";
 
 export default function Tasks() {
@@ -63,10 +63,9 @@ export default function Tasks() {
                 <span className="text-[15px] text-gray-900">
                   {taskCard.name}
                 </span>
-                <button type="button" className="">
-                  <Image src={Dots} alt="dots" />
-                </button>
+                <span className="text-[12px]">{taskCard.status}</span>
               </p>
+
               <p className="flex justify-between items-center w-full">
                 <span className="text-[12px] text-gray-700">
                   {taskCard.date}
