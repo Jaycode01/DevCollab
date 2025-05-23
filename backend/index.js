@@ -8,35 +8,32 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 5000;
 
-app.use(
-  cors({
-    origin: "http://localhost:3000",
-  })
-);
-
+// Middleware
+app.use(cors({ origin: "http://localhost:3000" }));
 app.use(express.json());
 
+// Default test route
 app.get("/", (req, res) => {
   res.json({
     message: "Backend is running...",
     status: "success",
   });
+});
 
-  app.use("/src/app/dashboard", dashboardRoutes);
+// ✅ FIXED route path
+app.use("/dashboard", dashboardRoutes);
 
-  app.use("*", (req, res) => {
-    console.log(`Routes not found: ${req.method} ${req.originalUrl}`);
-    res.status(404).json({
-      success: false,
-      message: `Route not found: ${req.method} ${req.originalUrl}`,
-      availableRoutes: ["GET /", "GET / src/app/dashboard"],
-    });
+// 404 fallback
+app.use("*", (req, res) => {
+  console.log(`Route not found: ${req.method} ${req.originalUrl}`);
+  res.status(404).json({
+    success: false,
+    message: `Route not found: ${req.method} ${req.originalUrl}`,
+    availableRoutes: ["GET /", "GET /dashboard"],
   });
+});
 
-  app.listen(port, () => {
-    console.log("Server is running on port ${port}");
-    console.log("Available routes:");
-    console.log(`- GET http://localhost:${port}/`);
-    console.log(`- GET http://localhost:${port}/src/app/dashboard`);
-  });
+// ✅ START SERVER (make sure this is NOT inside any route)
+app.listen(port, () => {
+  console.log(`✅ Server is running on http://localhost:${port}`);
 });
