@@ -74,7 +74,7 @@ router.get("/", authenticateToken, async (req, res) => {
       message: "Dashboard data retrieved successfully",
     });
   } catch (error) {
-    console.error("Dashboard error:", error);
+    console.error("Dashboard error: ", error);
     res.status(500).json({
       success: false,
       message: "Failed to retrieve dashboard data",
@@ -130,7 +130,7 @@ router.get("/alt", authenticateToken, async (req, res) => {
       message: "Dashboard data retrieved successfully",
     });
   } catch (error) {
-    console.error("Dashboard error:", error);
+    console.error("Dashboard error: ", error);
     res.status(500).json({
       success: false,
       message: "Failed to retrieve dashboard data",
