@@ -24,7 +24,7 @@
 
 #### Backend
 
--[Nextjs API Routes]
+-[Nextjs API Routes] -[Node Js] -[Express Js] -[Firebase/FireStore]
 <br>
 --still working on the frontend and abit backend--
 
