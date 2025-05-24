@@ -91,7 +91,7 @@ export default function Dashboard() {
         console.log("Server status:", serverStatus);
         console.log("Token exists:", !!token);
 
-        const res = await fetch("http://localhost:5000/src/app/dashboard", {
+        const res = await fetch("http://localhost:5000/dashboard", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
