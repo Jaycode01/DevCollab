@@ -1,15 +1,13 @@
 import admin from "firebase-admin";
-import { readFileSync } from "fs";
-import { resolve } from "path";
 
-// Load your Firebase service account key (download from Firebase console)
-const serviceAccount = JSON.parse(
-  readFileSync(resolve("./serviceAccountKey.json"), "utf-8")
-);
+// Parse the service account from environment variable
+const serviceAccount = JSON.parse(process.env.GOOGLE_CREDENTIALS);
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+  });
+}
 
 const db = admin.firestore();
 
