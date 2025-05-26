@@ -1,6 +1,14 @@
 import admin from "firebase-admin";
+import dotenv from "dotenv";
 
-// Parse the service account from environment variable
+dotenv.config();
+
+const credentialsJSON = process.env.GOOGLE_CREDENTIALS;
+
+if (!credentialsJSON) {
+  throw new Error("Missing GOOGLE_CREDENTIALS in .env");
+}
+
 const serviceAccount = JSON.parse(process.env.GOOGLE_CREDENTIALS);
 
 if (!admin.apps.length) {
