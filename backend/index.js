@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import dashboardRoutes from "./routes/dashboard.js";
+import projectRoutes from "./routes/project.js";
 
 dotenv.config();
 
@@ -33,6 +34,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/dashboard", dashboardRoutes);
+app.use("/api", projectRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);

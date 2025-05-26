@@ -1,4 +1,4 @@
-import { db } from "../firebase.js";
+import { admin, db } from "../firebase.js";
 
 export const getDashboard = async (req, res) => {
   try {
@@ -37,5 +37,34 @@ export const savedDashbaord = async (req, res) => {
   } catch (e) {
     console.error("error saving dashboard", e);
     return res.status(500).json({ error: "Failed to save dashboard" });
+  }
+};
+
+export const addNewProjet = async (req, res) => {
+  try {
+    const userId = req.user.uid;
+    const { projectName } = req.body;
+
+    const projectRef = db.collection("projects").doc();
+    await projectRef.set({
+      name: projectName,
+      createdAt: new Date().toISOString(),
+      userId,
+    });
+
+    const dashboardRef = db.collaction("dashboard").doc(userId);
+    await dashboardRef.set(
+      {
+        totalProjects: admin.firestore.FieldValue.increment(1),
+        lastUpdated: new Date().toISOString(),
+      },
+      { merge: true }
+    );
+    return res
+      .status(201)
+      .json({ message: "Project created and dashboard updated successfully." });
+  } catch (error) {
+    console.error("Error adding project:", error);
+    return res.json.status(500).json({ error: "Failed to add project." });
   }
 };

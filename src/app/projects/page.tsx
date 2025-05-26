@@ -9,6 +9,7 @@ import Link from "next/link";
 import Dots from "../../../public/dots.svg";
 import Image from "next/image";
 import { projects } from "../../lib/projectsData";
+import { getAuth } from "firebase/auth";
 
 export default function Projects() {
   const [sortOption, setSortOption] = useState("a-z");
@@ -53,6 +54,44 @@ export default function Projects() {
     });
   }, [sortOption, searchQuery]);
 
+  const handleAddProject = async () => {
+    try {
+      const auth = getAuth();
+      const user = auth.currentUser;
+
+      if (!user) {
+        alert("You must be logged i to add a project.");
+        return;
+      }
+
+      const newProject = {
+        name: `New Project ${Date.now()}`,
+        url: "https://example.com",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toString(),
+      };
+
+      const token = await user.getIdToken();
+
+      const res = await fetch("http:localhost:5000/api/projects", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(newProject),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to add new project");
+
+      alert("Project added successfully!");
+    } catch (error) {
+      console.error("Add project error:", error);
+      alert("Error addding project. Please try again later.");
+    }
+  };
+
   return (
     <div className="w-full bg-gray-50 pb-5 min-h-screen">
       <div className="mt-5 flex md:flex-row flex-col justify-between items-center border-b-2 border-gray-900 py-3 w-full md:px-5 px-2 gap-3.5 md:gap-0 bg-white">
@@ -86,6 +125,7 @@ export default function Projects() {
           </select>
           <button
             type="button"
+            onClick={handleAddProject}
             className="inline-flex bg-blue-600 py-3.5 px-5 items-center gap-2 text-sm text-white"
           >
             Add New <Image src={AddIcon} alt="add icon" />
