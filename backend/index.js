@@ -36,6 +36,10 @@ app.get("/", (req, res) => {
 app.use("/dashboard", dashboardRoutes);
 app.use("/api", projectRoutes);
 
+app.use((req, res) => {
+  res.status(404).json({ error: "Route not found" });
+});
+
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });

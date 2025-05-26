@@ -30,4 +30,8 @@ router.post("/projects", verifyToken, async (req, res) => {
   }
 });
 
+router.get("/projects", (req, res) => {
+  res.json({ message: "This is the GET /api/projects route" });
+});
+
 export default router;

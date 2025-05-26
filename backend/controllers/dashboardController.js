@@ -40,7 +40,7 @@ export const savedDashbaord = async (req, res) => {
   }
 };
 
-export const addNewProjet = async (req, res) => {
+export const addNewProject = async (req, res) => {
   try {
     const userId = req.user.uid;
     const { projectName } = req.body;
