@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import dashboardRoutes from "./routes/dashboard.js";
 import projectRoutes from "./routes/project.js";
 
-dotenv.config();
+dotenv.config({ path: "./backend/.env" });
 
 const app = express();
 const port = process.env.PORT || 5000;
