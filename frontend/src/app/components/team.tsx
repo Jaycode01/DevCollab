@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { Dot } from "lucide-react";
-import placeHolder from "../../../public/images/placeholder-image.jpg";
+import placeHolder from "../../../public/images/placeholder-image.png";
 
 export default function Team() {
   const teamMembers = [
