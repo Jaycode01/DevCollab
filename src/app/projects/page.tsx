@@ -10,6 +10,7 @@ import Dots from "../../../public/dots.svg";
 import Image from "next/image";
 import { projects } from "../../lib/projectsData";
 import { getAuth } from "firebase/auth";
+import AddProject from "../components/add-project";
 
 export default function Projects() {
   const [sortOption, setSortOption] = useState("a-z");
@@ -204,6 +205,7 @@ export default function Projects() {
           </div>
         ))}
       </div>
+      <AddProject />
     </div>
   );
 }
