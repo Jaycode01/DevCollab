@@ -1,11 +1,11 @@
 import express from "express";
 import { db } from "../firebase.js";
 import { admin } from "../firebase.js";
-import { verifyToken } from "../middleware/auth.js";
+import { authenticateToken } from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.post("/projects", verifyToken, async (req, res) => {
+router.post("/projects", authenticateToken, async (req, res) => {
   try {
     const userId = req.user.uid;
     const newProject = req.body;

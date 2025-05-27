@@ -5,12 +5,11 @@ import {
   savedDashbaord,
   addNewProject,
 } from "../controllers/dashboardController.js";
-import { verifyFirebaseToken } from "../middleware/auth.js";
 
 const router = express.Router();
 
 router.get("/", authenticateToken, getDashboard);
 router.post("/", authenticateToken, savedDashbaord);
-router.post("/add-project", verifyFirebaseToken, addNewProject);
+router.post("/add-project", authenticateToken, addNewProject);
 
 export default router;
