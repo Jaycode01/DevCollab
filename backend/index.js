@@ -1,8 +1,8 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import dashboardRoutes from "./backend/routes/dashboard.js";
-import projectRoutes from "./backend/routes/project.js";
+import dashboardRoutes from "./routes/dashboard.js";
+import projectRoutes from "./routes/project.js";
 
 dotenv.config();
 
