@@ -1,10 +1,13 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import http from "http";
+import { Server } from "socket.io";
+
 import dashboardRoutes from "./routes/dashboard.js";
 import projectRoutes from "./routes/project.js";
 
-dotenv.config({ path: "./backend/.env" });
+dotenv.config({ path: "./.env" });
 
 const app = express();
 const port = process.env.PORT || 5000;
