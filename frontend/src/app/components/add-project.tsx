@@ -4,21 +4,71 @@ import { useState } from "react";
 import AddIcon from "../../../public/add-black.svg";
 import CancelICon from "../../../public/cancel.svg";
 import Image from "next/image";
+import { getAuth } from "firebase/auth";
+import { app } from "../auth/config";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 interface AddProjectProps {
   onClose: () => void;
-  onSubmit: (data: { name: string; url: string; description: string }) => void;
+  onSubmit: (data: {
+    name: string;
+    url: string;
+    description: string;
+    imageUrl: string;
+  }) => void;
 }
 
 export default function AddProject({ onClose, onSubmit }: AddProjectProps) {
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [name, setName] = useState("");
   const [url, setUrl] = useState("");
   const [description, setDescription] = useState("");
+  const [uploading, setUploading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit({ name, url, description });
-    onClose();
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setImageFile(e.target.files[0]);
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!name || !url || !description || !imageFile) {
+      alert("All fields and images are required.");
+      return;
+    }
+
+    try {
+      setUploading(true);
+      const auth = getAuth();
+      const user = auth.currentUser;
+
+      if (!user) {
+        alert("You must be logged in.");
+        return;
+      }
+
+      const storage = getStorage(app);
+      const storageRef = ref(
+        storage,
+        `projects/${user.uid}/${Date.now()}_${imageFile.name}`
+      );
+
+      await uploadBytes(storageRef, imageFile);
+
+      const imageUrl = await getDownloadURL(storageRef);
+
+      onSubmit({
+        name,
+        url,
+        description,
+        imageUrl,
+      });
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      alert("Failed to upload image.");
+    } finally {
+      setUploading(false);
+    }
   };
 
   return (
@@ -46,6 +96,7 @@ export default function AddProject({ onClose, onSubmit }: AddProjectProps) {
               alt=""
               accept=".png, .jpg, .svg, .jpeg"
               className="hidden"
+              onChange={handleFileChange}
             />
             <label
               htmlFor="uploadProjectImage"
@@ -58,6 +109,7 @@ export default function AddProject({ onClose, onSubmit }: AddProjectProps) {
                 height={50}
               />
             </label>
+            {imageFile && <p className="text-sm mt-1">{imageFile.name}</p>}
           </div>
           <div className="flex flex-col gap-5 w-full">
             <input
@@ -90,9 +142,15 @@ export default function AddProject({ onClose, onSubmit }: AddProjectProps) {
         ></textarea>
         <button
           type="submit"
-          className="w-full text-center bg-blue-600 text-white py-3.5 px-5 mt-1 hover:bg-blue-500 transition-all duration-500 text-sm"
+          disabled={uploading}
+          onClick={handleSubmit}
+          className={`w-full text-center bg-blue-600 text-white py-3.5 px-5 mt-1 hover:bg-blue-500 transition-all duration-500 text-sm ${
+            uploading
+              ? "bg-gray-400 hover:cursor-not-allowed"
+              : "bg-blue-600 hover:bg-blue-500 text-white"
+          }`}
         >
-          Add Project
+          {uploading ? "Uploading..." : "Add Project"}
         </button>
       </form>
     </div>

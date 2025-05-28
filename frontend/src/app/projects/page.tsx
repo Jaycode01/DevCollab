@@ -16,6 +16,7 @@ interface Project {
   name: string;
   url: string;
   description: string;
+  imageUrl?: string;
   createdAt: string;
   updatedAt: string;
   collaborators?: string[];
@@ -214,11 +215,12 @@ export default function Projects() {
               <div className="flex justify-between items-center">
                 <div className="flex flex-row items-center gap-2">
                   <Image
-                    src={ProjectTestImage}
+                    src={project.imageUrl || ProjectTestImage}
                     alt="project image"
                     width={60}
                     height={60}
                     className="border-2 border-gray-900 rounded-md p-2"
+                    unoptimized
                   />
                   <div>
                     <p className="text-[17px]">{project.name}</p>
