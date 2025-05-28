@@ -31,7 +31,9 @@ export default function AddProject({ onClose, onSubmit }: AddProjectProps) {
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault(); // 🚨 prevent page reload
+
     if (!name || !url || !description || !imageFile) {
       alert("All fields and images are required.");
       return;
@@ -54,10 +56,10 @@ export default function AddProject({ onClose, onSubmit }: AddProjectProps) {
       );
 
       await uploadBytes(storageRef, imageFile);
-
       const imageUrl = await getDownloadURL(storageRef);
 
-      onSubmit({
+      // 🔥 Send data to parent for saving to backend
+      await onSubmit({
         name,
         url,
         description,
@@ -92,7 +94,7 @@ export default function AddProject({ onClose, onSubmit }: AddProjectProps) {
             <input
               type="file"
               id="uploadProjectImage"
-              src=""
+              src={AddIcon}
               alt=""
               accept=".png, .jpg, .svg, .jpeg"
               className="hidden"
@@ -143,7 +145,6 @@ export default function AddProject({ onClose, onSubmit }: AddProjectProps) {
         <button
           type="submit"
           disabled={uploading}
-          onClick={handleSubmit}
           className={`w-full text-center bg-blue-600 text-white py-3.5 px-5 mt-1 hover:bg-blue-500 transition-all duration-500 text-sm ${
             uploading
               ? "bg-gray-400 hover:cursor-not-allowed"

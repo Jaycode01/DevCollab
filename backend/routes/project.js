@@ -4,10 +4,10 @@ import { authenticateToken } from "../middleware/auth.js";
 
 const router = express.Router();
 
+// POST /api/projects - Create a new project
 router.post("/projects", authenticateToken, async (req, res) => {
   try {
     const userId = req.user.uid;
-
     const { name, url, description, imageUrl } = req.body;
 
     if (!name || !url || !description || !imageUrl) {
@@ -25,8 +25,10 @@ router.post("/projects", authenticateToken, async (req, res) => {
       updatedAt: new Date().toISOString(),
       userId,
     };
-    await db.collection("projects").add(newProject);
 
+    const projectRef = await db.collection("projects").add(newProject);
+
+    // Increment totalProjects in the dashboard doc
     const dashRef = db.collection("dashboard").doc(userId);
     await dashRef.set(
       {
@@ -35,15 +37,21 @@ router.post("/projects", authenticateToken, async (req, res) => {
       { merge: true }
     );
 
-    res
-      .status(201)
-      .json({ success: true, message: "project created successfully." });
+    // Return the newly created project including its ID
+    res.status(201).json({
+      success: true,
+      project: {
+        id: projectRef.id,
+        ...newProject,
+      },
+    });
   } catch (err) {
     console.error("Error adding project:", err);
     res.status(500).json({ error: "Failed to create project." });
   }
 });
 
+// GET /api/projects - Get all projects for the authenticated user
 router.get("/projects", authenticateToken, async (req, res) => {
   try {
     const userId = req.user.uid;

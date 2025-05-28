@@ -67,6 +67,7 @@ export default function Projects() {
     name: string;
     url: string;
     description: string;
+    imageUrl?: string;
   }) => {
     try {
       const auth = getAuth();
