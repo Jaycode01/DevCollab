@@ -28,7 +28,6 @@ router.post("/projects", authenticateToken, async (req, res) => {
 
     const projectRef = await db.collection("projects").add(newProject);
 
-    // Increment totalProjects in the dashboard doc
     const dashRef = db.collection("dashboard").doc(userId);
     await dashRef.set(
       {
@@ -37,7 +36,11 @@ router.post("/projects", authenticateToken, async (req, res) => {
       { merge: true }
     );
 
-    // Return the newly created project including its ID
+    req.io.emit("notify", {
+      message: `New project created: ${projectRef.name}`,
+      userid,
+    });
+
     res.status(201).json({
       success: true,
       project: {
@@ -51,7 +54,6 @@ router.post("/projects", authenticateToken, async (req, res) => {
   }
 });
 
-// GET /api/projects - Get all projects for the authenticated user
 router.get("/projects", authenticateToken, async (req, res) => {
   try {
     const userId = req.user.uid;

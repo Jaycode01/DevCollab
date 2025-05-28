@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 type Notification = {
-  id: number;
+  id: number | string;
   message: string;
 };
 
