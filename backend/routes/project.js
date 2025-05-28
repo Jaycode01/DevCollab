@@ -43,8 +43,25 @@ router.post("/projects", authenticateToken, async (req, res) => {
   }
 });
 
-router.get("/projects", (req, res) => {
-  res.json({ message: "The backed route to get the projects" });
+router.get("/projects", authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.uid;
+
+    const snapshot = await db
+      .collection("projects")
+      .where("userId", "==", userId)
+      .get();
+
+    const projects = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    res.status(200).json({ projects });
+  } catch (error) {
+    console.error("Error fetching projects:", error);
+    res.status(500).json({ error: "Failed to fetch projects." });
+  }
 });
 
 export default router;

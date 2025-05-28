@@ -8,16 +8,60 @@ import Avatar from "../../../public/images/fakeUserPic.png";
 import Link from "next/link";
 import Dots from "../../../public/dots.svg";
 import Image from "next/image";
-import { projects } from "../../lib/projectsData";
 import { getAuth } from "firebase/auth";
 import AddProject from "../components/add-project";
+
+interface Project {
+  id: string;
+  name: string;
+  url: string;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
+  collaborators?: string[];
+}
 
 export default function Projects() {
   const [sortOption, setSortOption] = useState("a-z");
   const [menuOpen, setMenuOpen] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [showAddProjectModal, setShowAddProjectModal] = useState(false);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
 
+  const menuRef = useRef<HTMLDivElement | null>(null);
+
+  // Fetch projects function
+  const fetchProjects = async () => {
+    try {
+      const auth = getAuth();
+      const user = auth.currentUser;
+
+      if (!user) {
+        console.warn("No user is currently logged in.");
+        return;
+      }
+
+      const token = await user.getIdToken();
+
+      const res = await fetch("http://localhost:5000/api/projects", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to fetch projects.");
+
+      setProjects(data.projects ?? []);
+    } catch (error) {
+      console.error("Fetch projects error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle adding a new project
   const handleAddProject = async (projectData: {
     name: string;
     url: string;
@@ -53,13 +97,17 @@ export default function Projects() {
       if (!res.ok) throw new Error(data.error || "Failed to add new project");
 
       alert("Project added successfully!");
+      setShowAddProjectModal(false);
+      fetchProjects();
     } catch (error) {
       console.error("Add project error:", error);
       alert("Error adding project. Please try again later.");
     }
   };
 
-  const menuRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    fetchProjects();
+  }, []);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -95,7 +143,15 @@ export default function Projects() {
       }
       return 0;
     });
-  }, [sortOption, searchQuery]);
+  }, [sortOption, searchQuery, projects]);
+
+  if (loading) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        <p className="text-lg font-medium">Loading projects...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full bg-gray-50 pb-5 min-h-screen relative">
@@ -145,75 +201,84 @@ export default function Projects() {
       </div>
 
       <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-5">
-        {filteredAndSortedProjects.map((project) => (
-          <div
-            key={project.id}
-            className="bg-white border border-gray-900 rounded-md p-4 shadow-lg flex flex-col gap-3 cursor-pointer hover:scale-98 transition-all duration-300 ease-in-out"
-          >
-            <div className="flex justify-between items-center">
-              <div className="flex flex-row items-center gap-2">
-                <Image
-                  src={ProjectTestImage}
-                  alt="project image"
-                  width={60}
-                  height={60}
-                  className="border-2 border-gray-900 rounded-md p-2"
-                />
-                <div>
-                  <p className="text-[17px]">{project.name}</p>
-                  <Link
-                    href={project.url}
-                    target="_blank"
-                    className="text-[14px] text-blue-600 hover:border-b border-blue-600"
-                  >
-                    {project.url}
-                  </Link>
+        {filteredAndSortedProjects.length === 0 ? (
+          <p className="col-span-full text-center text-gray-700 mt-10">
+            No projects found.
+          </p>
+        ) : (
+          filteredAndSortedProjects.map((project) => (
+            <div
+              key={project.id}
+              className="bg-white border border-gray-900 rounded-md p-4 shadow-lg flex flex-col gap-3 cursor-pointer hover:scale-98 transition-all duration-300 ease-in-out"
+            >
+              <div className="flex justify-between items-center">
+                <div className="flex flex-row items-center gap-2">
+                  <Image
+                    src={ProjectTestImage}
+                    alt="project image"
+                    width={60}
+                    height={60}
+                    className="border-2 border-gray-900 rounded-md p-2"
+                  />
+                  <div>
+                    <p className="text-[17px]">{project.name}</p>
+                    <Link
+                      href={project.url}
+                      target="_blank"
+                      className="text-[14px] text-blue-600 hover:border-b border-blue-600"
+                    >
+                      {project.url}
+                    </Link>
+                  </div>
+                </div>
+                <div className="relative" ref={menuRef}>
+                  <button type="button" className="z-20">
+                    <Image
+                      src={Dots}
+                      alt="project action icon"
+                      onClick={() =>
+                        setMenuOpen((prev) =>
+                          prev === project.id ? null : project.id
+                        )
+                      }
+                    />
+                  </button>
+
+                  {menuOpen === project.id && (
+                    <ul className="absolute bg-white right-0 mt-2 shadow-xl rounded-md border border-gray-300 py-2.5 px-5 w-64 text-sm z-30">
+                      <li className="hover:border-b w-fit border-gray-700">
+                        <Link href="#">Edit</Link>
+                      </li>
+                      <li className="text-red-600 hover:border-b w-fit border-red-600">
+                        <Link href="#">Delete</Link>
+                      </li>
+                    </ul>
+                  )}
                 </div>
               </div>
-              <div className="relative" ref={menuRef}>
-                <button type="button" className="z-20">
+
+              <div className="flex relative h-[30px]">
+                {[0, 5, 10, 15, 20].map((left, i) => (
                   <Image
-                    src={Dots}
-                    alt="project action icon"
-                    onClick={() =>
-                      setMenuOpen((prev) =>
-                        prev === project.id ? null : project.id
-                      )
-                    }
+                    key={i}
+                    src={Avatar}
+                    alt="collaborator"
+                    width={30}
+                    height={30}
+                    style={{
+                      position: "absolute",
+                      left: `${left}px`,
+                      top: 0,
+                      border: "1px solid #1F2937",
+                      borderRadius: "9999px",
+                    }}
                   />
-                </button>
-
-                {menuOpen === project.id && (
-                  <ul className="absolute bg-white right-0 mt-2 shadow-xl rounded-md border border-gray-300 py-2.5 px-5 w-64 text-sm z-30">
-                    <li className="hover:border-b w-fit border-gray-700">
-                      <a href="#">View Details</a>
-                    </li>
-                    <li className="hover:border-b w-fit border-gray-700">
-                      <a href="#">Edit</a>
-                    </li>
-                    <li className="text-red-600 hover:border-b w-fit border-red-600">
-                      <a href="#">Delete</a>
-                    </li>
-                  </ul>
-                )}
+                ))}
               </div>
+              <p className="mt-6 text-sm text-gray-900">{project.updatedAt}</p>
             </div>
-
-            <div className="flex relative">
-              {[0, 5, 10, 15, 20].map((left, i) => (
-                <Image
-                  key={i}
-                  src={Avatar}
-                  alt="collaborator"
-                  width={30}
-                  height={30}
-                  className={`absolute left-${left} top-0 border border-gray-900 rounded-full`}
-                />
-              ))}
-            </div>
-            <p className="mt-6 text-sm text-gray-900">{project.updatedAt}</p>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </div>
   );
