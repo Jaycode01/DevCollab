@@ -16,6 +16,48 @@ export default function Projects() {
   const [sortOption, setSortOption] = useState("a-z");
   const [menuOpen, setMenuOpen] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showAddProjectModal, setShowAddProjectModal] = useState(false);
+
+  const handleAddProject = async (projectData: {
+    name: string;
+    url: string;
+    description: string;
+  }) => {
+    try {
+      const auth = getAuth();
+      const user = auth.currentUser;
+
+      if (!user) {
+        alert("You must be logged in to add a project.");
+        return;
+      }
+
+      const newProject = {
+        ...projectData,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+
+      const token = await user.getIdToken();
+
+      const res = await fetch("http://localhost:5000/api/projects", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(newProject),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to add new project");
+
+      alert("Project added successfully!");
+    } catch (error) {
+      console.error("Add project error:", error);
+      alert("Error adding project. Please try again later.");
+    }
+  };
 
   const menuRef = useRef<HTMLDivElement | null>(null);
 
@@ -55,47 +97,14 @@ export default function Projects() {
     });
   }, [sortOption, searchQuery]);
 
-  const handleAddProject = async () => {
-    try {
-      const auth = getAuth();
-      const user = auth.currentUser;
-
-      if (!user) {
-        alert("You must be logged i to add a project.");
-        return;
-      }
-
-      const newProject = {
-        name: `New Project ${Date.now()}`,
-        url: "https://example.com",
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toString(),
-      };
-
-      const token = await user.getIdToken();
-
-      const res = await fetch("http://localhost:5000/api/projects", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(newProject),
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to add new project");
-
-      alert("Project added successfully!");
-    } catch (error) {
-      console.error("Add project error:", error);
-      alert("Error addding project. Please try again later.");
-    }
-  };
-
   return (
     <div className="w-full bg-gray-50 pb-5 min-h-screen relative">
-      <AddProject />
+      {showAddProjectModal && (
+        <AddProject
+          onClose={() => setShowAddProjectModal(false)}
+          onSubmit={handleAddProject}
+        />
+      )}
       <div className="mt-5 flex md:flex-row flex-col justify-between items-center border-b-2 border-gray-900 py-3 w-full md:px-5 px-2 gap-3.5 md:gap-0 bg-white">
         <div className="md:w-3/5 w-full flex flex-row md:gap-3 gap-2 items-center">
           <input
@@ -127,7 +136,7 @@ export default function Projects() {
           </select>
           <button
             type="button"
-            onClick={handleAddProject}
+            onClick={() => setShowAddProjectModal(true)}
             className="inline-flex bg-blue-600 py-3.5 px-5 items-center gap-2 text-sm text-white"
           >
             Add New <Image src={AddIcon} alt="add icon" />
@@ -206,7 +215,6 @@ export default function Projects() {
           </div>
         ))}
       </div>
-      <AddProject />
     </div>
   );
 }

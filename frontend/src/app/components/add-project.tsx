@@ -1,11 +1,42 @@
+"use client";
+
+import { useState } from "react";
 import AddIcon from "../../../public/add-black.svg";
+import CancelICon from "../../../public/cancel.svg";
 import Image from "next/image";
 
-export default function AddProject() {
+interface AddProjectProps {
+  onClose: () => void;
+  onSubmit: (data: { name: string; url: string; description: string }) => void;
+}
+
+export default function AddProject({ onClose, onSubmit }: AddProjectProps) {
+  const [name, setName] = useState("");
+  const [url, setUrl] = useState("");
+  const [description, setDescription] = useState("");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit({ name, url, description });
+    onClose();
+  };
+
   return (
-    <div className="md:w-1/2 w-3/4 mx-auto bg-white p-5 absolute top-[25%] md:left-[25%] left-[12%] shadow-lg z-50 border border-gray-300">
-      <h1 className="text-center text-[25px] mb-10">Add New Project</h1>
-      <form action="">
+    <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 md:w-1/2 w-3/4 bg-white p-5 shadow-lg z-50 border border-gray-300">
+      <div className="flex justify-between items-center mb-10">
+        <h1 className="text-center text-[25px] ">Add New Project</h1>
+        <button type="button" onClick={onClose}>
+          <Image
+            src={CancelICon}
+            alt="cancel modal"
+            width={30}
+            height={30}
+            aria-label="close"
+            className="cursor-pointer"
+          />
+        </button>
+      </div>
+      <form action="" onSubmit={handleSubmit}>
         <div className="flex md:flex-row flex-col gap-5 items-center">
           <div className="">
             <input
@@ -32,6 +63,8 @@ export default function AddProject() {
             <input
               type="text"
               name="projectName"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               id=""
               placeholder="project name"
               className="text-gray-900 text-sm border border-gray-900 py-1.5 px-2.5 outline-none"
@@ -40,6 +73,8 @@ export default function AddProject() {
               type="url"
               name=""
               id=""
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
               placeholder="repository link"
               className="text-sm text-gray-900 border border-gray-900 py-1.5 px-2.5 outline-none"
             />
@@ -48,9 +83,17 @@ export default function AddProject() {
         <textarea
           name="projectDescription"
           id=""
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
           placeholder="Enter project description here..."
           className="w-full mt-5 text-sm text-gray-900 border border-gray-900 py-1.5 px-2.5 outline-none resize-none h-[150px]"
         ></textarea>
+        <button
+          type="submit"
+          className="w-full text-center bg-blue-600 text-white py-3.5 px-5 mt-1 hover:bg-blue-500 transition-all duration-500 text-sm"
+        >
+          Add Project
+        </button>
       </form>
     </div>
   );
