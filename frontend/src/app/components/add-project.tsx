@@ -15,7 +15,7 @@ interface AddProjectProps {
     url: string;
     description: string;
     imageUrl: string;
-  }) => void;
+  }) => Promise<boolean>; // ✅ must return a boolean
 }
 
 export default function AddProject({ onClose, onSubmit }: AddProjectProps) {
@@ -32,7 +32,7 @@ export default function AddProject({ onClose, onSubmit }: AddProjectProps) {
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault(); // 🚨 prevent page reload
+    event.preventDefault();
 
     if (!name || !url || !description || !imageFile) {
       alert("All fields and images are required.");
@@ -58,13 +58,19 @@ export default function AddProject({ onClose, onSubmit }: AddProjectProps) {
       await uploadBytes(storageRef, imageFile);
       const imageUrl = await getDownloadURL(storageRef);
 
-      // 🔥 Send data to parent for saving to backend
-      await onSubmit({
+      const success = await onSubmit({
         name,
         url,
         description,
         imageUrl,
       });
+
+      if (success) {
+        alert("Project added successfully!");
+        onClose(); // ✅ close modal
+      } else {
+        alert("Failed to add project.");
+      }
     } catch (error) {
       console.error("Error uploading image:", error);
       alert("Failed to upload image.");
@@ -88,14 +94,12 @@ export default function AddProject({ onClose, onSubmit }: AddProjectProps) {
           />
         </button>
       </div>
-      <form action="" onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit}>
         <div className="flex md:flex-row flex-col gap-5 items-center">
-          <div className="">
+          <div>
             <input
               type="file"
               id="uploadProjectImage"
-              src={AddIcon}
-              alt=""
               accept=".png, .jpg, .svg, .jpeg"
               className="hidden"
               onChange={handleFileChange}
@@ -116,17 +120,13 @@ export default function AddProject({ onClose, onSubmit }: AddProjectProps) {
           <div className="flex flex-col gap-5 w-full">
             <input
               type="text"
-              name="projectName"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              id=""
               placeholder="project name"
               className="text-gray-900 text-sm border border-gray-900 py-1.5 px-2.5 outline-none"
             />
             <input
               type="url"
-              name=""
-              id=""
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               placeholder="repository link"
@@ -135,8 +135,6 @@ export default function AddProject({ onClose, onSubmit }: AddProjectProps) {
           </div>
         </div>
         <textarea
-          name="projectDescription"
-          id=""
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Enter project description here..."
@@ -145,9 +143,9 @@ export default function AddProject({ onClose, onSubmit }: AddProjectProps) {
         <button
           type="submit"
           disabled={uploading}
-          className={`w-full text-center bg-blue-600 text-white py-3.5 px-5 mt-1 hover:bg-blue-500 transition-all duration-500 text-sm ${
+          className={`w-full text-center py-3.5 px-5 mt-1 text-sm ${
             uploading
-              ? "bg-gray-400 hover:cursor-not-allowed"
+              ? "bg-gray-400 hover:cursor-not-allowed text-white"
               : "bg-blue-600 hover:bg-blue-500 text-white"
           }`}
         >

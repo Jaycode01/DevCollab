@@ -68,15 +68,15 @@ export default function Projects() {
     name: string;
     url: string;
     description: string;
-    imageUrl?: string;
-  }) => {
+    imageUrl: string;
+  }): Promise<boolean> => {
     try {
       const auth = getAuth();
       const user = auth.currentUser;
 
       if (!user) {
         alert("You must be logged in to add a project.");
-        return;
+        return false; // <== must return a boolean here
       }
 
       const newProject = {
@@ -97,14 +97,18 @@ export default function Projects() {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to add new project");
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to add new project");
+      }
 
       alert("Project added successfully!");
       setShowAddProjectModal(false);
       fetchProjects();
+      return true; // <== success path returns true
     } catch (error) {
       console.error("Add project error:", error);
       alert("Error adding project. Please try again later.");
+      return false;
     }
   };
 
