@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useRef, useEffect } from "react";
+import { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import Search from "../../../public/search.svg";
 import AddIcon from "../../../public/add.svg";
 import ProjectTestImage from "../../../public/square-3-stack.svg";
@@ -31,9 +31,10 @@ export default function Projects() {
   const [loading, setLoading] = useState(true);
 
   const menuRef = useRef<HTMLDivElement | null>(null);
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
-  // Fetch projects function
-  const fetchProjects = async () => {
+  // Memoize fetchProjects to avoid useEffect warnings
+  const fetchProjects = useCallback(async () => {
     try {
       const auth = getAuth();
       const user = auth.currentUser;
@@ -45,7 +46,7 @@ export default function Projects() {
 
       const token = await user.getIdToken();
 
-      const res = await fetch("http://localhost:5000/api/projects", {
+      const res = await fetch(`${API_BASE}/api/projects`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -60,7 +61,7 @@ export default function Projects() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [API_BASE]);
 
   // Handle adding a new project
   const handleAddProject = async (projectData: {
@@ -85,8 +86,7 @@ export default function Projects() {
       };
 
       const token = await user.getIdToken();
-      const API_BASE =
-        process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
       const res = await fetch(`${API_BASE}/projects`, {
         method: "POST",
         headers: {
@@ -110,7 +110,7 @@ export default function Projects() {
 
   useEffect(() => {
     fetchProjects();
-  }, []);
+  }, [fetchProjects]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
