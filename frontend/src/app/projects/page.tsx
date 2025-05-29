@@ -63,55 +63,6 @@ export default function Projects() {
     }
   }, [API_BASE]);
 
-  // Handle adding a new project
-  const handleAddProject = async (projectData: {
-    name: string;
-    url: string;
-    description: string;
-    imageUrl: string;
-  }): Promise<boolean> => {
-    try {
-      const auth = getAuth();
-      const user = auth.currentUser;
-
-      if (!user) {
-        alert("You must be logged in to add a project.");
-        return false; // <== must return a boolean here
-      }
-
-      const newProject = {
-        ...projectData,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
-
-      const token = await user.getIdToken();
-
-      const res = await fetch(`${API_BASE}/projects`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(newProject),
-      });
-
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || "Failed to add new project");
-      }
-
-      alert("Project added successfully!");
-      setShowAddProjectModal(false);
-      fetchProjects();
-      return true; // <== success path returns true
-    } catch (error) {
-      console.error("Add project error:", error);
-      alert("Error adding project. Please try again later.");
-      return false;
-    }
-  };
-
   useEffect(() => {
     fetchProjects();
   }, [fetchProjects]);
@@ -163,10 +114,7 @@ export default function Projects() {
   return (
     <div className="w-full bg-gray-50 pb-5 min-h-screen relative">
       {showAddProjectModal && (
-        <AddProject
-          onClose={() => setShowAddProjectModal(false)}
-          onSubmit={handleAddProject}
-        />
+        <AddProject onClose={() => setShowAddProjectModal(false)} />
       )}
       <div className="mt-5 flex md:flex-row flex-col justify-between items-center border-b-2 border-gray-900 py-3 w-full md:px-5 px-2 gap-3.5 md:gap-0 bg-white">
         <div className="md:w-3/5 w-full flex flex-row md:gap-3 gap-2 items-center">
