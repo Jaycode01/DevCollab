@@ -83,9 +83,10 @@ export default function Navbar() {
                   dashboard
                 </Link>
                 <Link
-                  href="/projects"
+                  href="/user-projects"
                   className=" flex items-center gap-2 mx-auto md:hover:border-blue-600  text-sm md:text-[1rem] md:hover:border-b-2 px-2 md:hover:bg-white md:hover:rounded-none hover:bg-gray-100 rounded-sm md:py-2"
                 >
+                  c
                   <Image
                     alt="Projects Icon"
                     src={ProjectsIcon}
