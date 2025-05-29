@@ -86,7 +86,7 @@ export default function Projects() {
 
       const token = await user.getIdToken();
       const API_BASE =
-        process.env.NEXT_PUBLIC_API_KEY || "http://localhost:5000";
+        process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
       const res = await fetch(`${API_BASE}/projects`, {
         method: "POST",
         headers: {

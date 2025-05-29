@@ -306,7 +306,7 @@ export default function Login() {
 
       <p className="mt-5 text-sm md:text-[1rem]">
         New to DevCollab?{" "}
-        <Link href="/sign-up" className="text-blue-600 hover:underline">
+        <Link href="/getstarted" className="text-blue-600 hover:underline">
           Sign Up
         </Link>
       </p>
