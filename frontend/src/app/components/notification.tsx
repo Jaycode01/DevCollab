@@ -1,31 +1,13 @@
-import { useEffect, useState } from "react";
-import io from "socket.io-client";
-
 type Notification = {
   id: string;
   message: string;
 };
 
-export default function Notification() {
-  const [notifyData, setnotifyData] = useState<Notification[]>([]);
+type Props = {
+  notifyData: Notification[];
+};
 
-  useEffect(() => {
-    const socket = io("http://localhost:5000");
-
-    socket.on("notify", (data: { message: string }) => {
-      const newNotification = {
-        id: Date.now().toString(),
-        message: data.message,
-      };
-
-      setnotifyData((prev) => [newNotification, ...prev]);
-    });
-
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
-
+export default function Notification({ notifyData }: Props) {
   if (!notifyData || notifyData.length === 0) {
     return (
       <div className="bg-white shadow-md rounded-md border p-4 w-full">
