@@ -28,6 +28,7 @@
 - [Node Js]()
 - [Express Js]()
 - [Firebase/FireStore]
+- [Socket.IO]
   <br>
   --still working on the frontend and abit backend--
 
