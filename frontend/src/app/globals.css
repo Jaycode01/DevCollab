@@ -1,6 +1,15 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+@font-face {
+  font-family: "Aclonica";
+  src: url("../../public/Aclonica-Regular.woff2");
+}
+
+* {
+  font-family: "Aclonica", sans-serif;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
