@@ -40,6 +40,7 @@ export default function Dashboard() {
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL || " http://localhost:5000";
 
   useEffect(() => {
     const fetchDashboard = async () => {
@@ -53,7 +54,7 @@ export default function Dashboard() {
           return;
         }
 
-        const res = await fetch("http://localhost:5000/dashboard", {
+        const res = await fetch(`${API_BASE}/dashboard`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -87,7 +88,7 @@ export default function Dashboard() {
           error.message.includes("Failed to fetch")
         ) {
           setError(
-            "Cannot connect to backend server. Please ensure your backend is running on http://localhost:5000"
+            "Cannot connect to backnd, ensure you have a good network connection. "
           );
         } else {
           setError(
@@ -102,7 +103,7 @@ export default function Dashboard() {
     };
 
     fetchDashboard();
-  }, [router]);
+  }, [router, API_BASE]);
 
   // Function to retry loading data
   const retryLoading = async () => {
