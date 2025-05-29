@@ -42,7 +42,7 @@ next-env.d.ts
 
 // hiden files
 
-*.json
+package-lock.json
 
 //folders
 node_modules
