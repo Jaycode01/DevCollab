@@ -16,7 +16,6 @@ interface Project {
   name: string;
   url: string;
   description: string;
-  imageUrl?: string;
   createdAt: string;
   updatedAt: string;
   collaborators?: string[];
@@ -33,7 +32,6 @@ export default function Projects() {
   const menuRef = useRef<HTMLDivElement | null>(null);
   const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
-  // Memoize fetchProjects to avoid useEffect warnings
   const fetchProjects = useCallback(async () => {
     try {
       const auth = getAuth();
@@ -172,7 +170,7 @@ export default function Projects() {
               <div className="flex justify-between items-center">
                 <div className="flex flex-row items-center gap-2">
                   <Image
-                    src={project.imageUrl || ProjectTestImage}
+                    src={ProjectTestImage}
                     alt="project image"
                     width={60}
                     height={60}

@@ -4,13 +4,13 @@ import { authenticateToken } from "../middleware/auth.js";
 
 const router = express.Router();
 
-// POST /api/projects - Create a new project
 router.post("/projects", authenticateToken, async (req, res) => {
+  console.log("Incoming project body:", req.body);
   try {
     const userId = req.user.uid;
-    const { name, url, description, imageUrl } = req.body;
+    const { name, url, description } = req.body;
 
-    if (!name || !url || !description || !imageUrl) {
+    if (!name || !url || !description) {
       return res
         .status(400)
         .json({ error: "Missing required project fields." });
@@ -20,7 +20,6 @@ router.post("/projects", authenticateToken, async (req, res) => {
       name,
       url,
       description,
-      imageUrl,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       userId,
@@ -36,10 +35,13 @@ router.post("/projects", authenticateToken, async (req, res) => {
       { merge: true }
     );
 
-    req.io.emit("notify", {
-      message: `New project created: ${projectRef.name}`,
-      userid,
-    });
+    // Assuming req.io is your socket instance, if not remove this
+    if (req.io) {
+      req.io.emit("notify", {
+        message: `New project created: ${newProject.name}`,
+        userId,
+      });
+    }
 
     res.status(201).json({
       success: true,
