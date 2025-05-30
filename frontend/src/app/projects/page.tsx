@@ -16,6 +16,7 @@ interface Project {
   name: string;
   url: string;
   description: string;
+  imageUrl?: string;
   createdAt: string;
   updatedAt: string;
   collaborators?: string[];
@@ -32,6 +33,7 @@ export default function Projects() {
   const menuRef = useRef<HTMLDivElement | null>(null);
   const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
+  // Memoize fetchProjects to avoid useEffect warnings
   const fetchProjects = useCallback(async () => {
     try {
       const auth = getAuth();
@@ -112,10 +114,7 @@ export default function Projects() {
   return (
     <div className="w-full bg-gray-50 pb-5 min-h-screen relative">
       {showAddProjectModal && (
-        <AddProject
-          onClose={() => setShowAddProjectModal(false)}
-          onProjectAdded={fetchProjects}
-        />
+        <AddProject onClose={() => setShowAddProjectModal(false)} />
       )}
       <div className="mt-5 flex md:flex-row flex-col justify-between items-center border-b-2 border-gray-900 py-3 w-full md:px-5 px-2 gap-3.5 md:gap-0 bg-white">
         <div className="md:w-3/5 w-full flex flex-row md:gap-3 gap-2 items-center">
@@ -170,7 +169,7 @@ export default function Projects() {
               <div className="flex justify-between items-center">
                 <div className="flex flex-row items-center gap-2">
                   <Image
-                    src={ProjectTestImage}
+                    src={project.imageUrl || ProjectTestImage}
                     alt="project image"
                     width={60}
                     height={60}
