@@ -30,7 +30,7 @@ export default function Projects() {
   const [loading, setLoading] = useState(true);
 
   const menuRef = useRef<HTMLDivElement | null>(null);
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+  // const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
   const fetchProjects = useCallback(async () => {
     try {
@@ -44,11 +44,14 @@ export default function Projects() {
 
       const token = await user.getIdToken();
 
-      const res = await fetch(`${API_BASE}/api/projects`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await fetch(
+        `https://devcollab-tslf.onrender.com/api/projects`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to fetch projects.");
@@ -59,7 +62,7 @@ export default function Projects() {
     } finally {
       setLoading(false);
     }
-  }, [API_BASE]);
+  }, []);
 
   useEffect(() => {
     fetchProjects();
