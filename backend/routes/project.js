@@ -10,7 +10,7 @@ router.post("/projects", authenticateToken, async (req, res) => {
     const userId = req.user.uid;
     const { name, url, description } = req.body;
 
-    if (!name || !url || !description) {
+    if (!name?.trim() || !url?.trim() || !description?.trim()) {
       return res
         .status(400)
         .json({ error: "Missing required project fields." });
