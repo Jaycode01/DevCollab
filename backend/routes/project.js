@@ -4,7 +4,6 @@ import { authenticateToken } from "../middleware/auth.js";
 
 const router = express.Router();
 
-// POST /api/projects - Create a new project
 router.post("/projects", authenticateToken, async (req, res) => {
   try {
     const userId = req.user.uid;
@@ -36,9 +35,9 @@ router.post("/projects", authenticateToken, async (req, res) => {
       { merge: true }
     );
 
-    req.io.emit("notify", {
-      message: `New project created: ${projectRef.name}`,
-      userid,
+    req.io.emit("project:created", {
+      id: projectRef.id,
+      ...newProject,
     });
 
     res.status(201).json({
@@ -54,6 +53,7 @@ router.post("/projects", authenticateToken, async (req, res) => {
   }
 });
 
+// GET /api/projects - Get all projects for a user
 router.get("/projects", authenticateToken, async (req, res) => {
   try {
     const userId = req.user.uid;
@@ -104,11 +104,8 @@ router.delete("/:id", authenticateToken, async (req, res) => {
       { merge: true }
     );
 
-    // Optional: Only keep if using Socket.IO
-    // req.io?.emit("notify", {
-    //   message: `Project deleted: ${projectData.name}`,
-    //   userId,
-    // });
+    // Emit project deleted event
+    req.io.emit("project:deleted", { id: projectId });
 
     res.status(200).json({
       success: true,

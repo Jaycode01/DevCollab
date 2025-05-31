@@ -43,7 +43,7 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
   console.log("New Client connected:", socket.id);
 
-  socket.on("diconnect", () => {
+  socket.on("disconnect", () => {
     console.log("Client disconnected:", socket.id);
   });
 });
