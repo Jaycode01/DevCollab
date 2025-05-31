@@ -35,7 +35,6 @@ router.post("/projects", authenticateToken, async (req, res) => {
       { merge: true }
     );
 
-    // Assuming req.io is your socket instance, if not remove this
     if (req.io) {
       req.io.emit("notify", {
         message: `New project created: ${newProject.name}`,
@@ -74,6 +73,51 @@ router.get("/projects", authenticateToken, async (req, res) => {
   } catch (error) {
     console.error("Error fetching projects:", error);
     res.status(500).json({ error: "Failed to fetch projects." });
+  }
+});
+
+router.delete("/:id", authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.uid;
+    const projectId = req.params.id;
+
+    const projectRef = db.collection("projects").doc(projectId);
+    const projectDoc = await projectRef.get();
+
+    if (!projectDoc.exists) {
+      return res.status(404).json({ error: "Project not found." });
+    }
+
+    const projectData = projectDoc.data();
+    if (projectData.userId !== userId) {
+      return res
+        .status(403)
+        .json({ error: "You can only delete your own projects." });
+    }
+
+    await projectRef.delete();
+    const dashRef = db.collection("dashboard").doc(userId);
+    await dashRef.set(
+      {
+        totalProjects: admin.firestore.FieldValue.increment(-1),
+      },
+      { merge: true }
+    );
+
+    if (req.io) {
+      req.io.emit("notify", {
+        message: `Project deleted: ${projectData.name}`,
+        userId,
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Project deleted successfully.",
+    });
+  } catch (err) {
+    console.error("error deleting project:", err);
+    res.status(500).json({ error: "Failed to delete project." });
   }
 });
 
