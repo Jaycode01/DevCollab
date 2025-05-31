@@ -9,14 +9,11 @@ import Link from "next/link";
 import Dots from "../../../public/dots.svg";
 import Image from "next/image";
 import { getAuth } from "firebase/auth";
-import AddProject from "../components/add-project";
-
 interface Project {
   id: string;
   name: string;
   url: string;
   description: string;
-  imageUrl?: string;
   createdAt: string;
   updatedAt: string;
   collaborators?: string[];
@@ -26,14 +23,12 @@ export default function Projects() {
   const [sortOption, setSortOption] = useState("a-z");
   const [menuOpen, setMenuOpen] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [showAddProjectModal, setShowAddProjectModal] = useState(false);
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
 
   const menuRef = useRef<HTMLDivElement | null>(null);
   const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
-  // Memoize fetchProjects to avoid useEffect warnings
   const fetchProjects = useCallback(async () => {
     try {
       const auth = getAuth();
@@ -113,9 +108,6 @@ export default function Projects() {
 
   return (
     <div className="w-full bg-gray-50 pb-5 min-h-screen relative">
-      {showAddProjectModal && (
-        <AddProject onClose={() => setShowAddProjectModal(false)} />
-      )}
       <div className="mt-5 flex md:flex-row flex-col justify-between items-center border-b-2 border-gray-900 py-3 w-full md:px-5 px-2 gap-3.5 md:gap-0 bg-white">
         <div className="md:w-3/5 w-full flex flex-row md:gap-3 gap-2 items-center">
           <input
@@ -147,10 +139,14 @@ export default function Projects() {
           </select>
           <button
             type="button"
-            onClick={() => setShowAddProjectModal(true)}
             className="inline-flex bg-blue-600 py-3.5 px-5 items-center gap-2 text-sm text-white"
           >
-            Add New <Image src={AddIcon} alt="add icon" />
+            <Link
+              href="../add-project"
+              className="inline-flex items-center gap-3"
+            >
+              Add New <Image src={AddIcon} alt="add icon" />
+            </Link>
           </button>
         </div>
       </div>
@@ -169,12 +165,11 @@ export default function Projects() {
               <div className="flex justify-between items-center">
                 <div className="flex flex-row items-center gap-2">
                   <Image
-                    src={project.imageUrl || ProjectTestImage}
+                    src={ProjectTestImage}
                     alt="project image"
                     width={60}
                     height={60}
                     className="border-2 border-gray-900 rounded-md p-2"
-                    unoptimized
                   />
                   <div>
                     <p className="text-[17px]">{project.name}</p>
