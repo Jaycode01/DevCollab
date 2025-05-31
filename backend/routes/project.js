@@ -95,6 +95,7 @@ router.delete("/:id", authenticateToken, async (req, res) => {
     }
 
     await projectRef.delete();
+
     const dashRef = db.collection("dashboard").doc(userId);
     await dashRef.set(
       {
@@ -103,19 +104,18 @@ router.delete("/:id", authenticateToken, async (req, res) => {
       { merge: true }
     );
 
-    if (req.io) {
-      req.io.emit("notify", {
-        message: `Project deleted: ${projectData.name}`,
-        userId,
-      });
-    }
+    // Optional: Only keep if using Socket.IO
+    // req.io?.emit("notify", {
+    //   message: `Project deleted: ${projectData.name}`,
+    //   userId,
+    // });
 
     res.status(200).json({
       success: true,
       message: "Project deleted successfully.",
     });
   } catch (err) {
-    console.error("error deleting project:", err);
+    console.error("Error deleting project:", err);
     res.status(500).json({ error: "Failed to delete project." });
   }
 });

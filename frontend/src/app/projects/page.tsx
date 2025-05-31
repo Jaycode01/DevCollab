@@ -122,16 +122,15 @@ export default function Projects() {
 
       if (!user) {
         alert("You must be logged in to delete projects.");
+        setLoading(false);
         return;
       }
 
       const token = await user.getIdToken();
-
       const response = await fetch(`${API_BASE}/api/projects/${projectId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
         },
       });
 
@@ -250,17 +249,19 @@ export default function Projects() {
                         <Link href={`#`}>Edit</Link>
                       </li>
                       <li className="text-red-600 hover:border-b w-fit border-red-600">
-                        <button
-                          onClick={() =>
-                            deleteProject(project.id, project.name)
-                          }
-                          disabled={deleteLoading === project.id}
-                          className="text-left w-full disabled:opacity-50"
-                        >
-                          {deleteLoading === project.id
-                            ? "Deleting..."
-                            : "Delete"}
-                        </button>
+                        <Link href={`#`}>
+                          <button
+                            onClick={() =>
+                              deleteProject(project.id, project.name)
+                            }
+                            disabled={deleteLoading === project.id}
+                            className="text-left w-full disabled:opacity-50"
+                          >
+                            {deleteLoading === project.id
+                              ? "Deleting..."
+                              : "Delete"}
+                          </button>
+                        </Link>
                       </li>
                     </ul>
                   )}
