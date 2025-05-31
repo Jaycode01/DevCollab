@@ -25,6 +25,7 @@ export default function Projects() {
   const [searchQuery, setSearchQuery] = useState("");
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const [deleteLoading, setdeleteLoading] = useState<string | null>(null);
 
   const menuRef = useRef<HTMLDivElement | null>(null);
   const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
@@ -105,6 +106,54 @@ export default function Projects() {
       </div>
     );
   }
+
+  const deleteProject = async (projectId: string, projectName: string) => {
+    const confirmed = window.confirm(
+      `Are you sure you want to delete "${projectName}"? This action action cannot be undone.`
+    );
+
+    if (!confirmed) return;
+
+    setdeleteLoading(projectId);
+
+    try {
+      const auth = getAuth();
+      const user = auth.currentUser;
+
+      if (!user) {
+        alert("You must be logged in to delete projects.");
+        return;
+      }
+
+      const token = await user.getIdToken();
+
+      const response = await fetch(`${API_BASE}/api/projects/${projectId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Failed to delete project");
+      }
+
+      setProjects((prev) => prev.filter((p) => p.id !== projectId));
+      setMenuOpen(null);
+      alert(`"${projectName}" has been deleted successfully.`);
+    } catch (error) {
+      console.error("Delete error: ", error);
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Failed to delete project. Please try again."
+      );
+    } finally {
+      setdeleteLoading(null);
+    }
+  };
 
   return (
     <div className="w-full bg-gray-50 pb-5 min-h-screen relative">
@@ -198,10 +247,20 @@ export default function Projects() {
                   {menuOpen === project.id && (
                     <ul className="absolute bg-white right-0 mt-2 shadow-xl rounded-md border border-gray-300 py-2.5 px-5 w-64 text-sm z-30">
                       <li className="hover:border-b w-fit border-gray-700">
-                        <Link href="#">Edit</Link>
+                        <Link href={`#`}>Edit</Link>
                       </li>
                       <li className="text-red-600 hover:border-b w-fit border-red-600">
-                        <Link href="#">Delete</Link>
+                        <button
+                          onClick={() =>
+                            deleteProject(project.id, project.name)
+                          }
+                          disabled={deleteLoading === project.id}
+                          className="text-left w-full disabled:opacity-50"
+                        >
+                          {deleteLoading === project.id
+                            ? "Deleting..."
+                            : "Delete"}
+                        </button>
                       </li>
                     </ul>
                   )}
