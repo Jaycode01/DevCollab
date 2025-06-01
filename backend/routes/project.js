@@ -82,7 +82,7 @@ router.delete("/projects/:projectId", authenticateToken, async (req, res) => {
     const projectRef = db.collection("projects").doc(projectId);
     const projectDoc = await projectRef.get();
 
-    if (!projectDoc.exists() || projectDoc.data().userId !== userId) {
+    if (!projectDoc.exists || projectDoc.data().userId !== userId) {
       return res
         .status(404)
         .json({ error: "Project not found or unauthorized." });
