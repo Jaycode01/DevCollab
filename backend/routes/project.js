@@ -53,7 +53,6 @@ router.post("/projects", authenticateToken, async (req, res) => {
   }
 });
 
-// GET /api/projects - Get all projects for a user
 router.get("/projects", authenticateToken, async (req, res) => {
   try {
     const userId = req.user.uid;
@@ -75,25 +74,19 @@ router.get("/projects", authenticateToken, async (req, res) => {
   }
 });
 
-router.delete("/:id", authenticateToken, async (req, res) => {
+router.delete("/projects/:projectId", authenticateToken, async (req, res) => {
   try {
     const userId = req.user.uid;
-    const projectId = req.params.id;
+    const projectId = req.params.projectId;
 
     const projectRef = db.collection("projects").doc(projectId);
     const projectDoc = await projectRef.get();
 
-    if (!projectDoc.exists) {
-      return res.status(404).json({ error: "Project not found." });
-    }
-
-    const projectData = projectDoc.data();
-    if (projectData.userId !== userId) {
+    if (!projectDoc.exists() || projectDoc.data().userId !== userId) {
       return res
-        .status(403)
-        .json({ error: "You can only delete your own projects." });
+        .status(404)
+        .json({ error: "Project not found or unauthorized." });
     }
-
     await projectRef.delete();
 
     const dashRef = db.collection("dashboard").doc(userId);
@@ -101,16 +94,14 @@ router.delete("/:id", authenticateToken, async (req, res) => {
       {
         totalProjects: admin.firestore.FieldValue.increment(-1),
       },
-      { merge: true }
+      {
+        merge: true,
+      }
     );
 
-    // Emit project deleted event
-    req.io.emit("project:deleted", { id: projectId });
+    req.io.emit("Project:deleted", { id: projectId });
 
-    res.status(200).json({
-      success: true,
-      message: "Project deleted successfully.",
-    });
+    res.status(200).json({ success: true, message: "Projects deleted." });
   } catch (err) {
     console.error("Error deleting project:", err);
     res.status(500).json({ error: "Failed to delete project." });

@@ -37,6 +37,7 @@ export default function Dashboard() {
   );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [userData, setuserData] = useState(null);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -105,11 +106,9 @@ export default function Dashboard() {
     fetchDashboard();
   }, [router, API_BASE]);
 
-  // Function to retry loading data
   const retryLoading = async () => {
     setIsLoading(true);
     setError(null);
-    // Just refetch dashboard data
     try {
       const token = localStorage.getItem("token");
       if (!token) {
@@ -165,6 +164,17 @@ export default function Dashboard() {
     }
   };
 
+  useEffect(() => {
+    try {
+      const storedData = localStorage.getItem("userData");
+      if (storedData) {
+        setuserData(JSON.parse(storedData));
+      }
+    } catch (error) {
+      console.error("Error loading user data:", error);
+    }
+  }, []);
+
   return (
     <>
       <div className="bg-gray-50 relative min-h-screen">
@@ -177,7 +187,7 @@ export default function Dashboard() {
         {/* Header */}
         <div className="p-4 flex justify-between items-center">
           <h1 className="capitalize md:text-[30px] sm:text-[25px] text-[22px]">
-            Welcome!
+            Welcome, {userData?.firstName || "User"}!
           </h1>
         </div>
 
