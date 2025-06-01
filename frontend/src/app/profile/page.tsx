@@ -72,13 +72,15 @@ export default function UsersProfile() {
           <span className="">Settings</span>
         </Link>
         <div className="flex gap-5 items-center border justify-center py-3 rounded px-2">
-          <Image
-            src={userImage}
-            alt="user pic"
-            width={250}
-            height={250}
-            className="md:w-[250px] w-[170px] md:h-[250px] h-[170px] rounded-full relative"
-          />
+          <div className="flex">
+            <Image
+              src={userImage}
+              alt="user pic"
+              width={250}
+              height={250}
+              className="md:w-[250px] w-[170px] md:h-[250px] h-[170px] rounded-full relative"
+            />
+          </div>
           <div className="">
             <p className="text-[20px]">{user?.name || "Guest User"}</p>
             <p className="text-[14px]">{user?.email || "Not logged in"}</p>

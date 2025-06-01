@@ -16,6 +16,8 @@ import {
 } from "firebase/auth";
 import { app, db } from "../auth/config";
 import { useRouter } from "next/navigation";
+import Camera from "../../../public/camera.svg";
+import Image from "next/image";
 
 interface FirebaseError extends Error {
   code: string;
@@ -184,6 +186,15 @@ export default function EditProfile() {
         </button>
       </div>
       <form action="" className="mt-2.5 flex flex-col gap-7 w-full border py-4">
+        <div className="w-[250px] h-[250px] border border-gray-900 rounded-full mx-auto flex flex-col justify-center items-center">
+          <Image
+            src={Camera}
+            width={40}
+            height={40}
+            alt="camera icon"
+            className="cursor-pointer"
+          />
+        </div>
         <div className="flex flex-col gap-1.5 md:w-3/5 w-11/12  mx-auto">
           <label htmlFor="name">Name:</label>
           <input
