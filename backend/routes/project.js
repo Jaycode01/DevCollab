@@ -19,7 +19,6 @@ router.post("/projects", authenticateToken, async (req, res) => {
       name,
       url,
       description,
-      imageUrl,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       userId,
