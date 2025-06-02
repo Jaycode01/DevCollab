@@ -108,4 +108,35 @@ router.delete("/projects/:projectId", authenticateToken, async (req, res) => {
   }
 });
 
+app.put("/api/projects/:id", authenticateToken, async (req, res) => {
+  const { id } = req.params;
+  const { name, url, description } = req.body;
+  const uid = req.user.uid;
+
+  try {
+    const projectRef = db.collection("projects").doc(id);
+    const doc = await projectRef.get();
+
+    if (!doc.exists) {
+      return res.status(404).json({ error: "project not found" });
+    }
+
+    if (doc.data().userId !== uid) {
+      return res.status(403).json({ erro: "Unauthorized" });
+    }
+
+    await projectRef.update({
+      name,
+      url,
+      description,
+      updatedAt: new Date().toISOString(),
+    });
+
+    return res.json({ message: "Project updated successfully." });
+  } catch (error) {
+    console.error("Update error:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 export default router;
