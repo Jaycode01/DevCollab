@@ -107,7 +107,7 @@ router.delete("/projects/:projectId", authenticateToken, async (req, res) => {
   }
 });
 
-router.put("/api/projects/:id", authenticateToken, async (req, res) => {
+router.put("/projects/:id", authenticateToken, async (req, res) => {
   const { id } = req.params;
   const { name, url, description } = req.body;
   const uid = req.user.uid;
