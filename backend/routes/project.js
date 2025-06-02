@@ -7,9 +7,9 @@ const router = express.Router();
 router.post("/projects", authenticateToken, async (req, res) => {
   try {
     const userId = req.user.uid;
-    const { name, url, description, imageUrl } = req.body;
+    const { name, url, description } = req.body;
 
-    if (!name || !url || !description || !imageUrl) {
+    if (!name || !url || !description) {
       return res
         .status(400)
         .json({ error: "Missing required project fields." });
@@ -105,6 +105,37 @@ router.delete("/projects/:projectId", authenticateToken, async (req, res) => {
   } catch (err) {
     console.error("Error deleting project:", err);
     res.status(500).json({ error: "Failed to delete project." });
+  }
+});
+
+app.put("/api/projects/:id", authenticateToken, async (req, res) => {
+  const { id } = req.params;
+  const { name, url, description } = req.body;
+  const uid = req.user.uid;
+
+  try {
+    const projectRef = db.collection("projects").doc(id);
+    const doc = await projectRef.get();
+
+    if (!doc.exists) {
+      return res.status(404).json({ error: "project not found" });
+    }
+
+    if (doc.data().userId !== uid) {
+      return res.status(403).json({ erro: "Unauthorized" });
+    }
+
+    await projectRef.update({
+      name,
+      url,
+      description,
+      updatedAt: new Date().toISOString(),
+    });
+
+    return res.json({ message: "Project updated successfully." });
+  } catch (error) {
+    console.error("Update error:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
 });
 
