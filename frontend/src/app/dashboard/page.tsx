@@ -28,6 +28,11 @@ type DashboardData = {
   teamMembers: number;
 };
 
+type UserData = {
+  firstName: string;
+  lastName: string;
+};
+
 export default function Dashboard() {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -37,7 +42,7 @@ export default function Dashboard() {
   );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [userData, setuserData] = useState(null);
+  const [userData, setuserData] = useState<UserData | null>(null);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);

@@ -40,6 +40,7 @@ export default function UsersProfile() {
       if (firebaseUser) {
         const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
         const userData = userDoc.exists() ? userDoc.data() : {};
+
         setUser({
           name: firebaseUser.displayName ?? userData.name ?? "Guest User",
           email: firebaseUser.email,
@@ -61,6 +62,7 @@ export default function UsersProfile() {
   }, []);
 
   const handleEditProfileBtn = () => {};
+
   return (
     <div className="">
       <div className="flex flex-col gap-7 w-11/12 md:w-1/2 mx-auto mt-7 border p-5 rounded-md">
