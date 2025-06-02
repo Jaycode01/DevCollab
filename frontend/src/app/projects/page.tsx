@@ -9,6 +9,7 @@ import Link from "next/link";
 import Dots from "../../../public/dots.svg";
 import Image from "next/image";
 import { getAuth } from "firebase/auth";
+import EditProject from "../components/edit-project";
 interface Project {
   id: string;
   name: string;
@@ -25,6 +26,7 @@ export default function Projects() {
   const [searchQuery, setSearchQuery] = useState("");
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const [editingProject, seteditingProject] = useState<Project | null>(null);
 
   const menuRef = useRef<HTMLDivElement | null>(null);
   const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
@@ -137,6 +139,14 @@ export default function Projects() {
 
   return (
     <div className="w-full bg-gray-50 pb-5 min-h-screen relative">
+      <div>
+        {editingProject && (
+          <EditProject
+            project={editingProject}
+            onClose={() => seteditingProject(null)}
+          />
+        )}
+      </div>
       <div className="mt-5 flex md:flex-row flex-col justify-between items-center border-b-2 border-gray-900 py-3 w-full md:px-5 px-2 gap-3.5 md:gap-0 bg-white">
         <div className="md:w-3/5 w-full flex flex-row md:gap-3 gap-2 items-center">
           <input
@@ -227,7 +237,11 @@ export default function Projects() {
                   {menuOpen === project.id && (
                     <ul className="absolute bg-white right-0 mt-2 shadow-xl rounded-md border border-gray-300 py-2.5 px-5 w-64 text-sm z-30">
                       <li className="hover:border-b w-fit border-gray-700">
-                        <Link href={`#`}>Edit</Link>
+                        <Link href={`#`}>
+                          <button onClick={() => seteditingProject(project)}>
+                            Edit
+                          </button>
+                        </Link>
                       </li>
                       <li className="text-red-600 hover:border-b w-fit border-red-600">
                         <Link href={`#`}>
