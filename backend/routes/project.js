@@ -7,9 +7,9 @@ const router = express.Router();
 router.post("/projects", authenticateToken, async (req, res) => {
   try {
     const userId = req.user.uid;
-    const { name, url, description, imageUrl } = req.body;
+    const { name, url, description } = req.body;
 
-    if (!name || !url || !description || !imageUrl) {
+    if (!name || !url || !description) {
       return res
         .status(400)
         .json({ error: "Missing required project fields." });
