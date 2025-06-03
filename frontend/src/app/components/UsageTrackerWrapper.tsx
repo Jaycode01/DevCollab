@@ -3,10 +3,18 @@
 import useUsageTracker from "@/hooks/useUsageTracker";
 import { useAuth } from "../auth/auth-provider";
 
-export default function UsageTrackerWrapper() {
-  const { token } = useAuth();
+export default function UsageTrackerWrapper({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const { token, loading } = useAuth();
 
-  useUsageTracker(token);
+  console.log("Wrapper state: ", { loading, token });
 
-  return null;
+  useUsageTracker(token, loading);
+
+  if (loading) return null;
+
+  return <>{children}</>;
 }

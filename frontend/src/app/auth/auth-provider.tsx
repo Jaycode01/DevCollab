@@ -40,6 +40,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (user) {
         setUser(user);
         const freshToken = await user.getIdToken(true);
+        settoken(freshToken);
         localStorage.setItem("token", freshToken);
       } else {
         setUser(null);

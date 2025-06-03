@@ -30,8 +30,7 @@ export default function RootLayout({
       <body className={aclonica.className}>
         <Navbar />
         <AuthProvider>
-          <UsageTrackerWrapper />
-          {children}
+          <UsageTrackerWrapper>{children}</UsageTrackerWrapper>
         </AuthProvider>
       </body>
     </html>
