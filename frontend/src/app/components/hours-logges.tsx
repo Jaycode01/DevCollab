@@ -5,6 +5,7 @@ import ProgressBar from "./progress-bar";
 import Image from "next/image";
 import Streak from ".././../../public/streak.svg";
 import { useAuth } from "../auth/auth-provider";
+import { getAuth } from "firebase/auth";
 
 interface LogEntry {
   day: string;
@@ -21,12 +22,18 @@ export default function HoursLogged() {
     const fetchLogs = async () => {
       if (!token || loading) return;
 
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (!user) return;
+
       const API_BASE =
         process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
       try {
+        const freshToken = await user.getIdToken(true);
+
         const res = await fetch(`${API_BASE}/api/logged-hours`, {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${freshToken}`,
           },
         });
 
@@ -34,7 +41,7 @@ export default function HoursLogged() {
         setlogs(data.logs || []);
         setstreak(data.streak || 0);
       } catch (err) {
-        console.error("Failed to fecth logged hours:", err);
+        console.error("Failed to fetch logged hours:", err);
       }
     };
 
