@@ -16,7 +16,7 @@ router.post("/logged-hours", authenticateToken, async (req, res) => {
     }
 
     await db.collection("loggedHours").add({
-      userid,
+      userId,
       duration,
       timestamp: admin.firestore.Timestamp.now(),
     });
