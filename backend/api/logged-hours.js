@@ -5,10 +5,8 @@ import { authenticateToken } from "../middleware/auth.js";
 const router = express.Router();
 
 router.post("/logged-hours", authenticateToken, async (req, res) => {
-  console.log("Incoming request body:", req.body);
-  console.log("User UID", req.user?.uid);
   try {
-    const userid = req.user.uid;
+    const userId = req.user.uid;
     const { duration } = req.body;
 
     if (!duration || typeof duration !== "number") {
@@ -16,7 +14,7 @@ router.post("/logged-hours", authenticateToken, async (req, res) => {
     }
 
     await db.collection("loggedHours").add({
-      userId,
+      userId, // consistent field name here
       duration,
       timestamp: admin.firestore.Timestamp.now(),
     });
@@ -41,7 +39,7 @@ router.get("/logged-hours", authenticateToken, async (req, res) => {
       .collection("loggedHours")
       .where("userId", "==", uid)
       .where("timestamp", ">=", admin.firestore.Timestamp.fromDate(startOfWeek))
-      .orderBy("_name_", "desc")
+      .orderBy("timestamp", "desc") // fixed orderBy here
       .get();
 
     const logsByDay = {};
