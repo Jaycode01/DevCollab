@@ -1,45 +1,80 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import ProgressBar from "./progress-bar";
 import Image from "next/image";
 import Streak from ".././../../public/streak.svg";
+import { useAuth } from "../auth/auth-provider";
+
+interface LogEntry {
+  day: string;
+  hours: number;
+  minutes: number;
+}
 
 export default function HoursLogged() {
+  const { token, loading } = useAuth();
+  const [logs, setlogs] = useState<LogEntry[]>([]);
+  const [streak, setstreak] = useState<number>(0);
+
+  useEffect(() => {
+    const fetchLogs = async () => {
+      if (!token || loading) return;
+
+      const API_BASE =
+        process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      try {
+        const res = await fetch(`${API_BASE}/api/logged-hours`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await res.json();
+        setlogs(data.logs || []);
+        setstreak(data.streak || 0);
+      } catch (err) {
+        console.error("Failed to fecth logged hours:", err);
+      }
+    };
+
+    fetchLogs();
+  }, [token, loading]);
+
+  const getProgress = (hours: number, minutes: number) => {
+    const totalMinutes = hours * 60 + minutes;
+    const percent = (totalMinutes / (12 * 60)) * 100;
+    return Math.min(percent, 100);
+  };
+
   return (
     <div className="flex flex-col gap-5">
       <div className="flex flex-row items-center justify-between">
-        <h3 className="md:text-2xl text-[22px]">Hours Logged</h3>
+        <h3 className="md:text-2xl text-[22px]">Logged Time</h3>
         <p className="flex items-center gap-0.5">
-          7 <Image alt="streak icon" src={Streak} width={20} height={20} />{" "}
+          {streak}{" "}
+          <Image
+            alt="streak icon"
+            src={Streak}
+            width={20}
+            height={20}
+            className="mb-1"
+          />{" "}
         </p>
       </div>
       <div className="flex flex-col gap-1.5">
-        <div className="mb-2">
-          <p className="text-sm mb-1">Monday: 7hrs 30mins</p>
-          <ProgressBar value={75} />
-        </div>
-        <div className="mb-2">
-          <p className="text-sm mb-1">Monday: 4hrs 21mins</p>
-          <ProgressBar value={42.1} />
-        </div>
-        <div className="mb-2">
-          <p className="text-sm mb-1">Wednesday: 9hrs 2mins</p>
-          <ProgressBar value={92} />
-        </div>
-        <div className="mb-2">
-          <p className="text-sm mb-1">Thursday: 2hrs 10mins</p>
-          <ProgressBar value={21} />
-        </div>
-        <div className="mb-2">
-          <p className="text-sm mb-1">Friday: 5hrs 0mins</p>
-          <ProgressBar value={50} />
-        </div>
-        <div className="mb-2">
-          <p className="text-sm mb-1">Saturday: 6hrs 6mins</p>
-          <ProgressBar value={66} />
-        </div>
-        <div className="mb-2">
-          <p className="text-sm mb-1">Sunday: 7hrs 9mins</p>
-          <ProgressBar value={79.5} />
-        </div>
+        {logs.length > 0 ? (
+          logs.map((log, i) => (
+            <div className="mb-2" key={i}>
+              <p className="text-sm mb-1">
+                {log.day}: {log.hours}hrs {log.minutes}mins
+              </p>
+              <ProgressBar value={getProgress(log.hours, log.minutes)} />
+            </div>
+          ))
+        ) : (
+          <p className="text-gray-500 text-sm">No logs yet this week.</p>
+        )}
       </div>
     </div>
   );
