@@ -121,7 +121,7 @@ export default function Dashboard() {
         return;
       }
 
-      const res = await fetch("http://localhost:5000/dashboard", {
+      const res = await fetch(`${API_BASE}/dashboard`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -155,7 +155,7 @@ export default function Dashboard() {
         error.message.includes("Failed to fetch")
       ) {
         setError(
-          "Cannot connect to backend server. Please ensure your backend is running on http://localhost:5000"
+          "Cannot connect to backend server. Please ensure your network connection is stable"
         );
       } else {
         setError(

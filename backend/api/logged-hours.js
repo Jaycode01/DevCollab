@@ -5,6 +5,8 @@ import { authenticateToken } from "../middleware/auth.js";
 const router = express.Router();
 
 router.post("/logged-hours", authenticateToken, async (req, res) => {
+  console.log("Incoming request body:", req.body);
+  console.log("User UID", req.user?.uid);
   try {
     const userid = req.user.uid;
     const { duration } = req.body;
