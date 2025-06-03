@@ -24,18 +24,25 @@ export default function HoursLogged() {
 
       const auth = getAuth();
       const user = auth.currentUser;
+
       if (!user) return;
 
-      const API_BASE =
-        process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
       try {
-        const freshToken = token;
+        const freshToken = await user.getIdToken(true); // force refresh
+        if (!freshToken) return;
+
+        const API_BASE =
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
         const res = await fetch(`${API_BASE}/api/logged-hours`, {
           headers: {
             Authorization: `Bearer ${freshToken}`,
           },
         });
+
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
 
         const data = await res.json();
         setlogs(data.logs || []);
