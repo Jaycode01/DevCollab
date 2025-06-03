@@ -3,6 +3,9 @@ import { Aclonica } from "next/font/google";
 import "./globals.css";
 import Navbar from "./navbar/page";
 import { AuthProvider } from "./auth/auth-provider";
+import useUsageTracker from "@/hooks/useUsageTracker";
+import { useAuth } from "./auth/auth-provider";
+import React from "react";
 
 const aclonica = Aclonica({
   subsets: ["latin"],
@@ -18,6 +21,13 @@ export const metadata: Metadata = {
   description: "Created and Idea by Nexon",
 };
 
+function UsageTrackerWrapper({ children }: { children: React.ReactNode }) {
+  const { token } = useAuth();
+  useUsageTracker(token);
+
+  return <>{children}</>;
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -27,7 +37,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={aclonica.className}>
         <Navbar />
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <UsageTrackerWrapper>{children}</UsageTrackerWrapper>
+        </AuthProvider>
       </body>
     </html>
   );

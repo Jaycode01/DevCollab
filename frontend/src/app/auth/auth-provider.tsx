@@ -12,6 +12,7 @@ import { auth } from "./config";
 import { useRouter } from "next/navigation";
 
 interface AuthContextType {
+  token: string | null;
   user: User | null;
   loading: boolean;
   logout: () => Promise<void>;
@@ -19,6 +20,7 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType>({
+  token: null,
   user: null,
   loading: true,
   logout: async () => {},
@@ -30,14 +32,15 @@ export const useAuth = () => useContext(AuthContext);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [token, settoken] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setUser(user);
-        const token = await user.getIdToken(true);
-        localStorage.setItem("token", token);
+        const freshToken = await user.getIdToken(true);
+        localStorage.setItem("token", freshToken);
       } else {
         setUser(null);
         localStorage.removeItem("token");
@@ -51,6 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = async () => {
     try {
       await signOut(auth);
+      settoken(null);
       localStorage.removeItem("token");
       localStorage.removeItem("userData");
       router.push("/login");
@@ -62,9 +66,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const refreshToken = async () => {
     if (user) {
       try {
-        const token = await user.getIdToken(true);
-        localStorage.setItem("token", token);
-        return token;
+        const freshToken = await user.getIdToken(true);
+        localStorage.setItem("token", freshToken);
+        return freshToken;
       } catch (error) {
         console.error("Error refreshing token: ", error);
         return null;
@@ -74,7 +78,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, logout, refreshToken }}>
+    <AuthContext.Provider
+      value={{ user, loading, logout, refreshToken, token }}
+    >
       {children}
     </AuthContext.Provider>
   );
