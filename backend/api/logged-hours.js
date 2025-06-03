@@ -14,7 +14,7 @@ router.post("/logged-hours", authenticateToken, async (req, res) => {
     }
 
     await db.collection("loggedHours").add({
-      userId, // consistent field name here
+      userId,
       duration,
       timestamp: admin.firestore.Timestamp.now(),
     });
@@ -39,7 +39,7 @@ router.get("/logged-hours", authenticateToken, async (req, res) => {
       .collection("loggedHours")
       .where("userId", "==", uid)
       .where("timestamp", ">=", admin.firestore.Timestamp.fromDate(startOfWeek))
-      .orderBy("timestamp", "desc") // fixed orderBy here
+      .orderBy("timestamp", "desc")
       .get();
 
     const logsByDay = {};
