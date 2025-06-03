@@ -27,12 +27,10 @@ export default function HoursLogged() {
 
       if (!user) return;
 
+      const API_BASE =
+        process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
       try {
-        const freshToken = await user.getIdToken(true); // force refresh
-        if (!freshToken) return;
-
-        const API_BASE =
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+        const freshToken = await user.getIdToken(true);
 
         const res = await fetch(`${API_BASE}/api/logged-hours`, {
           headers: {
@@ -40,11 +38,9 @@ export default function HoursLogged() {
           },
         });
 
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
-
         const data = await res.json();
+        console.log("Fetched logs data:", data);
+
         setlogs(data.logs || []);
         setstreak(data.streak || 0);
       } catch (err) {
