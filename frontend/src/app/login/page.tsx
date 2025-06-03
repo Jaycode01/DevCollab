@@ -88,9 +88,10 @@ export default function Login() {
           // Redirect to dashboard - using the correct path based on your folder structure
           console.log("Login successful, redirecting to dashboard...");
 
+          const API_BASE = process.env.NEXT_PUBLIC_API_URL;
           const idToken = await user.getIdToken();
           localStorage.setItem("token", idToken);
-          const response = await fetch("http://localhost:5000/dashboard", {
+          const response = await fetch(`${API_BASE}/dashboard`, {
             method: "GET",
             headers: {
               Authorization: `Bearer ${idToken}`,

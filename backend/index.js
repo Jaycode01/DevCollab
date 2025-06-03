@@ -7,6 +7,7 @@ import { Server } from "socket.io";
 import dashboardRoutes from "./routes/dashboard.js";
 import projectRoutes from "./routes/project.js";
 import notificationRoutes from "./routes/notifications.js";
+import loggedHoursRoutes from "./api/logged-hours.js";
 
 dotenv.config({ path: "./.env" });
 
@@ -62,6 +63,7 @@ app.get("/", (req, res) => {
 app.use("/dashboard", dashboardRoutes);
 app.use("/api", projectRoutes);
 app.use("/api", notificationRoutes);
+app.use("/api", loggedHoursRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ error: "Route not found" });
