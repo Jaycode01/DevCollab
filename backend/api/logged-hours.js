@@ -41,7 +41,7 @@ router.get("/logged-hours", authenticateToken, async (req, res) => {
       .collection("loggedHours")
       .where("userId", "==", uid)
       .where("timestamp", ">=", admin.firestore.Timestamp.fromDate(startOfWeek))
-      .orderBy("timestamp", "desc")
+      .orderBy("_name_", "desc")
       .get();
 
     const logsByDay = {};
