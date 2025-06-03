@@ -29,7 +29,7 @@ export default function HoursLogged() {
       const API_BASE =
         process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
       try {
-        const freshToken = await user.getIdToken(true);
+        const freshToken = token;
 
         const res = await fetch(`${API_BASE}/api/logged-hours`, {
           headers: {
