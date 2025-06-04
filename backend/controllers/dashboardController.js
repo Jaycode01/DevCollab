@@ -53,7 +53,7 @@ export const addNewProject = async (req, res) => {
       userId,
     });
 
-    const dashboardRef = db.collaction("dashboard").doc(userId);
+    const dashboardRef = db.collection("dashboard").doc(userId);
     await dashboardRef.set(
       {
         totalProjects: admin.firestore.FieldValue.increment(1),
