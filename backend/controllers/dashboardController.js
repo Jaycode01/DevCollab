@@ -12,6 +12,7 @@ export const getDashboard = async (req, res) => {
         pendingTasks: 0,
         teamMembers: 0,
         totalProjects: 0,
+        totalHoursLogged: 0,
         createdAt: new Date().toISOString(),
       };
       await docRef.set(defualtDashboard);

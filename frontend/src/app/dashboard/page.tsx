@@ -11,6 +11,7 @@ import HoursLogged from "../components/hours-logges";
 import TasksAndActivity from "../components/tasks-and-activity";
 import TaskPopup from "../components/task-popup";
 import TeamAndNotifications from "../components/team,notifications-and-stats";
+import TotalHourLogged from "../../../public/flame.svg";
 import { useRouter } from "next/navigation";
 
 type Project = {
@@ -198,19 +199,19 @@ export default function Dashboard() {
 
         {/* Error message and retry button */}
         {error && (
-          <div className="mx-4 mb-4 p-4 bg-red-50 border border-red-200 rounded-md">
-            <p className="text-red-600 mb-2">{error}</p>
+          <div className="mx-4 mb-4 py-4 px-2 bg-red-50 border border-red-200 rounded-md">
+            <p className="text-red-600 mb-2 text-sm">{error}</p>
             <button
               onClick={retryLoading}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm"
             >
-              Retry Connection
+              Refresh
             </button>
           </div>
         )}
 
         {/* Dashboard stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 p-4">
           {/* First box of the grid */}
           <div className="bg-white shadow-md p-3 rounded-md flex flex-row items-center gap-3">
             <div className="bg-blue-200 p-3.5 rounded-full w-fit">
@@ -309,6 +310,28 @@ export default function Dashboard() {
                 </p>
               )}
               <p className="text-gray-400 text-sm">Team Members</p>
+            </div>
+          </div>
+          <div className="bg-white shadow-md p-3 rounded-md flex flex-row items-center gap-3 sm:w-[100%]">
+            <div className="bg-green-200 w-fit p-3.5 rounded-full">
+              <Image
+                src={TotalHourLogged || "placeholder.svg"}
+                alt="total hours logged"
+                width={30}
+                height={30}
+              />
+            </div>
+            <div className="">
+              {isLoading ? (
+                <div className="animate-pulse">
+                  <div className="h6 bg-gray-300 rounded w-12 mb-1"></div>
+                </div>
+              ) : error ? (
+                <p className="text-red-500 text-sm">--</p>
+              ) : (
+                <p className="text-gray-900 text-[20px]">0</p>
+              )}
+              <p className="text-gray-400 text-sm">Total Hours Logged</p>
             </div>
           </div>
         </div>

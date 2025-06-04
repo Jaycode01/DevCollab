@@ -19,6 +19,15 @@ router.post("/logged-hours", authenticateToken, async (req, res) => {
       timestamp: admin.firestore.Timestamp.now(),
     });
 
+    const dashboardRef = db.collection("dashboard").doc(userId);
+    await dashboardRef.set(
+      {
+        totalHoursLogged: admin.firestore.FieldValue.increment(duration),
+        lastUpdated: new Date().toISOString,
+      },
+      { merge: true }
+    );
+
     res.status(200).json({ success: true });
   } catch (error) {
     console.error("Error logging usage:", error);
