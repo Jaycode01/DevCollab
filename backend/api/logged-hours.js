@@ -23,7 +23,7 @@ router.post("/logged-hours", authenticateToken, async (req, res) => {
     await dashboardRef.set(
       {
         totalHoursLogged: admin.firestore.FieldValue.increment(duration),
-        lastUpdated: new Date().toISOString,
+        lastUpdated: new Date().toISOString(),
       },
       { merge: true }
     );
