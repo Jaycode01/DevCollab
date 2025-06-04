@@ -97,4 +97,31 @@ router.get("/logged-hours", authenticateToken, async (req, res) => {
   }
 });
 
+router.get("/total-hours", authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.uid;
+
+    const snapshot = await db
+      .collection("loggedHours")
+      .where("userId", "==", userId)
+      .get();
+
+    let totalMinutes = 0;
+    snapshot.forEach((doc) => {
+      const { duration } = doc.data();
+      if (typeof duration === "number") {
+        totalMinutes += duration;
+      }
+    });
+
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+
+    res.json({ hours, minutes, totalMinutes });
+  } catch (error) {
+    console.error("Error calculating total hours logged:", error);
+    res.status(500).json({ error: "Failed to calculate total hours" });
+  }
+});
+
 export default router;

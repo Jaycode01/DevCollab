@@ -27,6 +27,7 @@ type DashboardData = {
   pendingTasks: number;
   completedTasks: number;
   teamMembers: number;
+  totalHoursLogged: number;
 };
 
 type UserData = {
@@ -329,7 +330,9 @@ export default function Dashboard() {
               ) : error ? (
                 <p className="text-red-500 text-sm">--</p>
               ) : (
-                <p className="text-gray-900 text-[20px]">0</p>
+                <p className="text-gray-900 text-[20px]">
+                  {dashboardData?.totalHoursLogged || 0}
+                </p>
               )}
               <p className="text-gray-400 text-sm">Total Hours Logged</p>
             </div>
