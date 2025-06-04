@@ -222,16 +222,16 @@ export default function Projects() {
                   </div>
                 </div>
                 <div className="relative" ref={menuRef}>
-                  <button type="button" className="z-20">
-                    <Image
-                      src={Dots}
-                      alt="project action icon"
-                      onClick={() =>
-                        setMenuOpen((prev) =>
-                          prev === project.id ? null : project.id
-                        )
-                      }
-                    />
+                  <button
+                    onClick={() =>
+                      setMenuOpen((prev) =>
+                        prev === project.id ? null : project.id
+                      )
+                    }
+                    type="button"
+                    className="z-20"
+                  >
+                    <Image src={Dots} alt="project action icon" />
                   </button>
 
                   {menuOpen === project.id && (
