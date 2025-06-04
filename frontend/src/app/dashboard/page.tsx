@@ -13,6 +13,8 @@ import TaskPopup from "../components/task-popup";
 import TeamAndNotifications from "../components/team,notifications-and-stats";
 import TotalHourLogged from "../../../public/flame.svg";
 import { useRouter } from "next/navigation";
+import { getIdToken } from "firebase/auth";
+import { auth } from "../auth/config";
 
 type Project = {
   id: number;
@@ -45,6 +47,7 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [userData, setuserData] = useState<UserData | null>(null);
+  const [totalHours, settotalHours] = useState<number | null>(null);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -181,6 +184,33 @@ export default function Dashboard() {
       console.error("Error loading user data:", error);
     }
   }, []);
+
+  useEffect(() => {
+    const fetchTotalHours = async () => {
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const token = await getIdToken(user);
+
+      const res = await fetch(`${API_BASE}/api/total-hours`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+      console.log("Total hours response:", data);
+
+      const hours = typeof data.hours === "number" ? data.hours : 0;
+      const minutes = typeof data.minutes === "number" ? data.minutes : 0;
+
+      const totalMinutes = hours * 60 + minutes;
+      const decimalHours = (totalMinutes / 60).toFixed(1);
+      settotalHours(Number(decimalHours));
+    };
+
+    fetchTotalHours();
+  }, [API_BASE]);
 
   return (
     <>
@@ -331,7 +361,7 @@ export default function Dashboard() {
                 <p className="text-red-500 text-sm">--</p>
               ) : (
                 <p className="text-gray-900 text-[20px]">
-                  {dashboardData?.totalHoursLogged || 0}
+                  {totalHours !== null ? `${totalHours}` : "--"}
                 </p>
               )}
               <p className="text-gray-400 text-sm">Total Hours Logged</p>
