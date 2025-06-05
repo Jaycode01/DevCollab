@@ -11,7 +11,7 @@ router.get("/notifications", authenticateToken, async (req, res) => {
     const snapshot = await db
       .collection("notifications")
       .where("userId", "==", userId)
-      .orderBy("createdAt", "desc")
+      .orderBy("timestamp", "desc")
       .limit(50)
       .get();
 
