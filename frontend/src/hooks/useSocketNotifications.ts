@@ -3,6 +3,8 @@ import { io } from "socket.io-client";
 import { useAuth } from "@/app/auth/auth-provider";
 
 type Notification = {
+  userId: string;
+  path: string;
   message: string;
   timestamp: string;
 };
