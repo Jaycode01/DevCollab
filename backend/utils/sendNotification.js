@@ -1,14 +1,12 @@
-export function sendNotification(io, userId, message) {
+import { io } from "../index.js";
+
+export function sendNotification(path, userId, message) {
   const notification = {
     userId,
+    path,
     message,
     timestamp: new Date().toISOString(),
   };
 
-  req.db
-    .collection("notifications")
-    .add(notification)
-    .catch((err) => console.error("Failed to store notification!", err));
-
-  req.io.emit("notification", notification);
+  io.emit("notification", notification);
 }
