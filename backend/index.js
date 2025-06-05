@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import http from "http";
 import { Server } from "socket.io";
+import { db } from "./firebase.js";
 
 import dashboardRoutes from "./routes/dashboard.js";
 import projectRoutes from "./routes/project.js";
