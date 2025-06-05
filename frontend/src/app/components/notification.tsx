@@ -13,15 +13,12 @@ export default function Notifications() {
 
       try {
         const token = await user.getIdToken();
-
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/notifications`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const API_BASE = process.env.NEXT_PUBLIC_API_URL;
+        const res = await fetch(`${API_BASE}/api/notifications`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         if (!res.ok) {
           throw new Error(`Server returned ${res.status}`);
