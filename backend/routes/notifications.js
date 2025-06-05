@@ -11,11 +11,14 @@ router.get("/notifications", authenticateToken, async (req, res) => {
     const snapshot = await db
       .collection("notifications")
       .where("userId", "==", userId)
-      .orderBy("timestamp", "desc")
+      .orderBy("createdAt", "desc")
       .limit(50)
       .get();
 
-    const notifications = snapshot.docs.map((doc) => doc.data());
+    const notifications = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
 
     res.status(200).json({ notifications });
   } catch (error) {
