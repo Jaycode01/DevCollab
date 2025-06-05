@@ -1,6 +1,7 @@
 import express from "express";
 import { db, admin } from "../firebase.js";
 import { authenticateToken } from "../middleware/auth.js";
+import { sendNotification } from "../utils/sendNotification.js";
 
 const router = express.Router();
 
@@ -26,6 +27,12 @@ router.post("/logged-hours", authenticateToken, async (req, res) => {
         lastUpdated: new Date().toISOString(),
       },
       { merge: true }
+    );
+
+    sendNotification(
+      req,
+      userId,
+      `You logged ${duration} minutes successfully.`
     );
 
     res.status(200).json({ success: true });
