@@ -5,20 +5,17 @@ import { authenticateToken } from "../middleware/auth.js";
 const router = express.Router();
 
 router.get("/notifications", authenticateToken, async (req, res) => {
-  try {
-    const userId = req.user.uid;
+  const userId = req.user.uid;
 
+  try {
     const snapshot = await db
       .collection("notifications")
       .where("userId", "==", userId)
-      .orderBy("createdAt", "desc")
-      .limit(5)
+      .orderBy("timestamp", "desc")
+      .limit(50)
       .get();
 
-    const notifications = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+    const notifications = snapshot.docs.map((doc) => doc.data());
 
     res.status(200).json({ notifications });
   } catch (error) {

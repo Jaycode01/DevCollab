@@ -1,6 +1,7 @@
 import express from "express";
 import { db, admin } from "../firebase.js";
 import { authenticateToken } from "../middleware/auth.js";
+import { sendNotification } from "../utils/sendNotification.js";
 
 const router = express.Router();
 
@@ -39,6 +40,11 @@ router.post("/projects", authenticateToken, async (req, res) => {
       ...newProject,
     });
 
+    sendNotification(
+      req.originalUrl,
+      userId,
+      `You created a new project: "${name}".`
+    );
     res.status(201).json({
       success: true,
       project: {
@@ -100,6 +106,12 @@ router.delete("/projects/:projectId", authenticateToken, async (req, res) => {
 
     req.io.emit("Project:deleted", { id: projectId });
 
+    sendNotification(
+      req.originalUrl,
+      userId,
+      `You deleted the project: "${projectName}".`
+    );
+
     res.status(200).json({ success: true, message: "Projects deleted." });
   } catch (err) {
     console.error("Error deleting project:", err);
@@ -130,6 +142,12 @@ router.put("/projects/:id", authenticateToken, async (req, res) => {
       description,
       updatedAt: new Date().toISOString(),
     });
+
+    sendNotification(
+      req.originalUrl,
+      userId,
+      `You updated the project: "${name}".`
+    );
 
     return res.json({ message: "Project updated successfully." });
   } catch (error) {

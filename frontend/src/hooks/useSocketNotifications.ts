@@ -18,9 +18,20 @@ export const useSocketNotifications = () => {
   useEffect(() => {
     if (!user?.uid) return;
 
+    const fetchInitialNotifications = async () => {
+      const res = await fetch(`${API_BASE}/notifications?uid=${user.uid}`);
+      const data = await res.json();
+      if (data.notifications) {
+        setNotifications(data.notifications.reverse());
+      }
+    };
+
+    fetchInitialNotifications();
+
     const socket = io(`${API_BASE}`);
 
     socket.emit("join", user.uid);
+
     socket.on("notification", (data: Notification) => {
       console.log("Received notification:", data);
       setNotifications((prev) => [data, ...prev]);

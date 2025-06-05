@@ -4,7 +4,7 @@ export default function Notifications() {
   const { notifications } = useSocketNotifications();
 
   return (
-    <div className="p-4 bg-white shadow-md border rounded-sm">
+    <div className="p-4 bg-white shadow-md border rounded-sm h-[600px] overflow-auto">
       <h2 className="text-xl font-semibold mb-4">Notifications</h2>
       {notifications.length === 0 ? (
         <p className="text-sm">No notifications yet.</p>

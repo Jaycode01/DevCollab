@@ -1,6 +1,7 @@
 import { io } from "../index.js";
+import { db } from "../firebase.js";
 
-export function sendNotification(path, userId, message) {
+export async function sendNotification(path, userId, message) {
   const notification = {
     userId,
     path,
@@ -8,5 +9,7 @@ export function sendNotification(path, userId, message) {
     timestamp: new Date().toISOString(),
   };
 
-  io.emit("notification", notification);
+  io.to(userId).emit("notification", notification);
+
+  await db.collection("otifications").add(notification);
 }
