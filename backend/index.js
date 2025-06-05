@@ -44,6 +44,11 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
   console.log("New Client connected:", socket.id);
 
+  socket.on("join", (userId) => {
+    socket.join(userId);
+    console.log(`User ${userId} joined their room`);
+  });
+
   socket.on("disconnect", () => {
     console.log("Client disconnected:", socket.id);
   });
@@ -51,6 +56,7 @@ io.on("connection", (socket) => {
 
 app.use((req, res, next) => {
   req.io = io;
+  req.db = db;
   next();
 });
 

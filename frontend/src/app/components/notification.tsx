@@ -1,38 +1,25 @@
-type Notification = {
-  id: string;
-  message: string;
-};
+import { useSocketNotifications } from "@/hooks/useSocketNotifications";
 
-type Props = {
-  notifyData: Notification[];
-};
+export default function Notifications() {
+  const { notifications } = useSocketNotifications();
 
-export default function Notification({ notifyData }: Props) {
-  if (!notifyData || notifyData.length === 0) {
-    return (
-      <div className="bg-white shadow-md rounded-md border p-4 w-full">
-        <h3 className="text-xl font-semibold mb-4">All Notifications</h3>
-        <p>No notifications available</p>
-      </div>
-    );
+  if (notifications.length === 0) {
+    return <p className="text-gray-500">No notifications yet.</p>;
   }
 
   return (
-    <div className="bg-white shadow-md rounded-md border p-4 w-full">
-      <h3 className="text-xl font-semibold mb-4">All Notifications</h3>
-
-      <div className="max-h-[400px] overflow-y-auto pr-2">
-        {notifyData.map((notify) => (
-          <div
-            className="py-2 transition-all duration-300 hover:scale-95 cursor-pointer"
-            key={notify.id}
-          >
-            <div className="p-3 border rounded-md shadow-sm">
-              {notify.message}
-            </div>
-          </div>
-        ))}
-      </div>
+    <div className="p-4 border rounded-lg shadow-md bg-white max-w-md aspect-square">
+      <h2 className="text-xl font-semibold mb-2">Notifications</h2>
     </div>
   );
+  <ul className="space-y-2">
+    {notifications.map((notif, idx) => (
+      <li key={idx} className="bg-gray-100 p-2 rounded">
+        <div className="text-sm">{notif.message}</div>
+        <div className="text-sm text-gray-500">
+          {new Date(notif.timestamp).toLocaleString()}
+        </div>
+      </li>
+    ))}
+  </ul>;
 }
