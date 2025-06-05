@@ -30,7 +30,7 @@ router.post("/logged-hours", authenticateToken, async (req, res) => {
     );
 
     sendNotification(
-      req,
+      req.originalUrl,
       userId,
       `You logged ${duration} minutes successfully.`
     );
