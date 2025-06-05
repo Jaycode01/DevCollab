@@ -11,5 +11,5 @@ export async function sendNotification(path, userId, message) {
 
   io.to(userId).emit("notification", notification);
 
-  await db.collection("otifications").add(notification);
+  await db.collection("notifications").add(notification);
 }
