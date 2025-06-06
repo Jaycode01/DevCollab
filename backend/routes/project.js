@@ -92,6 +92,10 @@ router.delete("/projects/:projectId", authenticateToken, async (req, res) => {
         .status(404)
         .json({ error: "Project not found or unauthorized." });
     }
+
+    const projectData = projectDoc.data();
+    const projectname = projectData.name;
+
     await projectRef.delete();
 
     const dashRef = db.collection("dashboard").doc(userId);
@@ -133,7 +137,7 @@ router.put("/projects/:id", authenticateToken, async (req, res) => {
     }
 
     if (doc.data().userId !== uid) {
-      return res.status(403).json({ erro: "Unauthorized" });
+      return res.status(403).json({ error: "Unauthorized" });
     }
 
     await projectRef.update({

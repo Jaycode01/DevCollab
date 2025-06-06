@@ -244,14 +244,12 @@ export default function Projects() {
                         </Link>
                       </li>
                       <li className="text-red-600 hover:border-b w-fit border-red-600">
-                        <Link href={`#`}>
-                          <button
-                            onClick={() => handleDelete(project.id)}
-                            className="text-left w-full disabled:opacity-50"
-                          >
-                            Delete
-                          </button>
-                        </Link>
+                        <button
+                          onClick={() => handleDelete(project.id)}
+                          className="text-left w-full disabled:opacity-50"
+                        >
+                          Delete
+                        </button>
                       </li>
                     </ul>
                   )}
