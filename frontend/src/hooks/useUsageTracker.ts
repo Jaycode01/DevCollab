@@ -19,7 +19,7 @@ export default function useUsageTracker(
         console.log("📡 Sending usage log...");
         await axios.post(
           `${API_BASE}/api/logged-hours`,
-          { duration: 1 },
+          { duration: 10 },
           { headers: { Authorization: `Bearer ${token}` } }
         );
         console.log("Usage logged");
