@@ -112,7 +112,7 @@ router.delete("/projects/:projectId", authenticateToken, async (req, res) => {
 
     sendNotification(
       req.originalUrl,
-      uid,
+      userId,
       `You deleted the project: "${projectName}".`
     );
 
@@ -149,7 +149,7 @@ router.put("/projects/:id", authenticateToken, async (req, res) => {
 
     sendNotification(
       req.originalUrl,
-      userId,
+      uid,
       `You updated the project: "${name}".`
     );
 
