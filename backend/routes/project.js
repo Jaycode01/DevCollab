@@ -150,7 +150,7 @@ router.put("/projects/:id", authenticateToken, async (req, res) => {
     sendNotification(
       req.originalUrl,
       uid,
-      `You updated the project: "${name}".`
+      `You updated a project to: "${name}".`
     );
 
     return res.json({ message: "Project updated successfully." });

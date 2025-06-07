@@ -1,3 +1,8 @@
 export default function Team() {
-  return <div>Team</div>;
+  return (
+    <>
+      <section></section>
+      <section>The main Team content</section>
+    </>
+  );
 }
