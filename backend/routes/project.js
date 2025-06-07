@@ -94,7 +94,7 @@ router.delete("/projects/:projectId", authenticateToken, async (req, res) => {
     }
 
     const projectData = projectDoc.data();
-    const projectname = projectData.name;
+    const projectName = projectData.name;
 
     await projectRef.delete();
 
@@ -108,15 +108,15 @@ router.delete("/projects/:projectId", authenticateToken, async (req, res) => {
       }
     );
 
-    req.io.emit("Project:deleted", { id: projectId });
+    req.io.emit("project:deleted", { id: projectId });
 
     sendNotification(
       req.originalUrl,
-      userId,
+      uid,
       `You deleted the project: "${projectName}".`
     );
 
-    res.status(200).json({ success: true, message: "Projects deleted." });
+    res.status(200).json({ success: true, message: "Project deleted." });
   } catch (err) {
     console.error("Error deleting project:", err);
     res.status(500).json({ error: "Failed to delete project." });
