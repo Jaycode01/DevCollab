@@ -106,7 +106,7 @@ export default function Team() {
           </button>
         )}
 
-        <section className="flex-1">
+        <section className="flex-1 w-full max-w-full overflow-x-auto">
           <div className="md:flex-row flex-col flex  justify-start md:justify-between px-5 py-3 md:items-center items-stretch h-fit">
             <h1 className="text-[25px]">Team Name</h1>
             <div className="flex h-fit gap-3 md:flex-row flex-col">
@@ -159,6 +159,27 @@ export default function Team() {
                     email: "kelvin@kaf.com",
                     status: "offline",
                     statusColor: "bg-red-500",
+                  },
+                  {
+                    name: "Joseph Lamidi",
+                    role: "Product Designer",
+                    email: "jay@designs.com",
+                    status: "online",
+                    statusColor: "bg-green-500",
+                  },
+                  {
+                    name: "Abdullahi Olaiwon",
+                    role: "Frontend Dev",
+                    email: "olaiwon@404.com",
+                    status: "away",
+                    statusColor: "bg-orange-500",
+                  },
+                  {
+                    name: "David Lamidi",
+                    role: "Photographer",
+                    email: "dave@visuals.com",
+                    status: "onine",
+                    statusColor: "bg-green-500",
                   },
                 ].map((member, index) => (
                   <tr
