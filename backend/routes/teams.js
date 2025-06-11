@@ -1,8 +1,8 @@
 import express from "express";
 import { FieldValue } from "firebase-admin/firestore";
 import { db } from "../firebase";
+
 const router = express.Router();
-const db = admin.firestore();
 
 router.post("/teams", async (req, res) => {
   try {
@@ -19,7 +19,7 @@ router.post("/teams", async (req, res) => {
       description: description || "",
       createdBy: userUid,
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
-      members: [{ uid: userUid, role: admin }],
+      members: [{ uid: userUid, role: "admin" }],
       memberUids: [userUid], //Makes it easy to query later
     });
 
@@ -30,4 +30,4 @@ router.post("/teams", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;
