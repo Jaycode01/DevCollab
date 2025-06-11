@@ -7,11 +7,13 @@ import AddIcon from "../../../public/add.svg";
 import OpenPanel from "../../../public/open-panel.svg";
 import ClosePanel from "../../../public/close-panel.svg";
 import User from "../../../public/user.svg";
+import CreateTeamModal from "../components/createTeamModal";
 
 export default function Team() {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const menuRef = useRef<HTMLDivElement | null>(null);
+  const [showCreateModal, setshowCreateModal] = useState(false);
 
   const teams = ["Frontend Team", "Backend Team", "Design Team"];
 
@@ -31,6 +33,11 @@ export default function Team() {
   return (
     <>
       <div className="flex bg-gray-50 border-t relative min-h-screen">
+        {showCreateModal && (
+          <div className=" p-5 fixed top-[25%] left-[25%] w-1/2 bg-white border shadow-md">
+            <CreateTeamModal />
+          </div>
+        )}
         <div
           className={`fixed top-0 left-0 h-full z-30 transition-transform duration-300 ease-in-out ${
             sidebarOpen ? "translate-x-0" : "-translate-x-full"
@@ -85,6 +92,7 @@ export default function Team() {
 
           <button
             type="button"
+            onClick={() => setshowCreateModal(true)}
             className="text-[13px] w-full mt-[30px] bg-blue-600 text-white p-2 rounded hover:bg-blue-500"
           >
             Create New Team
