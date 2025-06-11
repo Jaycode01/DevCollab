@@ -16,7 +16,8 @@ export default function CreateTeamModal({
     e.preventDefault();
 
     const token = localStorage.getItem("token");
-    const userUid = localStorage.getItem("userUid");
+    const userDataString = localStorage.getItem("userData");
+    const userUid = userDataString ? JSON.parse(userDataString)?.uid : null;
 
     if (!teamName || !userUid || !token) {
       seterror("Missing required info or you're not logged in.");
