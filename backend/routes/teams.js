@@ -1,6 +1,6 @@
 import express from "express";
 import { FieldValue } from "firebase-admin/firestore";
-import { db } from "../firebase.j";
+import { db } from "../firebase.js";
 
 const router = express.Router();
 
