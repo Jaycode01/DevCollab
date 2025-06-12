@@ -42,6 +42,11 @@ router.get("/teams", async (req, res) => {
     const teamsRef = db.collection("teams");
     const snapshot = await teamsRef.where("createdBy", "==", userUid).get();
 
+    if (!snapshot || !snapshot.docs) {
+      console.error("Firestore returned an invalid snaphot:", snapshot);
+      return res.status(500).json({ mesage: "Invalid Firestore response" });
+    }
+
     if (snapshot.empty) {
       return res.status(200).json({ teams: [] });
     }

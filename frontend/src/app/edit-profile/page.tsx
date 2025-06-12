@@ -271,7 +271,7 @@ export default function EditProfile() {
           />
         </div>
         <div className="flex flex-col md:w-3/5 w-11/12 mx-auto">
-          <label htmlFor="bio">Bio:</label>
+          <label htmlFor="bio">Role/Bio:</label>
           <textarea
             name="bio"
             id="bio"
