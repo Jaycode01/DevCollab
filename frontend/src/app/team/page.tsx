@@ -8,6 +8,7 @@ import OpenPanel from "../../../public/open-panel.svg";
 import ClosePanel from "../../../public/close-panel.svg";
 import User from "../../../public/user.svg";
 import CreateTeamModal from "../components/createTeamModal";
+import AddTeamMemberModal from "../components/addTeamMemberModal";
 
 type Team = {
   id: string;
@@ -72,6 +73,9 @@ export default function Team() {
             />
           </div>
         )}
+        <div className="bg-white border shadow-md z-30 p-5 fixed top-[25%] left-[25%] w-1/2">
+          <AddTeamMemberModal />
+        </div>
         <div
           className={`fixed top-0 left-0 h-full z-30 transition-transform duration-300 ease-in-out ${
             sidebarOpen ? "translate-x-0" : "-translate-x-full"
