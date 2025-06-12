@@ -35,7 +35,10 @@ export default function Team() {
       <div className="flex bg-gray-50 border-t relative min-h-screen">
         {showCreateModal && (
           <div className=" p-5 fixed top-[25%] left-[25%] w-1/2 bg-white border shadow-md">
-            <CreateTeamModal />
+            <CreateTeamModal
+              onSuccess={() => setshowCreateModal(false)}
+              onClose={() => setshowCreateModal(false)}
+            />
           </div>
         )}
         <div

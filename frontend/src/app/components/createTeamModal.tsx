@@ -1,10 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
+import CancelIcon from "../../../public/cancel.svg";
 
 export default function CreateTeamModal({
+  onClose,
   onSuccess,
 }: {
+  onClose: () => void;
   onSuccess?: () => void;
 }) {
   const [teamName, setteamName] = useState("");
@@ -62,6 +66,11 @@ export default function CreateTeamModal({
 
   return (
     <div>
+      <div className="flex flex-row justify-end mb-2">
+        <button type="button" onClick={onClose}>
+          <Image alt="cancel icon" src={CancelIcon} width={25} height={25} />
+        </button>
+      </div>
       <form
         action=""
         method=""
