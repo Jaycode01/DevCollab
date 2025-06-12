@@ -14,10 +14,29 @@ export default function Team() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const [showCreateModal, setshowCreateModal] = useState(false);
+  const [teams, setteams] = useState([]);
 
-  const teams = ["Frontend Team", "Backend Team", "Design Team"];
+  const fetchTeams = async () => {
+    const userDataString = localStorage.getItem("userData");
+    const userUid = userDataString ? JSON.parse(userDataString)?.uid : null;
+
+    if (!userUid) return;
+
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL;
+
+    try {
+      const res = await fetch(`${API_BASE}/api/teams?userUid=${userUid}`);
+      const data = await res.json();
+
+      setteams(data.teams || []);
+    } catch (error) {
+      console.error("Error fetching teams:", error);
+    }
+  };
 
   useEffect(() => {
+    fetchTeams();
+
     function handleClickOutside(event: MouseEvent) {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setActiveMenu(null);
@@ -36,7 +55,10 @@ export default function Team() {
         {showCreateModal && (
           <div className=" p-5 fixed top-[25%] left-[25%] w-1/2 bg-white border shadow-md">
             <CreateTeamModal
-              onSuccess={() => setshowCreateModal(false)}
+              onSuccess={() => {
+                setshowCreateModal(false);
+                fetchTeams();
+              }}
               onClose={() => setshowCreateModal(false)}
             />
           </div>
@@ -54,43 +76,47 @@ export default function Team() {
           </div>
 
           <div className="flex-1">
-            {teams.map((team) => (
-              <div
-                key={team}
-                className="flex justify-between items-center hover:bg-gray-50 p-2 rounded hover:border hover:cursor-pointer hover:text-blue-600 relative"
-              >
-                <button type="button" className="text-sm">
-                  {team}
-                </button>
-                <div ref={menuRef} className="relative">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setActiveMenu((prev) => (prev === team ? null : team))
-                    }
-                  >
-                    <Image
-                      src={Dots}
-                      width={25}
-                      height={25}
-                      alt="dots"
-                      className="pt-2.5"
-                    />
+            {teams.length === 0 ? (
+              <p className="text-sm text-gray-500">No teams created yet.</p>
+            ) : (
+              teams.map((team) => (
+                <div
+                  key={team}
+                  className="flex justify-between items-center hover:bg-gray-50 p-2 rounded hover:border hover:cursor-pointer hover:text-blue-600 relative"
+                >
+                  <button type="button" className="text-sm">
+                    {team}
                   </button>
+                  <div ref={menuRef} className="relative">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setActiveMenu((prev) => (prev === team ? null : team))
+                      }
+                    >
+                      <Image
+                        src={Dots}
+                        width={25}
+                        height={25}
+                        alt="dots"
+                        className="pt-2.5"
+                      />
+                    </button>
 
-                  {activeMenu === team && (
-                    <ul className="bg-white text-gray-900 hover:text-gray-900 absolute left-[-135spx]  w-40 top-[45px] border shadow text-sm px-2 py-1 z-20">
-                      <li className="border-gray-900 hover:border-b w-fit">
-                        Edit
-                      </li>
-                      <li className="border-red-600 hover:border-b text-red-600 w-fit">
-                        Delete
-                      </li>
-                    </ul>
-                  )}
+                    {activeMenu === team && (
+                      <ul className="bg-white text-gray-900 hover:text-gray-900 absolute left-[-135spx]  w-40 top-[45px] border shadow text-sm px-2 py-1 z-20">
+                        <li className="border-gray-900 hover:border-b w-fit">
+                          Edit
+                        </li>
+                        <li className="border-red-600 hover:border-b text-red-600 w-fit">
+                          Delete
+                        </li>
+                      </ul>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
 
           <button

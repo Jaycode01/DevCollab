@@ -29,4 +29,33 @@ router.post("/teams", async (req, res) => {
   }
 });
 
+router.get("/teams", async (req, res) => {
+  try {
+    const userUid = req.query.userUid;
+
+    if (!userUid) {
+      return res
+        .status(400)
+        .json({ message: "Missing UserUid or You're not logged In" });
+    }
+
+    const teamsRef = db.collection("teams");
+    const snapshot = await teamsRef.where("createdBy", "==", userUid).get();
+
+    if (snapshot.empty) {
+      return res.status(200).json({ teams: [] });
+    }
+
+    const teams = snapshot.doc.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    res.sendStatus(200).json({ teams });
+  } catch (error) {
+    console.error("Error fetching teams:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 export default router;
