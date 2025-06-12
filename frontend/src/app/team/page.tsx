@@ -9,12 +9,21 @@ import ClosePanel from "../../../public/close-panel.svg";
 import User from "../../../public/user.svg";
 import CreateTeamModal from "../components/createTeamModal";
 
+type Team = {
+  id: string;
+  name: string;
+  description?: string;
+  createdBy: string;
+  createdAt?: string;
+  members?: { uid: string; role: string }[];
+};
+
 export default function Team() {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const [showCreateModal, setshowCreateModal] = useState(false);
-  const [teams, setteams] = useState([]);
+  const [teams, setteams] = useState<Team[]>([]);
 
   const fetchTeams = async () => {
     const userDataString = localStorage.getItem("userData");
@@ -53,7 +62,7 @@ export default function Team() {
     <>
       <div className="flex bg-gray-50 border-t relative min-h-screen">
         {showCreateModal && (
-          <div className=" p-5 fixed top-[25%] left-[25%] w-1/2 bg-white border shadow-md">
+          <div className=" p-5 fixed top-[25%] left-[25%] w-1/2 bg-white border shadow-md z-50">
             <CreateTeamModal
               onSuccess={() => {
                 setshowCreateModal(false);
@@ -66,7 +75,7 @@ export default function Team() {
         <div
           className={`fixed top-0 left-0 h-full z-30 transition-transform duration-300 ease-in-out ${
             sidebarOpen ? "translate-x-0" : "-translate-x-full"
-          } w-[70%] md:w-[300px] border-r bg-white flex flex-col gap-5 p-3`}
+          } w-[70%] md:w-[300px] border-r bg-white flex flex-col gap-5 p-3 shadow-md`}
         >
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-[20px]">Teams</h2>
@@ -81,17 +90,19 @@ export default function Team() {
             ) : (
               teams.map((team) => (
                 <div
-                  key={team}
+                  key={team.id}
                   className="flex justify-between items-center hover:bg-gray-50 p-2 rounded hover:border hover:cursor-pointer hover:text-blue-600 relative"
                 >
                   <button type="button" className="text-sm">
-                    {team}
+                    {team.name}
                   </button>
                   <div ref={menuRef} className="relative">
                     <button
                       type="button"
                       onClick={() =>
-                        setActiveMenu((prev) => (prev === team ? null : team))
+                        setActiveMenu((prev) =>
+                          prev === team.id ? null : team.id
+                        )
                       }
                     >
                       <Image
@@ -103,10 +114,13 @@ export default function Team() {
                       />
                     </button>
 
-                    {activeMenu === team && (
-                      <ul className="bg-white text-gray-900 hover:text-gray-900 absolute left-[-135spx]  w-40 top-[45px] border shadow text-sm px-2 py-1 z-20">
+                    {activeMenu === team.id && (
+                      <ul className="bg-white text-gray-900 hover:text-gray-900 absolute left-[-135px]  w-40 top-[45px] border shadow text-sm px-2 py-1 z-20 flex flex-col gap-1.5">
                         <li className="border-gray-900 hover:border-b w-fit">
                           Edit
+                        </li>
+                        <li className="border-gray-900 hover:border-b w-fit">
+                          Info
                         </li>
                         <li className="border-red-600 hover:border-b text-red-600 w-fit">
                           Delete
