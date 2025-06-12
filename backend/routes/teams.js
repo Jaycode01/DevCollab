@@ -56,7 +56,7 @@ router.get("/teams", async (req, res) => {
       ...doc.data(),
     }));
 
-    res.sendStatus(200).json({ teams });
+    res.status(200).json({ teams });
   } catch (error) {
     console.error("Error fetching teams:", error);
     res.status(500).json({ message: "Server error" });
