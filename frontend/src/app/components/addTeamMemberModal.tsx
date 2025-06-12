@@ -1,11 +1,15 @@
 import Image from "next/image";
 import CancelIcon from "../../../public/cancel.svg";
 
-export default function AddTeamMemberModal() {
+export default function AddTeamMemberModal({
+  onClose,
+}: {
+  onClose: () => void;
+}) {
   return (
     <div>
       <div className="flex flex-row justify-end mb-2">
-        <button type="button">
+        <button type="button" onClick={onClose}>
           <Image alt="cancel icon" src={CancelIcon} />
         </button>
       </div>

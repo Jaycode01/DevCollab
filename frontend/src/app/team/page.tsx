@@ -25,6 +25,7 @@ export default function Team() {
   const menuRef = useRef<HTMLDivElement | null>(null);
   const [showCreateModal, setshowCreateModal] = useState(false);
   const [teams, setteams] = useState<Team[]>([]);
+  const [showAddMemberModal, setshowAddMemberModal] = useState(false);
 
   const fetchTeams = async () => {
     const userDataString = localStorage.getItem("userData");
@@ -73,9 +74,11 @@ export default function Team() {
             />
           </div>
         )}
-        <div className="bg-white border shadow-md z-30 p-5 fixed top-[25%] left-[25%] w-1/2">
-          <AddTeamMemberModal />
-        </div>
+        {showAddMemberModal && (
+          <div className="bg-white border shadow-md z-30 p-5 fixed top-[25%] left-[25%] w-1/2">
+            <AddTeamMemberModal onClose={() => setshowAddMemberModal(false)} />
+          </div>
+        )}
         <div
           className={`fixed top-0 left-0 h-full z-30 transition-transform duration-300 ease-in-out ${
             sidebarOpen ? "translate-x-0" : "-translate-x-full"
@@ -174,6 +177,7 @@ export default function Team() {
               />
               <button
                 type="button"
+                onClick={() => setshowAddMemberModal(true)}
                 className="flex items-center bg-blue-600 text-sm text-white px-3 py-3 w-fit"
               >
                 Add New Member <Image src={AddIcon} alt="add icon" />
