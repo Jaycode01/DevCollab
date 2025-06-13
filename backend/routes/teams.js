@@ -19,7 +19,7 @@ router.post("/teams", async (req, res) => {
       createdBy: userUid,
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
       members: [{ uid: userUid, role: "admin" }],
-      memberUids: [userUid], //Makes it easy to query later
+      memberUids: [userUid],
     });
 
     res.status(201).json({ message: "Team created", teamId: teamRef.id });
@@ -40,21 +40,27 @@ router.get("/teams", async (req, res) => {
     }
 
     const teamsRef = db.collection("teams");
-    const snapshot = await teamsRef.where("createdBy", "==", userUid).get();
+    const snapshot = await teamsRef
+      .where("memberUids", "array-contains", userUid)
+      .get();
 
-    if (!snapshot || !snapshot.docs) {
-      console.error("Firestore returned an invalid snaphot:", snapshot);
-      return res.status(500).json({ mesage: "Invalid Firestore response" });
-    }
+    const createdBySnapshot = await teamsRef
+      .where("createdBy", "==", userUid)
+      .get();
 
-    if (snapshot.empty) {
-      return res.status(200).json({ teams: [] });
-    }
+    const allDocs = [...snapshot.docs, ...createdBySnapshot.docs];
 
-    const teams = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+    const seen = new Set();
+    const teams = allDocs
+      .filter((doc) => {
+        if (seen.has(doc.id)) return false;
+        seen.add(doc.id);
+        return true;
+      })
+      .map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
 
     res.status(200).json({ teams });
   } catch (error) {

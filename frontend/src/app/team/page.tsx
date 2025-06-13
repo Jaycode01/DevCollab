@@ -38,6 +38,7 @@ export default function Team() {
     null
   );
   const [members, setmembers] = useState<Member[]>([]);
+  const [searchQuery, setsearchQuery] = useState("");
 
   const fetchTeams = async () => {
     const userDataString = localStorage.getItem("userData");
@@ -127,6 +128,14 @@ export default function Team() {
       alert("Something went wrong");
     }
   };
+
+  const selectedTeam = teams.find((team) => team.id === selectedTeamId);
+
+  const filteredMembers = members.filter(
+    (member) =>
+      member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      member.email.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <>
@@ -268,13 +277,17 @@ export default function Team() {
 
         <section className="flex-1 w-full max-w-full overflow-x-auto">
           <div className="md:flex-row flex-col flex  justify-start md:justify-between px-5 py-3 md:items-center items-stretch h-fit">
-            <h1 className="text-[25px]">Team Name</h1>
+            <h1 className="text-[25px]">
+              {selectedTeam ? selectedTeam.name : "Select a Team"}
+            </h1>
             <div className="flex h-fit gap-3 md:flex-row flex-col">
               <input
                 type="search"
                 name="searchTeamMember"
                 id="searchTeamMember"
                 placeholder="search team member..."
+                value={searchQuery}
+                onChange={(e) => setsearchQuery(e.target.value)}
                 className="outline-none border border-gray-900 p-2.5  text-sm w-full md:w-[350px]"
               />
               <button
@@ -304,9 +317,19 @@ export default function Team() {
                 </tr>
               </thead>
               <tbody>
-                {members.map((member) => (
+                {filteredMembers.length === 0 && (
+                  <tr>
+                    <td
+                      colSpan={6}
+                      className="text-center py-4 text-gray-500 text-sm"
+                    >
+                      No members found.
+                    </td>
+                  </tr>
+                )}
+                {filteredMembers.map((member) => (
                   <tr
-                    className="hover:bg-gray-50 transition-colors border- lat:border-0"
+                    className="hover:bg-gray-50 transition-colors border-last:border-0"
                     key={`${member.uid}-${member.email}`}
                   >
                     <td className="px-4 y-3">
@@ -324,13 +347,20 @@ export default function Team() {
                       {member.email}
                     </td>
                     <td className="px-4 py-3 text-blue-600 space-x-2 cursor-pointer">
-                      <span>View</span>/{" "}
-                      <span
-                        onClick={() => handleRemoveMember(member.uid)}
-                        className="text-red-600 hover:underline cursor-pointer"
-                      >
-                        Remove
-                      </span>
+                      <span>View</span>
+                      {member.role.toLowerCase() !== "admin" ? (
+                        <>
+                          /{" "}
+                          <span
+                            onClick={() => handleRemoveMember(member.uid)}
+                            className="text-red-600 hover:underline cursor-pointer"
+                          >
+                            Remove
+                          </span>
+                        </>
+                      ) : (
+                        <span className="text-gray-400 ml-2">(Admin)</span>
+                      )}
                     </td>
                   </tr>
                 ))}

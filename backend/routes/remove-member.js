@@ -20,6 +20,16 @@ router.post("/teams/:teamId/remove-member", async (req, res) => {
     }
 
     const teamData = teamDoc.data();
+    const currentMembers = teamData.members || [];
+
+    const member = currentMembers.find((m) => m.uid === uid);
+    if (!member) {
+      return res.status(404).json({ message: "Member not found" });
+    }
+
+    if (member.role?.toLowerCase() === "admin") {
+      return res.status(403).json({ message: "Admin cannot be removed." });
+    }
 
     const updateMembers = (teamData.members || []).filter(
       (member) => member.uid !== uid
