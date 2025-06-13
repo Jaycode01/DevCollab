@@ -25,7 +25,10 @@ export default function Team() {
   const menuRef = useRef<HTMLDivElement | null>(null);
   const [showCreateModal, setshowCreateModal] = useState(false);
   const [teams, setteams] = useState<Team[]>([]);
-  const [showAddMemberModal, setshowAddMemberModal] = useState(false);
+  const [selectedTeamId, setselectedTeamId] = useState<null | string>(null);
+  const [showAddMemberModal, setshowAddMemberModal] = useState<null | string>(
+    null
+  );
 
   const fetchTeams = async () => {
     const userDataString = localStorage.getItem("userData");
@@ -76,7 +79,18 @@ export default function Team() {
         )}
         {showAddMemberModal && (
           <div className="bg-white border shadow-md z-30 p-5 fixed top-[25%] left-[25%] w-1/2">
-            <AddTeamMemberModal onClose={() => setshowAddMemberModal(false)} />
+            <AddTeamMemberModal
+              teamId={showAddMemberModal}
+              onSuccess={() => {
+                setshowAddMemberModal(null);
+                setselectedTeamId(null);
+                fetchTeams();
+              }}
+              onClose={() => {
+                setshowAddMemberModal(null);
+                setselectedTeamId(null);
+              }}
+            />
           </div>
         )}
         <div
@@ -129,6 +143,16 @@ export default function Team() {
                         <li className="border-gray-900 hover:border-b w-fit">
                           Info
                         </li>
+                        <li
+                          className="hover:underline text-blue-600 text-sm cursor-pointer"
+                          onClick={() => {
+                            setselectedTeamId(team.id);
+                            setshowAddMemberModal(selectedTeamId);
+                            setActiveMenu(null);
+                          }}
+                        >
+                          Add Member
+                        </li>
                         <li className="border-red-600 hover:border-b text-red-600 w-fit">
                           Delete
                         </li>
@@ -177,7 +201,13 @@ export default function Team() {
               />
               <button
                 type="button"
-                onClick={() => setshowAddMemberModal(true)}
+                onClick={() => {
+                  if (!selectedTeamId) {
+                    alert("Please select a team first.");
+                    return;
+                  }
+                  setshowAddMemberModal(selectedTeamId);
+                }}
                 className="flex items-center bg-blue-600 text-sm text-white px-3 py-3 w-fit"
               >
                 Add New Member <Image src={AddIcon} alt="add icon" />
