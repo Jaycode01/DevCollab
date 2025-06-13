@@ -58,4 +58,45 @@ router.post("/teams/:teamId/add-member", async (req, res) => {
   }
 });
 
+router.get("/teams/:teamId/members", async (req, res) => {
+  try {
+    const { teamId } = req.params;
+
+    const teamRef = db.collection("teams").doc(teamId);
+    const teamDoc = await teamRef.get();
+
+    if (!teamDoc.exists) {
+      return res.status(404).json({ message: "Team not found." });
+    }
+
+    const teamData = teamDoc.data();
+    const members = teamData.members || [];
+
+    const memberDetails = await Promise.all(
+      members.map(async (member) => {
+        const userDoc = await db.collection("users").doc(member.uid).get();
+        if (userDoc.exists) {
+          const userData = userDoc.data();
+          return {
+            uid: member.uid,
+            role: member.role,
+            name: `${userData.firstName} ${userData.lastName}`,
+            email: userData.email,
+            photoURL: userData.photoURL || null,
+          };
+        } else {
+          return null;
+        }
+      })
+    );
+
+    const filteredMembers = memberDetails.filter((m) => m !== null);
+
+    res.status(200).json({ members: filteredMembers });
+  } catch (err) {
+    console.error("Error fetching team members:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 export default router;
