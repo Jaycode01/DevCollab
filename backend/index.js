@@ -11,6 +11,7 @@ import notificationRoutes from "./routes/notifications.js";
 import loggedHoursRoutes from "./api/logged-hours.js";
 import teamsRoutes from "./routes/teams.js";
 import addMemberRoutes from "./routes/add-member.js";
+import removeMemberRoutes from "./routes/remove-member.js";
 
 dotenv.config({ path: "./.env" });
 
@@ -75,6 +76,7 @@ app.use("/api", notificationRoutes);
 app.use("/api", loggedHoursRoutes);
 app.use("/api", teamsRoutes);
 app.use("/api", addMemberRoutes);
+app.use("/api", removeMemberRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ error: "Route not found" });
