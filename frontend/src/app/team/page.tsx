@@ -19,6 +19,14 @@ type Team = {
   members?: { uid: string; role: string }[];
 };
 
+type Member = {
+  uid: string;
+  name: string;
+  email: string;
+  role: string;
+  photoURL?: string | null;
+};
+
 export default function Team() {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -29,6 +37,7 @@ export default function Team() {
   const [showAddMemberModal, setshowAddMemberModal] = useState<null | string>(
     null
   );
+  const [members, setmembers] = useState<Member[]>([]);
 
   const fetchTeams = async () => {
     const userDataString = localStorage.getItem("userData");
@@ -62,6 +71,23 @@ export default function Team() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  const fetchTeamMembers = async (teamId: string) => {
+    try {
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL;
+      const res = await fetch(`${API_BASE}/api/teams/${teamId}/members`);
+      const data = await res.json();
+
+      if (res.ok) {
+        console.log("Members:", data.members);
+        setmembers(data.members || []);
+      } else {
+        console.error(data.message);
+      }
+    } catch (err) {
+      console.error("Error fetching members:", err);
+    }
+  };
 
   return (
     <>
@@ -123,7 +149,7 @@ export default function Team() {
                     }`}
                     onClick={() => {
                       setselectedTeamId(team.id);
-                      console.log("Selected team:", team.id);
+                      fetchTeamMembers(team.id);
                       setActiveMenu(null);
                     }}
                   >
@@ -239,57 +265,14 @@ export default function Team() {
                 </tr>
               </thead>
               <tbody>
-                {[
-                  {
-                    name: "Mark Zuckerberg",
-                    role: "Frontend Dev",
-                    email: "zuckerberg@mark.com",
-                    status: "online",
-                    statusColor: "bg-green-500",
-                  },
-                  {
-                    name: "Alice Smith",
-                    role: "Product Mgr",
-                    email: "alice@company.com",
-                    status: "away",
-                    statusColor: "bg-orange-500",
-                  },
-                  {
-                    name: "Kelvin Okafor",
-                    role: "Backend Dev",
-                    email: "kelvin@kaf.com",
-                    status: "offline",
-                    statusColor: "bg-red-500",
-                  },
-                  {
-                    name: "Joseph Lamidi",
-                    role: "Product Designer",
-                    email: "jay@designs.com",
-                    status: "online",
-                    statusColor: "bg-green-500",
-                  },
-                  {
-                    name: "Abdullahi Olaiwon",
-                    role: "Frontend Dev",
-                    email: "olaiwon@404.com",
-                    status: "away",
-                    statusColor: "bg-orange-500",
-                  },
-                  {
-                    name: "David Lamidi",
-                    role: "Photographer",
-                    email: "dave@visuals.com",
-                    status: "onine",
-                    statusColor: "bg-green-500",
-                  },
-                ].map((member, index) => (
+                {members.map((member) => (
                   <tr
                     className="hover:bg-gray-50 transition-colors border- lat:border-0"
-                    key={index}
+                    key={member.uid}
                   >
                     <td className="px-4 y-3">
                       <Image
-                        src={User}
+                        src={member.photoURL || User}
                         alt="user"
                         className="rounded-full w-8 h-8"
                       />
@@ -301,9 +284,9 @@ export default function Team() {
                     </td>
                     <td className="px-4 py-3 flex items-center gap-2">
                       <span
-                        className={`inline-block w-3 h-3 rounded-full ${member.statusColor}`}
+                        className={`inline-block w-3 h-3 rounded-full bg-green-500`}
                       ></span>
-                      <span>{member.status}</span>
+                      <span>online</span>
                     </td>
                     <td className="px-4 py-3 text-blue-600 space-x-2 cursor-pointer">
                       <span>View</span>/ <span>Remove</span>
