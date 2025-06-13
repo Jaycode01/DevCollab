@@ -46,9 +46,12 @@ router.post("/teams/:teamId/add-member", async (req, res) => {
       return res.status(409).json({ message: "User already added." });
     }
 
+    const updatedMembers = [...(teamData.members || []), { uid: userId, role }];
+    const updatedUids = new Set([...(teamData.memberUids || []), userId]);
+
     await teamRef.update({
-      members: [...(teamData.members || []), { uid: userId, role }],
-      memberUids: [...(teamData.memberUids || []), userId],
+      members: updatedMembers,
+      memberUids: Array.from(updatedUids),
     });
 
     res.status(200).json({ message: "Member added successfully!" });
