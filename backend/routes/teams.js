@@ -34,9 +34,7 @@ router.get("/teams", async (req, res) => {
     const userUid = req.query.userUid;
 
     if (!userUid) {
-      return res
-        .status(400)
-        .json({ message: "Missing UserUid or You're not logged In" });
+      return res.status(400).json({ message: "Unauthorized" });
     }
 
     const teamsRef = db.collection("teams");
@@ -44,23 +42,10 @@ router.get("/teams", async (req, res) => {
       .where("memberUids", "array-contains", userUid)
       .get();
 
-    const createdBySnapshot = await teamsRef
-      .where("createdBy", "==", userUid)
-      .get();
-
-    const allDocs = [...snapshot.docs, ...createdBySnapshot.docs];
-
-    const seen = new Set();
-    const teams = allDocs
-      .filter((doc) => {
-        if (seen.has(doc.id)) return false;
-        seen.add(doc.id);
-        return true;
-      })
-      .map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+    const teams = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
 
     res.status(200).json({ teams });
   } catch (error) {
