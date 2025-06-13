@@ -268,13 +268,15 @@ export default function Team() {
                 {members.map((member) => (
                   <tr
                     className="hover:bg-gray-50 transition-colors border- lat:border-0"
-                    key={member.uid}
+                    key={`${member.uid}-${member.email}`}
                   >
                     <td className="px-4 y-3">
                       <Image
                         src={member.photoURL || User}
                         alt="user"
-                        className="rounded-full w-8 h-8"
+                        className="rounded-full w-8 h-8 object-cover"
+                        width={32}
+                        height={32}
                       />
                     </td>
                     <td className="px- py-3">{member.name}</td>
