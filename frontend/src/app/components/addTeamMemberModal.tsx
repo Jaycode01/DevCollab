@@ -27,6 +27,10 @@ export default function AddTeamMemberModal({
 
     try {
       const API_BASE = process.env.NEXT_PUBLIC_API_URL;
+      console.log(
+        "🟡 Submitting request to:",
+        `${API_BASE}/api/teams/${teamId}/add-member`
+      );
 
       const response = await fetch(
         `${API_BASE}/api/teams/${teamId}/add-member`,
@@ -39,17 +43,27 @@ export default function AddTeamMemberModal({
         }
       );
 
+      console.log("🟢 Response received:", response);
+
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        console.error("❌ Invalid JSON response");
+        seterror("Server did not return valid JSON.");
+        return;
+      }
+
       const result = await response.json();
+      console.log("🟢 Parsed JSON result:", result);
 
       if (!response.ok) {
         seterror(result.message || "Failed to add member.");
         return;
       }
 
-      alert("Member added successfully!");
-      onSuccess();
+      alert("✅ Member added successfully!");
+      onSuccess(); // <- close modal and refresh
     } catch (err) {
-      console.error(err);
+      console.error("❌ Error in handleSubmit:", err);
       seterror("Something went wrong.");
     } finally {
       setloading(false);
