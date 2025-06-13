@@ -34,7 +34,7 @@ router.post("/teams/:teamId/remove-member", async (req, res) => {
       memberUids: updatedMemberUids,
     });
 
-    req.status(200).json({ message: "Member removed successfully!" });
+    res.status(200).json({ message: "Member removed successfully!" });
   } catch (err) {
     console.error("Error removing member:", err);
     res.status(500).json({ message: "Server error" });
