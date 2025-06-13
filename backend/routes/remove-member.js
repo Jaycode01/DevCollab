@@ -1,6 +1,5 @@
 import express from "express";
 import { db } from "../firebase.js";
-import { messaging } from "firebase-admin";
 
 const router = express.Router();
 
