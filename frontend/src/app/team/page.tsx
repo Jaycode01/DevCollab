@@ -114,7 +114,19 @@ export default function Team() {
                   key={team.id}
                   className="flex justify-between items-center hover:bg-gray-50 p-2 rounded hover:border hover:cursor-pointer hover:text-blue-600 relative"
                 >
-                  <button type="button" className="text-sm">
+                  <button
+                    type="button"
+                    className={`text-sm ${
+                      selectedTeamId === team.id
+                        ? "text-blue-600 font-semibold"
+                        : ""
+                    }`}
+                    onClick={() => {
+                      setselectedTeamId(team.id);
+                      console.log("Selected team:", team.id);
+                      setActiveMenu(null);
+                    }}
+                  >
                     {team.name}
                   </button>
                   <div ref={menuRef} className="relative">
@@ -147,7 +159,7 @@ export default function Team() {
                           className="hover:underline text-blue-600 text-sm cursor-pointer"
                           onClick={() => {
                             setselectedTeamId(team.id);
-                            setshowAddMemberModal(selectedTeamId);
+                            setshowAddMemberModal(team.id);
                             setActiveMenu(null);
                           }}
                         >
