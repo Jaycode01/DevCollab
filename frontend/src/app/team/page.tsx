@@ -44,6 +44,8 @@ export default function Team() {
     const userDataString = localStorage.getItem("userData");
     const userUid = userDataString ? JSON.parse(userDataString)?.uid : null;
 
+    console.log("User id:", userUid);
+
     if (!userUid) return;
 
     const API_BASE = process.env.NEXT_PUBLIC_API_URL;
