@@ -39,11 +39,11 @@ router.post("/teams/:teamId/add-member", async (req, res) => {
 
     const teamData = teamDoc.data();
 
-    const isAlreadyMember = teamData.memberUids?.includes(userId);
+    const currentMembers = teamData.members || [];
+
+    const isAlreadyMember = currentMembers.some((m) => m.uid === userId);
     if (isAlreadyMember) {
-      return res
-        .status(409)
-        .json({ message: "User is already a team member." });
+      return res.status(409).json({ message: "User already added." });
     }
 
     await teamRef.update({
@@ -77,10 +77,21 @@ router.get("/teams/:teamId/members", async (req, res) => {
         const userDoc = await db.collection("users").doc(member.uid).get();
         if (userDoc.exists) {
           const userData = userDoc.data();
+          let name = "";
+          if (userData.firstName && userData.lastName) {
+            name = `${userData.firstName} ${userData.lastName}`;
+          } else if (userData.firstName) {
+            name = userData.firstName;
+          } else if (userData.email) {
+            name = userData.email.split("@")[0];
+          } else {
+            name = "Unnamed";
+          }
+
           return {
             uid: member.uid,
             role: member.role,
-            name: `${userData.firstName} ${userData.lastName}`,
+            name,
             email: userData.email,
             photoURL: userData.photoURL || null,
           };
