@@ -89,6 +89,45 @@ export default function Team() {
     }
   };
 
+  const handleRemoveMember = async (uid: string) => {
+    if (!selectedTeamId) {
+      alert("No team selected");
+      return;
+    }
+
+    const confirm = window.confirm(
+      "Are you sure you want to remove this member?"
+    );
+    if (!confirm) return;
+
+    try {
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL;
+      const res = await fetch(
+        `${API_BASE}/api/teams/${selectedTeamId}/remove-member`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ uid }),
+        }
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.message || "Failed to remove member");
+      } else {
+        alert("Member removed successfully.");
+        fetchTeams();
+        fetchTeamMembers(selectedTeamId);
+      }
+    } catch (err) {
+      console.error("Error removing member:", err);
+      alert("Something went wrong");
+    }
+  };
+
   return (
     <>
       <div className="flex bg-gray-50 border-t relative min-h-screen">
@@ -119,6 +158,7 @@ export default function Team() {
             />
           </div>
         )}
+
         <div
           className={`fixed top-0 left-0 h-full z-30 transition-transform duration-300 ease-in-out ${
             sidebarOpen ? "translate-x-0" : "-translate-x-full"
@@ -260,7 +300,6 @@ export default function Team() {
                   <th className="px-4 py-3 border-b">Name</th>
                   <th className="px-4 py-3 border-b">Role</th>
                   <th className="px-4 py-3 border-b">Email</th>
-                  <th className="px-4 py-3 border-b">Status</th>
                   <th className="px-4 py-3 border-b">Actions</th>
                 </tr>
               </thead>
@@ -284,14 +323,14 @@ export default function Team() {
                     <td className="px-4 py-3 text-blue-600 underline cursor-pointer">
                       {member.email}
                     </td>
-                    <td className="px-4 py-3 flex items-center gap-2">
-                      <span
-                        className={`inline-block w-3 h-3 rounded-full bg-green-500`}
-                      ></span>
-                      <span>online</span>
-                    </td>
                     <td className="px-4 py-3 text-blue-600 space-x-2 cursor-pointer">
-                      <span>View</span>/ <span>Remove</span>
+                      <span>View</span>/{" "}
+                      <span
+                        onClick={() => handleRemoveMember(member.uid)}
+                        className="text-red-600 hover:underline cursor-pointer"
+                      >
+                        Remove
+                      </span>
                     </td>
                   </tr>
                 ))}
