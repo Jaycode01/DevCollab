@@ -48,7 +48,7 @@ export default function Team() {
 
     if (!userUid) return;
 
-    const API_BASE = process.env.NEXT_PUBLIC_API_URL;
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "localhost:5000";
 
     try {
       const res = await fetch(`${API_BASE}/api/teams?userUid=${userUid}`);
