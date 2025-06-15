@@ -235,16 +235,6 @@ export default function Team() {
                         <li className="border-gray-900 hover:border-b w-fit">
                           Info
                         </li>
-                        <li
-                          className="hover:underline text-blue-600 text-sm cursor-pointer"
-                          onClick={() => {
-                            setselectedTeamId(team.id);
-                            setshowAddMemberModal(team.id);
-                            setActiveMenu(null);
-                          }}
-                        >
-                          Add Member
-                        </li>
                         <li className="border-red-600 hover:border-b text-red-600 w-fit">
                           Delete
                         </li>
