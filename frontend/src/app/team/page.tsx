@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Dots from "../../../public/dots.svg";
 import AddIcon from "../../../public/add.svg";
@@ -40,10 +40,13 @@ export default function Team() {
   const [members, setmembers] = useState<Member[]>([]);
   const [searchQuery, setsearchQuery] = useState("");
 
-  const fetchTeams = async () => {
-    const userDataString = localStorage.getItem("userData");
-    const userUid = userDataString ? JSON.parse(userDataString)?.uid : null;
+  const userDataString = localStorage.getItem("userData");
+  const userUid = userDataString ? JSON.parse(userDataString)?.uid : null;
 
+  const currentUserRole = members.find((m) => m.uid === userUid)?.role;
+  const isCurrentUsersAdmin = currentUserRole === "admin";
+
+  const fetchTeams = useCallback(async () => {
     console.log("User id:", userUid);
 
     if (!userUid) return;
@@ -58,7 +61,7 @@ export default function Team() {
     } catch (error) {
       console.error("Error fetching teams:", error);
     }
-  };
+  }, [userUid]);
 
   useEffect(() => {
     fetchTeams();
@@ -73,7 +76,7 @@ export default function Team() {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  }, [fetchTeams]);
 
   const fetchTeamMembers = async (teamId: string) => {
     try {
@@ -112,7 +115,7 @@ export default function Team() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ uid }),
+          body: JSON.stringify({ uid, requesterUid: userUid }),
         }
       );
 
@@ -349,19 +352,26 @@ export default function Team() {
                       {member.email}
                     </td>
                     <td className="px-4 py-3 text-blue-600 space-x-2 cursor-pointer">
-                      <span>View</span>
-                      {member.role.toLowerCase() !== "admin" ? (
-                        <>
-                          /{" "}
-                          <span
-                            onClick={() => handleRemoveMember(member.uid)}
-                            className="text-red-600 hover:underline cursor-pointer"
-                          >
-                            Remove
-                          </span>
-                        </>
+                      {member.uid === userUid ? (
+                        <span className="text-gray-500 text-sm">You</span>
                       ) : (
-                        <span className="text-gray-400 ml-2">(Admin)</span>
+                        <>
+                          <span>View</span>
+                          {member.role.toLowerCase() !== "admin" &&
+                          isCurrentUsersAdmin ? (
+                            <>
+                              /{" "}
+                              <span
+                                onClick={() => handleRemoveMember(member.uid)}
+                                className="text-red-600 hover:underline cursor-pointer"
+                              >
+                                Remove
+                              </span>
+                            </>
+                          ) : member.role.toLowerCase() === "admin" ? (
+                            <span className="text-gray-400 ml-2">(Admin)</span>
+                          ) : null}
+                        </>
                       )}
                     </td>
                   </tr>
