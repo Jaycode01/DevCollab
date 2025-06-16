@@ -6,7 +6,10 @@ interface TeamInfoProps {
     name: string;
     description?: string;
     creatorName?: string;
-    createdAt?: { seconds: number; nanoseconds: number };
+    createdAt?: {
+      _seconds: number;
+      _nanoseconds: number;
+    };
     members?: { uid: string; role: string }[];
     memberCount?: number;
   };
@@ -30,10 +33,11 @@ export default function Teamnfo({ team, onClose }: TeamInfoProps) {
         <p className="text-sm">Created By: {team.creatorName || "Unknown"}</p>
         <p className="text-sm">
           Created At:{" "}
-          {team.createdAt?.seconds
-            ? new Date(team.createdAt.seconds * 1000).toLocaleString()
+          {team.createdAt
+            ? new Date(team.createdAt._seconds * 1000).toLocaleString()
             : "N/A"}
         </p>
+
         <p className="text-sm">
           Total Number of Member(s):{" "}
           {team.memberCount || team.members?.length || 0}

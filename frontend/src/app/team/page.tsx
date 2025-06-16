@@ -31,7 +31,7 @@ type Member = {
 
 type TeamDetails = Team & {
   creatorName?: string;
-  createdAt?: { seconds: number; nanoseconds: number };
+  createdAt?: { _seconds: number; _nanoseconds: number };
   memberCount?: number;
 };
 
