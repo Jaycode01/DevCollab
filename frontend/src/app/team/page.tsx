@@ -9,6 +9,7 @@ import ClosePanel from "../../../public/close-panel.svg";
 import User from "../../../public/user.svg";
 import CreateTeamModal from "../components/createTeamModal";
 import AddTeamMemberModal from "../components/addTeamMemberModal";
+import EditTeam from "../components/edit-team";
 
 type Team = {
   id: string;
@@ -39,6 +40,9 @@ export default function Team() {
   );
   const [members, setmembers] = useState<Member[]>([]);
   const [searchQuery, setsearchQuery] = useState("");
+  const [showEditTeamModal, setshowEditTeamModal] = useState<null | string>(
+    null
+  );
 
   const userDataString = localStorage.getItem("userData");
   const userUid = userDataString ? JSON.parse(userDataString)?.uid : null;
@@ -173,6 +177,20 @@ export default function Team() {
           </div>
         )}
 
+        {showEditTeamModal && selectedTeam && (
+          <div className="bg-white shadow-md z-40 fixed top-[25%] left-[25%] w-1/2">
+            <EditTeam
+              team={selectedTeam}
+              requesterUid={userUid}
+              onClose={() => setshowEditTeamModal(null)}
+              onSuccess={() => {
+                setshowEditTeamModal(null);
+                fetchTeams();
+              }}
+            />
+          </div>
+        )}
+
         <div
           className={`fixed top-0 left-0 h-full z-30 transition-transform duration-300 ease-in-out ${
             sidebarOpen ? "translate-x-0" : "-translate-x-full"
@@ -229,7 +247,14 @@ export default function Team() {
 
                     {activeMenu === team.id && (
                       <ul className="bg-white text-gray-900 hover:text-gray-900 absolute left-[-135px]  w-40 top-[45px] border shadow text-sm px-2 py-1 z-20 flex flex-col gap-1.5">
-                        <li className="border-gray-900 hover:border-b w-fit">
+                        <li
+                          className="border-gray-900 hover:border-b w-fit"
+                          onClick={() => {
+                            setselectedTeamId(team.id);
+                            setshowEditTeamModal(team.id);
+                            setActiveMenu(null);
+                          }}
+                        >
                           Edit
                         </li>
                         <li className="border-gray-900 hover:border-b w-fit">
