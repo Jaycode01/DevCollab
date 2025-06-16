@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Dots from "../../../public/dots.svg";
 import AddIcon from "../../../public/add.svg";
@@ -9,6 +9,7 @@ import ClosePanel from "../../../public/close-panel.svg";
 import User from "../../../public/user.svg";
 import CreateTeamModal from "../components/createTeamModal";
 import AddTeamMemberModal from "../components/addTeamMemberModal";
+import EditTeam from "../components/edit-team";
 
 type Team = {
   id: string;
@@ -39,11 +40,17 @@ export default function Team() {
   );
   const [members, setmembers] = useState<Member[]>([]);
   const [searchQuery, setsearchQuery] = useState("");
+  const [showEditTeamModal, setshowEditTeamModal] = useState<null | string>(
+    null
+  );
 
-  const fetchTeams = async () => {
-    const userDataString = localStorage.getItem("userData");
-    const userUid = userDataString ? JSON.parse(userDataString)?.uid : null;
+  const userDataString = localStorage.getItem("userData");
+  const userUid = userDataString ? JSON.parse(userDataString)?.uid : null;
 
+  const currentUserRole = members.find((m) => m.uid === userUid)?.role;
+  const isCurrentUsersAdmin = currentUserRole === "admin";
+
+  const fetchTeams = useCallback(async () => {
     console.log("User id:", userUid);
 
     if (!userUid) return;
@@ -58,7 +65,7 @@ export default function Team() {
     } catch (error) {
       console.error("Error fetching teams:", error);
     }
-  };
+  }, [userUid]);
 
   useEffect(() => {
     fetchTeams();
@@ -73,7 +80,7 @@ export default function Team() {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  }, [fetchTeams]);
 
   const fetchTeamMembers = async (teamId: string) => {
     try {
@@ -112,7 +119,7 @@ export default function Team() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ uid }),
+          body: JSON.stringify({ uid, requesterUid: userUid }),
         }
       );
 
@@ -165,6 +172,20 @@ export default function Team() {
               onClose={() => {
                 setshowAddMemberModal(null);
                 setselectedTeamId(null);
+              }}
+            />
+          </div>
+        )}
+
+        {showEditTeamModal && selectedTeam && (
+          <div className="bg-white shadow-md z-40 fixed top-[25%] left-[25%] w-1/2">
+            <EditTeam
+              team={selectedTeam}
+              requesterUid={userUid}
+              onClose={() => setshowEditTeamModal(null)}
+              onSuccess={() => {
+                setshowEditTeamModal(null);
+                fetchTeams();
               }}
             />
           </div>
@@ -226,21 +247,18 @@ export default function Team() {
 
                     {activeMenu === team.id && (
                       <ul className="bg-white text-gray-900 hover:text-gray-900 absolute left-[-135px]  w-40 top-[45px] border shadow text-sm px-2 py-1 z-20 flex flex-col gap-1.5">
-                        <li className="border-gray-900 hover:border-b w-fit">
+                        <li
+                          className="border-gray-900 hover:border-b w-fit"
+                          onClick={() => {
+                            setselectedTeamId(team.id);
+                            setshowEditTeamModal(team.id);
+                            setActiveMenu(null);
+                          }}
+                        >
                           Edit
                         </li>
                         <li className="border-gray-900 hover:border-b w-fit">
                           Info
-                        </li>
-                        <li
-                          className="hover:underline text-blue-600 text-sm cursor-pointer"
-                          onClick={() => {
-                            setselectedTeamId(team.id);
-                            setshowAddMemberModal(team.id);
-                            setActiveMenu(null);
-                          }}
-                        >
-                          Add Member
                         </li>
                         <li className="border-red-600 hover:border-b text-red-600 w-fit">
                           Delete
@@ -349,19 +367,26 @@ export default function Team() {
                       {member.email}
                     </td>
                     <td className="px-4 py-3 text-blue-600 space-x-2 cursor-pointer">
-                      <span>View</span>
-                      {member.role.toLowerCase() !== "admin" ? (
-                        <>
-                          /{" "}
-                          <span
-                            onClick={() => handleRemoveMember(member.uid)}
-                            className="text-red-600 hover:underline cursor-pointer"
-                          >
-                            Remove
-                          </span>
-                        </>
+                      {member.uid === userUid ? (
+                        <span className="text-gray-500 text-sm">You</span>
                       ) : (
-                        <span className="text-gray-400 ml-2">(Admin)</span>
+                        <>
+                          <span>View</span>
+                          {member.role.toLowerCase() !== "admin" &&
+                          isCurrentUsersAdmin ? (
+                            <>
+                              /{" "}
+                              <span
+                                onClick={() => handleRemoveMember(member.uid)}
+                                className="text-red-600 hover:underline cursor-pointer"
+                              >
+                                Remove
+                              </span>
+                            </>
+                          ) : member.role.toLowerCase() === "admin" ? (
+                            <span className="text-gray-400 ml-2">(Admin)</span>
+                          ) : null}
+                        </>
                       )}
                     </td>
                   </tr>
