@@ -16,7 +16,18 @@ router.get("/teams/:teamId/details", async (req, res) => {
     const creatorUid = teamData.createdBy;
 
     const userDoc = await db.collection("users").doc(creatorUid).get();
-    const creatorName = userDoc.exists ? userDoc.data().name : "Unknown";
+    let creatorName = "Unknown";
+
+    if (userDoc.exists) {
+      const user = userDoc.data();
+      if (user.firstName) {
+        creatorName = user.lastName
+          ? `${user.firstName} ${user.lastName}`
+          : user.firstName;
+      } else if (user.email) {
+        creatorName = user.email.split("@")[0];
+      }
+    }
 
     return res.status(200).json({
       id: teamId,

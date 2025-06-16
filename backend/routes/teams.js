@@ -54,48 +54,4 @@ router.get("/teams", async (req, res) => {
   }
 });
 
-router.get("/teams/:teamId", async (req, res) => {
-  try {
-    const { teamId } = req.params;
-
-    const teamRef = db.collection("teams").doc(teamId);
-    const teamDoc = await teamRef.get();
-
-    if (!teamDoc.exists) {
-      return res.status(404).json({ message: "Team not found." });
-    }
-
-    const teamData = teamDoc.data();
-
-    let creatorData = null;
-    if (teamData.createdBy) {
-      const userDoc = await db
-        .collection("users")
-        .doc(teamData.createdBy)
-        .get();
-      if (userDoc.exists) {
-        creatorData = userDoc.data();
-      }
-    }
-
-    const response = {
-      id: teamId,
-      name: teamData.name || "",
-      description: teamData.description || null,
-      createdBy: teamData.createdBy || "",
-      cretorName: creatorData?.firstName
-        ? `${creatorData.firstName} ${creatorData.lastName || ""}`
-        : creatorData?.email || "Unknown",
-      createdAt: teamData.createdAt || null,
-      members: teamData.members || [],
-      memberCount: teamData.members?.length || 0,
-    };
-
-    res.status(200).json(response);
-  } catch (err) {
-    console.error("Error fetching team details:", err);
-    res.status(500).json({ message: "server error." });
-  }
-});
-
 export default router;

@@ -296,7 +296,7 @@ export default function Team() {
                                 process.env.NEXT_PUBLIC_API_URL ||
                                 "http://localhost:5000";
                               const res = await fetch(
-                                `${API_BASE}/api/teams/${team.id}`
+                                `${API_BASE}/api/teams/${team.id}/details`
                               );
                               const data = await res.json();
 
