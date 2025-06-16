@@ -54,4 +54,40 @@ router.get("/teams", async (req, res) => {
   }
 });
 
+router.delete("/teams/:teamId", async (req, res) => {
+  try {
+    const { teamId } = req.params;
+    const { requesterUid } = req.body;
+
+    if (!requesterUid) {
+      return res.status(400).json({ message: "Missing requesterUid" });
+    }
+
+    const teamRef = db.collection("teams").doc(teamId);
+    const teamDoc = await teamRef.get();
+
+    if (!teamDoc.exists) {
+      return res.status(404).json({ message: "Team not found." });
+    }
+
+    const teamData = teamDoc.data();
+    const isAdmin = teamData.members?.some(
+      (m) => m.uid === requesterUid && m.role === "admin"
+    );
+
+    if (!isAdmin) {
+      return res
+        .status(403)
+        .json({ message: "Only team admins can delete this team" });
+    }
+
+    await teamRef.delete();
+
+    res.status(200).json({ message: "Team deleted successfuly" });
+  } catch (err) {
+    console.error("Error deleting team:", err);
+    res.status(500).json({ message: "Server error." });
+  }
+});
+
 export default router;
