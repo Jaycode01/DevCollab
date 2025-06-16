@@ -5,31 +5,15 @@ interface TeamInfoProps {
   team: {
     name: string;
     description?: string;
-    createdBy: string;
-    createdAt?: string;
-    members?: { uid: string; role: string; name?: string }[];
+    creatorName?: string;
+    createdAt?: { seconds: number; nanoseconds: number };
+    members?: { uid: string; role: string }[];
+    memberCount?: number;
   };
   onClose: () => void;
 }
 
 export default function Teamnfo({ team, onClose }: TeamInfoProps) {
-  const creator = team.members?.find((m) => m.uid === team.createdBy);
-
-  function parseFirestoreDateString(dateStr: string): string {
-    if (!dateStr || typeof dateStr !== "string") return "Unknown";
-
-    const cleaned = dateStr.replace(/UTC[+-]\d+/, "").trim();
-    const parsed = Date.parse(cleaned);
-
-    if (!isNaN(parsed)) {
-      return new Date(parsed).toLocaleString();
-    }
-
-    return "Invalid Date";
-  }
-
-  console.log("Team:", team);
-
   return (
     <div className="p-5 flex-col flex gap-5">
       <div className="flex flex-row justify-between">
@@ -43,12 +27,16 @@ export default function Teamnfo({ team, onClose }: TeamInfoProps) {
         <p className="text-sm">
           Description: {team.description || "No description provided."}
         </p>
-        <p className="text-sm">Created By: {creator?.name || team.createdBy}</p>
+        <p className="text-sm">Created By: {team.creatorName || "Unknown"}</p>
         <p className="text-sm">
-          Created At: {parseFirestoreDateString(team.createdAt || "")}
+          Created At:{" "}
+          {team.createdAt?.seconds
+            ? new Date(team.createdAt.seconds * 1000).toLocaleString()
+            : "N/A"}
         </p>
         <p className="text-sm">
-          Total Number of Member(s): {team.members?.length || 0}
+          Total Number of Member(s):{" "}
+          {team.memberCount || team.members?.length || 0}
         </p>
       </div>
     </div>

@@ -29,6 +29,12 @@ type Member = {
   photoURL?: string | null;
 };
 
+type TeamDetails = Team & {
+  creatorName?: string;
+  createdAt?: { seconds: number; nanoseconds: number };
+  memberCount?: number;
+};
+
 export default function Team() {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -46,6 +52,7 @@ export default function Team() {
   const [showTeamInfoModal, setshowTeamInfoModal] = useState<null | string>(
     null
   );
+  const [teamDetails, setteamDetails] = useState<TeamDetails | null>(null);
 
   const userDataString = localStorage.getItem("userData");
   const userUid = userDataString ? JSON.parse(userDataString)?.uid : null;
@@ -203,11 +210,14 @@ export default function Team() {
           </div>
         )}
 
-        {showTeamInfoModal && selectedTeam && (
+        {showTeamInfoModal && teamDetails && (
           <div className="bg-white shadow-md z-40 fixed top-[25%] left-[25%] w-1/2">
             <Teamnfo
-              team={selectedTeam}
-              onClose={() => setshowTeamInfoModal(null)}
+              team={teamDetails}
+              onClose={() => {
+                setshowTeamInfoModal(null);
+                setteamDetails(null);
+              }}
             />
           </div>
         )}
@@ -279,9 +289,28 @@ export default function Team() {
                         </li>
                         <li
                           className="border-gray-900 hover:border-b w-fit"
-                          onClick={() => {
-                            setshowTeamInfoModal(team.id);
+                          onClick={async () => {
                             setActiveMenu(null);
+                            try {
+                              const API_BASE =
+                                process.env.NEXT_PUBLIC_API_URL ||
+                                "http://localhost:5000";
+                              const res = await fetch(
+                                `${API_BASE}/api/teams/${team.id}`
+                              );
+                              const data = await res.json();
+
+                              if (res.ok) {
+                                setteamDetails(data);
+                                setshowTeamInfoModal(team.id);
+                              } else {
+                                console.error(data.message);
+                                alert("Failed to fetch team info");
+                              }
+                            } catch (err) {
+                              console.error("Error:", err);
+                              alert("error fetching team info");
+                            }
                           }}
                         >
                           Info
