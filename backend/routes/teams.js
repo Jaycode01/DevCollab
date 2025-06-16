@@ -78,7 +78,7 @@ router.delete("/teams/:teamId", async (req, res) => {
     if (!isAdmin) {
       return res
         .status(403)
-        .json({ message: "Only team admins can delete this team" });
+        .json({ message: "Only team admins can delete team" });
     }
 
     await teamRef.delete();
