@@ -10,6 +10,7 @@ import User from "../../../public/user.svg";
 import CreateTeamModal from "../components/createTeamModal";
 import AddTeamMemberModal from "../components/addTeamMemberModal";
 import EditTeam from "../components/edit-team";
+import Teamnfo from "../components/team-info";
 
 type Team = {
   id: string;
@@ -40,6 +41,9 @@ export default function Team() {
   const [members, setmembers] = useState<Member[]>([]);
   const [searchQuery, setsearchQuery] = useState("");
   const [showEditTeamModal, setshowEditTeamModal] = useState<null | string>(
+    null
+  );
+  const [showTeamInfoModal, setshowTeamInfoModal] = useState<null | string>(
     null
   );
 
@@ -199,6 +203,15 @@ export default function Team() {
           </div>
         )}
 
+        {showTeamInfoModal && selectedTeam && (
+          <div className="bg-white shadow-md z-40 fixed top-[25%] left-[25%] w-1/2">
+            <Teamnfo
+              team={selectedTeam}
+              onClose={() => setshowTeamInfoModal(null)}
+            />
+          </div>
+        )}
+
         <div
           className={`fixed top-0 left-0 h-full z-30 transition-transform duration-300 ease-in-out ${
             sidebarOpen ? "translate-x-0" : "-translate-x-full"
@@ -264,7 +277,13 @@ export default function Team() {
                         >
                           Edit
                         </li>
-                        <li className="border-gray-900 hover:border-b w-fit">
+                        <li
+                          className="border-gray-900 hover:border-b w-fit"
+                          onClick={() => {
+                            setshowTeamInfoModal(team.id);
+                            setActiveMenu(null);
+                          }}
+                        >
                           Info
                         </li>
                         <li className="border-red-600 hover:border-b text-red-600 w-fit">
