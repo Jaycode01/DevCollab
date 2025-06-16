@@ -11,6 +11,7 @@ import CreateTeamModal from "../components/createTeamModal";
 import AddTeamMemberModal from "../components/addTeamMemberModal";
 import EditTeam from "../components/edit-team";
 import Teamnfo from "../components/team-info";
+import MemberDetailsModal from "../components/memberDetailsModal";
 
 type Team = {
   id: string;
@@ -53,6 +54,7 @@ export default function Team() {
     null
   );
   const [teamDetails, setteamDetails] = useState<TeamDetails | null>(null);
+  const [viewedMember, setviewedMember] = useState<Member | null>(null);
 
   const userDataString = localStorage.getItem("userData");
   const userUid = userDataString ? JSON.parse(userDataString)?.uid : null;
@@ -218,6 +220,15 @@ export default function Team() {
                 setshowTeamInfoModal(null);
                 setteamDetails(null);
               }}
+            />
+          </div>
+        )}
+
+        {viewedMember && (
+          <div className="bg-white shadow-md z-30 fixed top-[25%] left-[25%] w-1/2">
+            <MemberDetailsModal
+              member={viewedMember}
+              onClose={() => setviewedMember(null)}
             />
           </div>
         )}
@@ -464,7 +475,12 @@ export default function Team() {
                         <span className="text-gray-500 text-sm">You</span>
                       ) : (
                         <>
-                          <span>View</span>
+                          <span
+                            onClick={() => setviewedMember(member)}
+                            className="hover:underline"
+                          >
+                            View
+                          </span>
                           {member.role.toLowerCase() !== "admin" &&
                           isCurrentUsersAdmin ? (
                             <>
