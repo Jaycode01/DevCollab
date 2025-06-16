@@ -14,6 +14,7 @@ import addMemberRoutes from "./routes/add-member.js";
 import removeMemberRoutes from "./routes/remove-member.js";
 import editTeamRoutes from "./routes/edit-team.js";
 import teamDetailsRoutes from "./routes/team-details.js";
+import usersRoutes from "./routes/users.js";
 
 dotenv.config({ path: "./.env" });
 
@@ -81,6 +82,7 @@ app.use("/api", addMemberRoutes);
 app.use("/api", removeMemberRoutes);
 app.use("/api", editTeamRoutes);
 app.use("/api", teamDetailsRoutes);
+app.use("/api", usersRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ error: "Route not found" });

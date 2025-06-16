@@ -41,6 +41,7 @@ export default function MemberDetailsModal({
           <Link
             href={member.github}
             target="_blank"
+            rel="noopener noreferrer"
             className="text-sm text-blue-600 hover:underline"
           >
             Github
@@ -49,6 +50,8 @@ export default function MemberDetailsModal({
         {member.linkedin && (
           <Link
             href={member.linkedin}
+            target="_blank"
+            rel="noopener noreferrer"
             className="text-sm text-blue-600 hover:underline"
           >
             LinkedIn
@@ -57,15 +60,21 @@ export default function MemberDetailsModal({
         {member.twitter && (
           <Link
             href={member.twitter}
+            target="_blank"
+            rel="noopener noreferrer"
             className="text-sm text-blue-600 hover:underline"
           >
             Twitter/X
           </Link>
         )}
-        {member.phone && <p className="text-sm text-gray-900">09023838391</p>}
+        {member.phone && (
+          <p className="text-sm text-gray-900">Phone: {member.phone}</p>
+        )}
         {member.website && (
           <Link
             href={member.website}
+            target="_blank"
+            rel="noopener noreferrer"
             className="text-sm text-blue-600 hover:underline"
           >
             Website
