@@ -67,11 +67,26 @@ router.get("/teams/:teamId", async (req, res) => {
 
     const teamData = teamDoc.data();
 
+    let creatorData = null;
+    if (teamData.createdBy) {
+      const userDoc = await db
+        .collection("users")
+        .doc(teamData.createdBy)
+        .get();
+      if (userDoc.exists) {
+        creatorData = userDoc.data();
+      }
+    }
+
     const response = {
       id: teamId,
       name: teamData.name || "",
       description: teamData.description || null,
       createdBy: teamData.createdBy || "",
+      cretorName: creatorData?.firstName
+        ? `${creatorData.firstName} ${creatorData.lastName || ""}`
+        : creatorData?.email || "Unknown",
+      createdAt: teamData.createdAt || null,
       members: teamData.members || [],
       memberCount: teamData.members?.length || 0,
     };
