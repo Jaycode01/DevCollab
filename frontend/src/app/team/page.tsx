@@ -315,7 +315,45 @@ export default function Team() {
                         >
                           Info
                         </li>
-                        <li className="border-red-600 hover:border-b text-red-600 w-fit">
+                        <li
+                          className="border-red-600 hover:border-b text-red-600 w-fit"
+                          onClick={async () => {
+                            const confirmDelete = confirm(
+                              "Are you sure you want to delete this team?"
+                            );
+                            if (!confirmDelete) return;
+
+                            try {
+                              const API_BASE =
+                                process.env.NEXT_PUBLIC_API_URL ||
+                                "http://localhost:5000";
+                              const res = await fetch(
+                                `${API_BASE}/api/teams/${team.id}`,
+                                {
+                                  method: "DELETE",
+                                  headers: {
+                                    "Content-Type": "application/json",
+                                  },
+                                  body: JSON.stringify({
+                                    requesterUid: userUid,
+                                  }),
+                                }
+                              );
+
+                              const data = await res.json();
+                              if (res.ok) {
+                                alert("Team deleted successfully!");
+                                setselectedTeamId(null);
+                                fetchTeams();
+                              } else {
+                                alert(data.message || "Failed to delete team.");
+                              }
+                            } catch (err) {
+                              console.error("Error deleting team:", err);
+                              alert("Something went wrong");
+                            }
+                          }}
+                        >
                           Delete
                         </li>
                       </ul>
