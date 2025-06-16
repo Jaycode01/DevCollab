@@ -12,6 +12,7 @@ import loggedHoursRoutes from "./api/logged-hours.js";
 import teamsRoutes from "./routes/teams.js";
 import addMemberRoutes from "./routes/add-member.js";
 import removeMemberRoutes from "./routes/remove-member.js";
+import editTeamRoutes from "./routes/edit-team.js";
 
 dotenv.config({ path: "./.env" });
 
@@ -77,6 +78,7 @@ app.use("/api", loggedHoursRoutes);
 app.use("/api", teamsRoutes);
 app.use("/api", addMemberRoutes);
 app.use("/api", removeMemberRoutes);
+app.use("/api", editTeamRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ error: "Route not found" });
