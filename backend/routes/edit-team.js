@@ -39,9 +39,9 @@ router.post("/teams/:teamId/edit", async (req, res) => {
 
     await teamRef.update(updates);
 
-    res.status(20).json({ message: "team details updated successfully." });
+    res.status(200).json({ message: "team details updated successfully." });
   } catch (err) {
-    console.error("Erro updating team:", err);
+    console.error("Error updating team:", err);
     res.status(500).json({ message: "Server error." });
   }
 });

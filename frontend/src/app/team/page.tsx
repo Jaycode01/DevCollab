@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Dots from "../../../public/dots.svg";
 import AddIcon from "../../../public/add.svg";
@@ -31,7 +31,6 @@ type Member = {
 export default function Team() {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const menuRef = useRef<HTMLDivElement | null>(null);
   const [showCreateModal, setshowCreateModal] = useState(false);
   const [teams, setteams] = useState<Team[]>([]);
   const [selectedTeamId, setselectedTeamId] = useState<null | string>(null);
@@ -49,6 +48,8 @@ export default function Team() {
 
   const currentUserRole = members.find((m) => m.uid === userUid)?.role;
   const isCurrentUsersAdmin = currentUserRole === "admin";
+
+  const editTeam = teams.find((team) => team.id === showEditTeamModal);
 
   const fetchTeams = useCallback(async () => {
     console.log("User id:", userUid);
@@ -71,7 +72,14 @@ export default function Team() {
     fetchTeams();
 
     function handleClickOutside(event: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+      const target = event.target as HTMLElement;
+
+      const dropdowns = Array.from(document.querySelectorAll(".team-dropdown"));
+      const clickedInsideDropdown = dropdowns.some((el: Element) =>
+        el.contains(target)
+      );
+
+      if (!clickedInsideDropdown) {
         setActiveMenu(null);
       }
     }
@@ -177,10 +185,10 @@ export default function Team() {
           </div>
         )}
 
-        {showEditTeamModal && selectedTeam && (
+        {showEditTeamModal && editTeam && (
           <div className="bg-white shadow-md z-40 fixed top-[25%] left-[25%] w-1/2">
             <EditTeam
-              team={selectedTeam}
+              team={editTeam}
               requesterUid={userUid}
               onClose={() => setshowEditTeamModal(null)}
               onSuccess={() => {
@@ -227,7 +235,7 @@ export default function Team() {
                   >
                     {team.name}
                   </button>
-                  <div ref={menuRef} className="relative">
+                  <div className="relative team-dropdown">
                     <button
                       type="button"
                       onClick={() =>
@@ -250,7 +258,6 @@ export default function Team() {
                         <li
                           className="border-gray-900 hover:border-b w-fit"
                           onClick={() => {
-                            setselectedTeamId(team.id);
                             setshowEditTeamModal(team.id);
                             setActiveMenu(null);
                           }}

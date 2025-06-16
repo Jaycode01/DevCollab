@@ -89,7 +89,7 @@ export default function EditTeam({
           className="bg-blue-600 py-3 text-sm text-white"
           disabled={loading}
         >
-          {loading ? "Updating" : "Update Team"}
+          {loading ? "Updating..." : "Update Team"}
         </button>
       </form>
     </div>
