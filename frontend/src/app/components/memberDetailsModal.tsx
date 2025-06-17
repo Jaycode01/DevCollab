@@ -6,7 +6,6 @@ interface MemberDetailsModalProps {
   member: {
     name: string;
     email: string;
-    location?: string;
     bio?: string;
     github?: string;
     linkedin?: string;
@@ -31,9 +30,7 @@ export default function MemberDetailsModal({
       <div className="border border-gray-900 p-2.5 flex flex-col gap-1.5">
         <p className="text-sm text-gray-900">Name: {member.name}</p>
         <p className="text-sm text-gray-900">Email: {member.email}</p>
-        {member.location && (
-          <p className="text-sm text-gray-900">Location: {member.location}</p>
-        )}
+        <p className="text-sm text-gray-900">Location: </p>
         {member.bio && (
           <p className="text-sm text-gray-900">Bio: {member.bio}.</p>
         )}
