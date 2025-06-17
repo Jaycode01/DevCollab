@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import CancelIcon from "../../../public/cancel.svg";
 import Link from "next/link";
@@ -19,6 +22,20 @@ export default function MemberDetailsModal({
   member,
   onClose,
 }: MemberDetailsModalProps) {
+  const [location, setlocation] = useState<string>("");
+
+  useEffect(() => {
+    fetch("https://ipapi.co/json")
+      .then((res) => res.json())
+      .then((data) => {
+        setlocation(`${data.city}, ${data.region}, ${data.country_name}`);
+      })
+      .catch((err) => {
+        console.error("Error fetching location:", err);
+        setlocation("Unknown");
+      });
+  }, []);
+
   return (
     <div className="p-5 flex flex-col gap-5 border">
       <div className="flex flex-row justify-between items-center">
@@ -30,7 +47,9 @@ export default function MemberDetailsModal({
       <div className="border border-gray-900 p-2.5 flex flex-col gap-1.5">
         <p className="text-sm text-gray-900">Name: {member.name}</p>
         <p className="text-sm text-gray-900">Email: {member.email}</p>
-        <p className="text-sm text-gray-900">Location: </p>
+        {location && (
+          <p className="text-sm text-gray-900">Location:{location} </p>
+        )}
         {member.bio && (
           <p className="text-sm text-gray-900">Bio: {member.bio}.</p>
         )}
