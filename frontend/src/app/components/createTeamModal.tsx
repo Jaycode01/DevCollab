@@ -95,7 +95,7 @@ export default function CreateTeamModal({
             value={description}
             onChange={(e) => setdescription(e.target.value)}
             id=""
-            className="border-gray-900 border outline-none text-[13px] text-gray-900 py-3 px-5  h-[200px]"
+            className="border-gray-900 border outline-none text-[13px] text-gray-900 py-3 px-5  h-[150px] md:h-[200px]"
           />
         </div>
 

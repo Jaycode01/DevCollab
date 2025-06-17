@@ -171,7 +171,7 @@ export default function Team() {
     <>
       <div className="flex bg-gray-50 border-t relative min-h-screen">
         {showCreateModal && (
-          <div className=" p-5 fixed top-[25%] left-[25%] w-1/2 bg-white border shadow-md z-50">
+          <div className=" p-5 fixed top-[25%] md:left-[25%] left-[5%] md:w-1/2 w-[90%] bg-white border shadow-md z-50">
             <CreateTeamModal
               onSuccess={() => {
                 setshowCreateModal(false);
@@ -182,7 +182,7 @@ export default function Team() {
           </div>
         )}
         {showAddMemberModal && (
-          <div className="bg-white border shadow-md z-30 p-5 fixed top-[25%] left-[25%] w-1/2">
+          <div className="bg-white border shadow-md z-30 p-5 fixed top-[25%] md:left-[25%] md:w-1/2 w-[90%] left-[5%]">
             <AddTeamMemberModal
               teamId={showAddMemberModal}
               onSuccess={() => {
@@ -199,7 +199,7 @@ export default function Team() {
         )}
 
         {showEditTeamModal && editTeam && (
-          <div className="bg-white shadow-md z-40 fixed top-[25%] left-[25%] w-1/2">
+          <div className="bg-white shadow-md z-40 fixed top-[25%] md:left-[25%] left-[5%] md:w-1/2 w-[90%]">
             <EditTeam
               team={editTeam}
               requesterUid={userUid}
@@ -213,7 +213,7 @@ export default function Team() {
         )}
 
         {showTeamInfoModal && teamDetails && (
-          <div className="bg-white shadow-md z-40 fixed top-[25%] left-[25%] w-1/2">
+          <div className="bg-white shadow-md z-40 fixed top-[25%] left-[5%] md:left-[25%] md:w-1/2 w-[90%]">
             <Teamnfo
               team={teamDetails}
               onClose={() => {
@@ -225,7 +225,7 @@ export default function Team() {
         )}
 
         {viewedMember && (
-          <div className="bg-white shadow-md z-30 fixed top-[25%] left-[25%] w-1/2">
+          <div className="bg-white shadow-md z-30 fixed top-[25%] md:left-[25%] left-[5%] md:w-1/2 w-[90%]">
             <MemberDetailsModal
               member={viewedMember}
               onClose={() => setviewedMember(null)}
