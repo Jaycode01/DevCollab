@@ -28,7 +28,7 @@ type DashboardData = {
   totalProjects: number;
   pendingTasks: number;
   completedTasks: number;
-  teamMembers: number;
+  totalTeams: number;
   totalHoursLogged: number;
 };
 
@@ -337,10 +337,10 @@ export default function Dashboard() {
                 <p className="text-red-500 text-sm">--</p>
               ) : (
                 <p className="text-gray-900 text-[20px]">
-                  {dashboardData?.teamMembers || 0}
+                  {dashboardData?.totalTeams || 0}
                 </p>
               )}
-              <p className="text-gray-400 text-sm">Team Members</p>
+              <p className="text-gray-400 text-sm">Total Teams</p>
             </div>
           </div>
           <div className="bg-white shadow-md p-3 rounded-md flex flex-row items-center gap-3 sm:w-[100%]">

@@ -6,11 +6,17 @@ export const getDashboard = async (req, res) => {
     const docRef = db.collection("dashboard").doc(userId);
     const doc = await docRef.get();
 
+    const teamsSnapshot = await db
+      .collection("teams")
+      .where("memberUids", "array-contains", userId)
+      .get();
+    const totalTeams = teamsSnapshot.size;
+
     if (!doc.exists) {
       const defualtDashboard = {
         completedTasks: 0,
         pendingTasks: 0,
-        teamMembers: 0,
+        totalTeams,
         totalProjects: 0,
         totalHoursLogged: 0,
         createdAt: new Date().toISOString(),
@@ -19,7 +25,15 @@ export const getDashboard = async (req, res) => {
       return res.json({ dashbaord: defualtDashboard });
     }
 
-    return res.json({ dashboard: doc.data() });
+    const data = doc.data();
+    data.totalTeams = totalTeams;
+
+    return res.json({
+      dashboard: {
+        ...doc.data(),
+        totalTeams,
+      },
+    });
   } catch (e) {
     console.error("error fething dashboard:", e);
     return res.status(500).json({ error: "failed to fetch  dashboard" });
