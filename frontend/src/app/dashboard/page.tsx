@@ -17,11 +17,10 @@ import { getIdToken } from "firebase/auth";
 import { auth } from "../auth/config";
 
 type Project = {
-  id: number;
+  id: string;
   name: string;
-  update: string;
-  due: string;
-  status: string;
+  updatedAt: string;
+  createdAt: string;
 };
 
 type DashboardData = {

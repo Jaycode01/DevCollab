@@ -4,11 +4,10 @@ import Image from "next/image";
 import CancelPopup from "../../../public/cancel.svg";
 
 type Project = {
-  id: number;
+  id: string;
   name: string;
-  update: string;
-  due: string;
-  status: string;
+  updatedAt: string;
+  createdAt: string;
 };
 
 type ModalProps = {
@@ -29,9 +28,10 @@ export default function TaskPopup({ isOpen, onClose, project }: ModalProps) {
         </button>
       </div>
       <div className="mb-3">
-        <p className="text-sm text-gray-600">Last Update: {project.update}</p>
-        <p className="text-sm text-gray-600">Due Date: {project.due}</p>
-        <p className="text-sm text-gray-600">Status: {project.status}</p>
+        <p className="text-sm text-gray-600">
+          Last Update: {project.updatedAt}
+        </p>
+        <p className="text-sm text-gray-600">Created At: {project.createdAt}</p>
       </div>
     </div>
   );
