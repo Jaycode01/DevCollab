@@ -88,7 +88,7 @@ export default function ProjectsSummary({
                   className="hover:text-blue-600 cursor-pointer text-gray-900"
                 >
                   <td className="py-2 px-4 border-b">
-                    {project.id.slice(0, 6)}
+                    {project.id.slice(0, 3)}
                   </td>
                   <td className="py-2 px-4 border-b">{project.name}</td>
                   <td className="py-2 px-4 border-b">{project.createdAt}</td>
