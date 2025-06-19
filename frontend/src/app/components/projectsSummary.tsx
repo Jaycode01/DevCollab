@@ -46,14 +46,19 @@ export default function ProjectsSummary({
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Failed to fetch projects");
 
-        const formatted = (data.projects as RawProject[]).map((p) => ({
-          id: p.id,
-          name: p.name,
-          createdAt: new Date(p.createdAt).toLocaleDateString(),
-          updatedAt: new Date(p.updatedAt).toLocaleDateString(),
-        }));
+        const formatted = (data.projects as RawProject[])
+          .sort(
+            (a, b) =>
+              new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+          )
+          .map((p) => ({
+            id: p.id,
+            name: p.name,
+            createdAt: new Date(p.createdAt).toLocaleDateString(),
+            updatedAt: new Date(p.updatedAt).toLocaleDateString(),
+          }));
 
-        setprojects(formatted);
+        setprojects(formatted.slice(0, 6));
       } catch (err) {
         console.error("Error fetching projects:", err);
       }
