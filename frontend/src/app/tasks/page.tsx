@@ -8,6 +8,7 @@ import DeleteIocn from "../../../public/delete.svg";
 import Dots from "../../../public/dots.svg";
 import Image from "next/image";
 import AddTasksModal from "../components/addTasksModal";
+import UpdateTaskStatus from "../components/updateTaskStatus";
 
 const statusStyles = {
   "In Progress": {
@@ -31,6 +32,9 @@ export default function Tasks() {
   const [showModal, setshowModal] = useState(false);
   const [tasks, settasks] = useState<Task[]>([]);
   const [loading, setloading] = useState(true);
+  const [activeDropdownTaskId, setactiveDropdownTaskId] = useState<
+    string | null
+  >(null);
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -64,6 +68,10 @@ export default function Tasks() {
     fetchTasks();
   }, []);
 
+  const toggleDropDown = (taskId: string) => {
+    setactiveDropdownTaskId((prev) => (prev === taskId ? null : taskId));
+  };
+
   return (
     <>
       {showModal && (
@@ -71,6 +79,9 @@ export default function Tasks() {
           <AddTasksModal onClose={() => setshowModal(false)} />
         </div>
       )}
+      <div className="fixed top-[25%] left-[25%] w-1/2 bg-white shadow-md z-40 border rounded p-5">
+        <UpdateTaskStatus />
+      </div>
       <div className="bg-gray-50 px-8 min-h-[100vh] border-t">
         {/* Header buttons */}
         <div className="w-full flex flex-row justify-end gap-5 pt-5 pr-5 items-center">
@@ -129,19 +140,40 @@ export default function Tasks() {
                           {task.name}
                         </h2>
                       </div>
-                      <div className="flex gap-1">
+                      <div className="flex gap-1 relative">
                         <Image
                           src={DeleteIocn}
                           alt="delete icon"
                           width={19}
                           height={19}
                         />
-                        <Image
-                          src={Dots}
-                          alt="more actions"
-                          width={20}
-                          height={20}
-                        />
+                        <button
+                          type="button"
+                          onClick={() => toggleDropDown(task.id)}
+                        >
+                          {" "}
+                          <Image
+                            src={Dots}
+                            alt="more actions"
+                            width={20}
+                            height={20}
+                          />
+                        </button>
+                        {activeDropdownTaskId === task.id && (
+                          <div className="absolute top-6 w-[150px] right-[0px]">
+                            <ul className="bg-white p-2.5 shadow-md border text-sm text-gray-900 ">
+                              <li className="hover:text-blue-600 hover:underline">
+                                Update Status
+                              </li>
+                              <li className="hover:text-blue-600 hover:underline">
+                                View
+                              </li>
+                              <li className="text-blue-600 hover:underline">
+                                Edit
+                              </li>
+                            </ul>
+                          </div>
+                        )}
                       </div>
                     </div>
 
