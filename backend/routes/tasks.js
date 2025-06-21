@@ -41,4 +41,27 @@ router.post("/tasks", authenticateToken, async (req, res) => {
   }
 });
 
+router.get("/tasks", authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.uid;
+
+    const snapshot = await db
+      .collection("tasks")
+      .where("createdBy", "==", userId)
+      .get();
+
+    const tasks = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    res.status(200).json({ tasks });
+  } catch (err) {
+    console.error("Error fetching tasks:", err);
+    res
+      .status(500)
+      .json({ error: "Failed to fetch tasks: I think server error" });
+  }
+});
+
 export default router;

@@ -9,6 +9,14 @@ interface Props {
   onClose: () => void;
 }
 
+type TaskPayload = {
+  name: string;
+  description: string;
+  dueDate: string;
+  status: "In Progress" | "Completed" | "Due";
+  assignedTo?: string;
+};
+
 export default function AddTasksModal({ onClose }: Props) {
   const [taskMode, settaskMode] = useState<"personal" | "team" | "">("");
   const [name, setname] = useState("");
@@ -24,7 +32,7 @@ export default function AddTasksModal({ onClose }: Props) {
 
     const token = await user.getIdToken();
 
-    const taskPayload: any = {
+    const taskPayload: TaskPayload = {
       name,
       description,
       dueDate,
@@ -41,7 +49,7 @@ export default function AddTasksModal({ onClose }: Props) {
       const res = await fetch(`${API_BASE}/api/tasks`, {
         method: "POST",
         headers: {
-          AUthorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(taskPayload),
