@@ -35,6 +35,10 @@ export default function Tasks() {
   const [activeDropdownTaskId, setactiveDropdownTaskId] = useState<
     string | null
   >(null);
+  const [showStatusModal, setshowStatusModal] = useState(false);
+  const [statusModalTaskId, setstatusModalTaskId] = useState<string | null>(
+    null
+  );
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -79,9 +83,20 @@ export default function Tasks() {
           <AddTasksModal onClose={() => setshowModal(false)} />
         </div>
       )}
-      <div className="fixed top-[25%] left-[25%] w-1/2 bg-white shadow-md z-40 border rounded p-5">
-        <UpdateTaskStatus />
-      </div>
+      {showStatusModal && statusModalTaskId && (
+        <div className="fixed top-[25%] left-[25%] w-1/2 bg-white shadow-md z-40 border rounded p-5">
+          <UpdateTaskStatus
+            onClose={() => {
+              setstatusModalTaskId(null);
+              setshowStatusModal(false);
+            }}
+            onStatusUpdated={() => {
+              window.location.reload();
+            }}
+            taskId={statusModalTaskId}
+          />
+        </div>
+      )}
       <div className="bg-gray-50 px-8 min-h-[100vh] border-t">
         {/* Header buttons */}
         <div className="w-full flex flex-row justify-end gap-5 pt-5 pr-5 items-center">
@@ -162,7 +177,14 @@ export default function Tasks() {
                         {activeDropdownTaskId === task.id && (
                           <div className="absolute top-6 w-[150px] right-[0px]">
                             <ul className="bg-white p-2.5 shadow-md border text-sm text-gray-900 ">
-                              <li className="hover:text-blue-600 hover:underline">
+                              <li
+                                onClick={() => {
+                                  setstatusModalTaskId(task.id);
+                                  setshowStatusModal(true);
+                                  setactiveDropdownTaskId(null);
+                                }}
+                                className="hover:text-blue-600 hover:underline"
+                              >
                                 Update Status
                               </li>
                               <li className="hover:text-blue-600 hover:underline">
