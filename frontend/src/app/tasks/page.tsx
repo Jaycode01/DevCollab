@@ -27,6 +27,7 @@ type Task = {
 
 export default function Tasks() {
   const [open, setopen] = useState(false);
+  const [showModal, setshowModal] = useState(false);
   const [tasks] = useState<Task[]>([
     {
       id: "1",
@@ -50,9 +51,11 @@ export default function Tasks() {
 
   return (
     <>
-      <div className="fixed top-[25%] left-[25%] w-1/2 bg-white shadow-md z-50 border rounded p-5">
-        <AddTasksModal />
-      </div>
+      {showModal && (
+        <div className="fixed top-[25%] left-[25%] w-1/2 bg-white shadow-md z-50 border rounded p-5">
+          <AddTasksModal onClose={() => setshowModal(false)} />
+        </div>
+      )}
       <div className="bg-gray-50 px-8 min-h-[100vh] border-t">
         {/* Header buttons */}
         <div className="w-full flex flex-row justify-end gap-5 pt-5 pr-5 items-center">
@@ -79,6 +82,7 @@ export default function Tasks() {
           </div>
           <button
             type="button"
+            onClick={() => setshowModal(true)}
             className="bg-blue-600 text-sm text-white py-3 px-5 flex items-center gap-1.5 hover:bg-blue-500"
           >
             Add New Task

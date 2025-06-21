@@ -4,7 +4,11 @@ import { useState } from "react";
 import cancelIcon from "../../../public/cancel.svg";
 import Image from "next/image";
 
-export default function AddTasksModal() {
+interface Props {
+  onClose: () => void;
+}
+
+export default function AddTasksModal({ onClose }: Props) {
   const [taskMode, settaskMode] = useState<"personal" | "team" | "">("");
 
   return (
@@ -12,7 +16,7 @@ export default function AddTasksModal() {
       <div>
         <div className="flex flex-row justify-between items-center">
           <h1 className="text-[20px] font-semibold">Add Task</h1>
-          <button type="button">
+          <button type="button" onClick={onClose}>
             <Image src={cancelIcon} alt="cancel icon" />
           </button>
         </div>
@@ -45,12 +49,17 @@ export default function AddTasksModal() {
               placeholder="Task Description"
               className="w-full border border-gray-900 px-3 py-4 outline-none text-sm h-[200px]"
             />
-            <input
-              type="date"
-              name=""
-              id=""
-              className="w-full border border-gray-900 px-4 py-2 text-sm outline-none"
-            />
+            <div className="flex flex-col gap-1 mt-2">
+              <label htmlFor="dueDate" className="text-sm">
+                Due Date:
+              </label>
+              <input
+                type="date"
+                name=""
+                id=""
+                className="w-full border border-gray-900 px-4 py-2 text-sm outline-none"
+              />
+            </div>
             <select
               name=""
               id=""
