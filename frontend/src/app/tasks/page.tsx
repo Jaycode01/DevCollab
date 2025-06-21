@@ -6,6 +6,7 @@ import { Circle, CheckCircle, AlertCircle } from "lucide-react";
 import DeleteIocn from "../../../public/delete.svg";
 import Dots from "../../../public/dots.svg";
 import Image from "next/image";
+import AddTasksModal from "../components/addTasksModal";
 
 const statusStyles = {
   "In Progress": {
@@ -49,6 +50,9 @@ export default function Tasks() {
 
   return (
     <>
+      <div className="fixed top-[25%] left-[25%] w-1/2 bg-white shadow-md z-50 border rounded p-5">
+        <AddTasksModal />
+      </div>
       <div className="bg-gray-50 px-8 min-h-[100vh] border-t">
         {/* Header buttons */}
         <div className="w-full flex flex-row justify-end gap-5 pt-5 pr-5 items-center">
