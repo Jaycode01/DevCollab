@@ -65,7 +65,39 @@ export default function AddTasksModal() {
         )}
 
         {/* Extra fields for team Task */}
-        {taskMode === "team" && <div className="mt-"></div>}
+        {taskMode === "team" && (
+          <div className="mt-5 flex flex-col gap-3">
+            <select
+              name=""
+              id=""
+              className="w-full border border-gray-900 px-4 py-2 text-sm"
+            >
+              <option value="">Select Team</option>
+              {/* Dynamic Teams fetched */}
+              <option value="team1">Team 1</option>
+              <option value="team2">Team 2</option>
+            </select>
+            <select
+              name=""
+              id=""
+              className="w-full border border-gray-900 px-4 py-2 text-sm"
+            >
+              <option value="">Assign to Member</option>
+              {/* Dynamically load members later */}
+              <option value="uid1">Member A</option>
+              <option value="uid2">Member B</option>
+            </select>
+          </div>
+        )}
+
+        {taskMode && (
+          <button
+            type="submit"
+            className="mt-5 w-full bg-blue-600 text-sm text-white py-2 hover:bg-blue-500"
+          >
+            Create Task
+          </button>
+        )}
       </div>
     </>
   );
