@@ -1,81 +1,67 @@
 "use client";
+
+import { useState } from "react";
+import AddIcon from "../../../public/add.svg";
+import { Circle, CheckCircle, AlertCircle } from "lucide-react";
+import DeleteIocn from "../../../public/delete.svg";
+import Dots from "../../../public/dots.svg";
 import Image from "next/image";
-import SearchIcon from "../../../public/search.svg";
-import { taskCards } from "@/lib/tasks";
 
 export default function Tasks() {
+  const [open, setopen] = useState(false);
+
   return (
-    <div className="bg-gray-50 min-h-screen">
-      <div className="mt-5 flex md:flex-row flex-col justify-between items-center border-b-2 border-gray-900 py-3 w-full md:px-5 px-2 gap-3.5 md:gap-0 bg-white">
-        <div className="md:w-3/5 w-full flex flex-row md:gap-3 gap-2 items-center">
-          <input
-            type="search"
-            name=""
-            id=""
-            className="border border-gray-900 outline-none w-full py-4 px-2 text-sm"
-          />
+    <>
+      <div className="bg-gray-50 px-8 min-h-[100vh] border-t">
+        <div className="w-full flex flex-row justify-end gap-5 pt-5 pr-5 items-center">
+          <div className="relative inline-block text-left text-sm">
+            <button
+              className="border px-5 py-3 rounded"
+              onClick={() => setopen(!open)}
+            >
+              All ▼
+            </button>
+            {open && (
+              <div className="absolute mt-2 bg-white border rounded shadow w-40">
+                <div className="px-4 py-2 flex items-center gap-2 hover:bg-gray-100 cursor-pointer">
+                  <Circle className="text-yellow-500 w-4 h-4" /> In Progress
+                </div>
+                <div className="px-4 py-2 flex items-center gap-2 hover:bg-gray-100 cursor-pointer">
+                  <CheckCircle className="text-green-600 w-4 h-4" /> Completed
+                </div>
+                <div className="px-4 py-2 flex items-center gap-2 hover:bg-gray-100 cursor-pointer">
+                  <AlertCircle className="text-red-500 w-4 h-4" /> Due
+                </div>
+              </div>
+            )}
+          </div>
           <button
             type="button"
-            className="inline-flex items-center bg-blue-600 hover:bg-blue-500 text-sm text-white py-3.5 px-7  flex-row gap-2"
+            className="bg-blue-600 text-sm text-white py-3 px-5 flex items-center gap-1.5 hover:bg-blue-500"
           >
-            Search
-            <Image src={SearchIcon} alt="search icon" />
+            Add New Task
+            <Image src={AddIcon} alt="add icon" />
           </button>
         </div>
-        <div className="flex flex-row items-center gap-5 w-full md:w-auto">
-          <select
-            name=""
-            id=""
-            className="text-sm text-gray-900 bg-gray-100 p-2 outline-none py-3.5 px-3 "
-          >
-            <option defaultValue="filter">Filter</option>
-            <option value="todo">Todo</option>
-            <option value="in progress">In Progress</option>
-            <option value="completed">Completed</option>
-          </select>
-          <select
-            name=""
-            id=""
-            className="text-sm text-gray-900 bg-gray-100 p-2 outline-none py-3.5 px-3"
-          >
-            <option defaultValue="sort">Sort</option>
-            <option value="deadline">Deadline</option>
-            <option value="design">Design</option>
-            <option value="frontend">Frontend</option>
-            <option value="backend">Backend</option>
-          </select>
-        </div>
-      </div>
-      <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-5">
-        {taskCards.map((taskCard) => (
-          <div
-            key={taskCard.id}
-            className="bg-white flex flex-row items-center p-4 gap-5 rounded-md shadow-lg cursor-pointer hover:scale-102 transition-all duration-300 ease-in-out"
-          >
-            <input
-              type="radio"
-              name=""
-              id=""
-              className="scale-200 accent-blue-600"
-            />
-            <div className="flex flex-col gap-0.5 w-full">
-              <p className="flex flex-row items-center justify-between">
-                <span className="text-[15px] text-gray-900">
-                  {taskCard.name}
-                </span>
-                <span className="text-[12px]">{taskCard.status}</span>
-              </p>
-
-              <p className="flex justify-between items-center w-full">
-                <span className="text-[12px] text-gray-700">
-                  {taskCard.date}
-                </span>
-                <span className="text-[11px]">{taskCard.tag}</span>
-              </p>
+        <div className="">
+          {/* Task card - small */}
+          <div className="flex flex-col w-[25%] bg-white shadow-md border rounded p-3 gap-5">
+            <div className="flex flex-row items-center justify-between">
+              <h2>Task Name</h2>
+              <div className="flex flex-row gap-1 items-center">
+                <Image src={DeleteIocn} alt="delete icon" />
+                <Image src={Dots} alt="dots" />
+              </div>
+            </div>
+            <div className="flex flex-row items-center justify-between">
+              <span className="text-sm flex items-center gap-0.5">
+                <Circle className="text-yellow-500 w-4 h-4" /> In Progress
+              </span>
+              <span className="text-sm">21/06/2025</span>
             </div>
           </div>
-        ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
