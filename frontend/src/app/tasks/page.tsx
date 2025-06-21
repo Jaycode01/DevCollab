@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getAuth } from "firebase/auth";
 import AddIcon from "../../../public/add.svg";
 import { Circle, CheckCircle, AlertCircle } from "lucide-react";
 import DeleteIocn from "../../../public/delete.svg";
@@ -28,26 +29,40 @@ type Task = {
 export default function Tasks() {
   const [open, setopen] = useState(false);
   const [showModal, setshowModal] = useState(false);
-  const [tasks] = useState<Task[]>([
-    {
-      id: "1",
-      name: "Fix dashboard loading",
-      status: "In Progress",
-      dueDate: "2025-06-22",
-    },
-    {
-      id: "2",
-      name: "Update user profile modal",
-      status: "Completed",
-      dueDate: "2025-06-22",
-    },
-    {
-      id: "3",
-      name: "Handle team deleteion edge case",
-      status: "Due",
-      dueDate: "2025-06-20",
-    },
-  ]);
+  const [tasks, settasks] = useState<Task[]>([]);
+  const [loading, setloading] = useState(true);
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      setloading(true);
+      try {
+        const auth = getAuth();
+        const user = auth.currentUser;
+        if (!user) return;
+
+        const token = await user.getIdToken();
+        const API_BASE =
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
+        const res = await fetch(`${API_BASE}/api/tasks`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Failed to fetch tasks");
+
+        settasks(data.tasks);
+      } catch (error) {
+        console.error("Fetch error:", error);
+      } finally {
+        setloading(false);
+      }
+    };
+
+    fetchTasks();
+  }, []);
 
   return (
     <>
@@ -91,48 +106,61 @@ export default function Tasks() {
         </div>
 
         {/* Task cards grid */}
-        <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {tasks.map((task) => {
-            const { icon: StatusIcon, color } = statusStyles[task.status];
-            return (
-              <div
-                key={task.id}
-                className="flex flex-col justify-between bg-white shadow border rounded-lg p-4 hover:shadow-md transition-all cursor-pointer"
-              >
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h2 className="font-semibold text-[17px] text-gray-900">
-                      {task.name}
-                    </h2>
-                  </div>
-                  <div className="flex gap-1">
-                    <Image
-                      src={DeleteIocn}
-                      alt="delete icon"
-                      width={18}
-                      height={18}
-                    />
-                    <Image
-                      src={Dots}
-                      alt="more actions"
-                      width={20}
-                      height={20}
-                    />
-                  </div>
-                </div>
+        <div className="mt-10">
+          {loading ? (
+            <p className="text-center text-sm text-gray-600">
+              Loading tasks...
+            </p>
+          ) : tasks.length === 0 ? (
+            <p className="text-center text-sm text-gray-600">No tasks yet.</p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {tasks.map((task) => {
+                const { icon: StatusIcon, color } = statusStyles[task.status];
 
-                <div className="flex justify-between items-center mt-6">
+                return (
                   <div
-                    className={`flex items-center gap-1 text-xs font-medium ${color}`}
+                    key={task.id}
+                    className="flex flex-col justify-between bg-white shadow border rounded p-4 hover:shadow-md transition-all cursor-pointer"
                   >
-                    <StatusIcon className={`w-4 h-4`} />
-                    {task.status}
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h2 className="font-semibold text-[17px] text-gray-900">
+                          {task.name}
+                        </h2>
+                      </div>
+                      <div className="flex gap-1">
+                        <Image
+                          src={DeleteIocn}
+                          alt="delete icon"
+                          width={19}
+                          height={19}
+                        />
+                        <Image
+                          src={Dots}
+                          alt="more actions"
+                          width={20}
+                          height={20}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex justify-between items-center mt-6">
+                      <div
+                        className={`flex items-center gap-1 text-xs font-medium ${color}`}
+                      >
+                        <StatusIcon className="w-h h-4" />
+                        {task.status}
+                      </div>
+                      <span className="text-xs text-gray-600">
+                        {task.dueDate}
+                      </span>
+                    </div>
                   </div>
-                  <span className="text-xs text-gray-600">{task.dueDate}</span>
-                </div>
-              </div>
-            );
-          })}
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
     </>
