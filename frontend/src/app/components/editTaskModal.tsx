@@ -29,7 +29,7 @@ export default function EditTaskModal({ task, onClose, onTaskUpdated }: Props) {
       const API_BASE =
         process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
-      const res = await fetch(`${API_BASE}/api/tasks/${task.id}/edit`, {
+      const res = await fetch(`${API_BASE}/api/tasks/${task.id}`, {
         method: "PATCH",
         headers: {
           Authorization: `Bearer ${token}`,

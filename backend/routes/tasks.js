@@ -74,13 +74,7 @@ router.get("/tasks", authenticateToken, async (req, res) => {
 
 router.patch("/tasks/:id", authenticateToken, async (req, res) => {
   const taskId = req.params.id;
-  const { status, comment } = req.body;
-
-  if (!status && !name && !description && !dueDate) {
-    return res
-      .status(400)
-      .json({ error: "At least one field should must be orovided to update." });
-  }
+  const { status, comment, name, description, dueDate } = req.body;
 
   try {
     const taskRef = db.collection("tasks").doc(taskId);
@@ -90,28 +84,34 @@ router.patch("/tasks/:id", authenticateToken, async (req, res) => {
       return res.status(404).json({ error: "Task not found." });
     }
 
-    const updates = {
-      ...admin(name && { name }),
-      ...(description && { description }),
-      ...admin(dueDate && { dueDate }),
-      ...admin(status && { status }),
-      updateAt: new Date().toISOString(),
-    };
+    const updates = {};
 
-    if (status || comment) {
-      await taskRef.update({
-        ...updates,
-        updates: admin.firestore.FieldValue.arrayUnion({
-          status: status || taskDoc.data().status,
-          comment: comment || "Task updated.",
-          updatedAt: new Date().toISOString(),
-        }),
+    if (status) {
+      updates.status = status;
+      updates.updatedAt = new Date().toISOString();
+      updates.updates = admin.firestore.FieldValue.arrayUnion({
+        comment: comment || "",
+        status,
+        updatedAt: new Date().toISOString(),
       });
-    } else {
-      await taskRef.update(updates);
     }
 
-    res.status(200).json({ message: "Task status updated." });
+    if (name || description || dueDate) {
+      if (name) updates.name = name;
+      if (description) updates.description = description;
+      if (dueDate) updates.dueDate = dueDate;
+      updates.updatedAt = new Date().toISOString();
+    }
+
+    if (Object.keys(updates).length === 0) {
+      return res
+        .status(400)
+        .json({ error: "No valid update fields provided." });
+    }
+
+    await taskRef.update(updates);
+
+    res.status(200).json({ message: "Task updated successfully." });
   } catch (error) {
     console.error("Error updating task:", error);
     res.status(500).json({ error: "Something went wrong." });
