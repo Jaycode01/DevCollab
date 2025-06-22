@@ -161,6 +161,9 @@ export default function Tasks() {
               setshowEditModal(false);
               settaskToEdit(null);
             }}
+            onTaskUpdated={() => {
+              window.location.reload();
+            }}
           />
         </div>
       )}

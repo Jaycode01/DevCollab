@@ -76,8 +76,10 @@ router.patch("/tasks/:id", authenticateToken, async (req, res) => {
   const taskId = req.params.id;
   const { status, comment } = req.body;
 
-  if (!status) {
-    return res.status(400).json({ error: "Status is required." });
+  if (!status && !name && !description && !dueDate) {
+    return res
+      .status(400)
+      .json({ error: "At least one field should must be orovided to update." });
   }
 
   try {
@@ -88,15 +90,26 @@ router.patch("/tasks/:id", authenticateToken, async (req, res) => {
       return res.status(404).json({ error: "Task not found." });
     }
 
-    await taskRef.update({
-      status,
-      updates: admin.firestore.FieldValue.arrayUnion({
-        comment: comment || "",
-        status,
-        updatedAt: new Date().toISOString(),
-      }),
-      updatedAt: new Date().toISOString(),
-    });
+    const updates = {
+      ...admin(name && { name }),
+      ...(description && { description }),
+      ...admin(dueDate && { dueDate }),
+      ...admin(status && { status }),
+      updateAt: new Date().toISOString(),
+    };
+
+    if (status || comment) {
+      await taskRef.update({
+        ...updates,
+        updates: admin.firestore.FieldValue.arrayUnion({
+          status: status || taskDoc.data().status,
+          comment: comment || "Task updated.",
+          updatedAt: new Date().toISOString(),
+        }),
+      });
+    } else {
+      await taskRef.update(updates);
+    }
 
     res.status(200).json({ message: "Task status updated." });
   } catch (error) {
