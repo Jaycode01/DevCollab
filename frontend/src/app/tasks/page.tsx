@@ -9,6 +9,7 @@ import Dots from "../../../public/dots.svg";
 import Image from "next/image";
 import AddTasksModal from "../components/addTasksModal";
 import UpdateTaskStatus from "../components/updateTaskStatus";
+import ViewTaskDetails from "../components/viewTaskDetails";
 
 const statusStyles = {
   "In Progress": {
@@ -130,6 +131,9 @@ export default function Tasks() {
           />
         </div>
       )}
+      <div className="fixed top-[25%] left-[25%] w-1/2 shadow-md bg-white z-50  border rounded p-5 ">
+        <ViewTaskDetails />
+      </div>
       <div className="bg-gray-50 px-8 min-h-[100vh] border-t">
         {/* Header buttons */}
         <div className="w-full flex flex-row justify-end gap-5 pt-5 pr-5 items-center">
