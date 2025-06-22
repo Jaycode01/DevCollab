@@ -17,6 +17,7 @@ interface Props {
 export default function EditTaskModal({ task, onClose, onTaskUpdated }: Props) {
   const [name, setName] = useState(task.name);
   const [description, setDescription] = useState(task.description);
+  const [dueDate, setdueDate] = useState(task.dueDate);
   const [loading, setLoading] = useState(false);
 
   const handleEdit = async (e: React.FormEvent) => {
@@ -34,7 +35,7 @@ export default function EditTaskModal({ task, onClose, onTaskUpdated }: Props) {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, description }),
+        body: JSON.stringify({ name, description, dueDate }),
       });
 
       const data = await res.json();
@@ -74,6 +75,13 @@ export default function EditTaskModal({ task, onClose, onTaskUpdated }: Props) {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
+        <input
+          type="date"
+          value={dueDate}
+          onChange={(e) => setdueDate(e.target.value)}
+          className="text-sm px-4 py-2.5 border border-gray-900 outline-none"
+        />
+
         <button
           type="submit"
           className="bg-blue-600 text-sm text-white py-2.5"
