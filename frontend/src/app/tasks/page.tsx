@@ -26,6 +26,16 @@ type Task = {
   name: string;
   status: "In Progress" | "Completed" | "Due";
   dueDate: string;
+  description: string;
+  createdAt: string;
+  createdBy: string;
+  updatedAt?: string;
+  assignedTo?: string[];
+  updates?: {
+    comment: string;
+    status: string;
+    updatedAt: string;
+  }[];
 };
 
 export default function Tasks() {
@@ -40,6 +50,7 @@ export default function Tasks() {
   const [statusModalTaskId, setstatusModalTaskId] = useState<string | null>(
     null
   );
+  const [selectedTask, setselectedTask] = useState<Task | null>(null);
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -131,9 +142,14 @@ export default function Tasks() {
           />
         </div>
       )}
-      <div className="fixed top-[25%] left-[25%] w-1/2 shadow-md bg-white z-50  border rounded p-5 ">
-        <ViewTaskDetails />
-      </div>
+      {selectedTask && (
+        <div className="fixed top-[25%] left-[25%] w-1/2 shadow-md bg-white z-50  border rounded p-5 ">
+          <ViewTaskDetails
+            task={selectedTask}
+            onClose={() => setselectedTask(null)}
+          />
+        </div>
+      )}
       <div className="bg-gray-50 px-8 min-h-[100vh] border-t">
         {/* Header buttons */}
         <div className="w-full flex flex-row justify-end gap-5 pt-5 pr-5 items-center">
@@ -230,7 +246,13 @@ export default function Tasks() {
                               >
                                 Update Status
                               </li>
-                              <li className="hover:text-blue-600 hover:underline">
+                              <li
+                                onClick={() => {
+                                  setselectedTask(task);
+                                  setactiveDropdownTaskId(null);
+                                }}
+                                className="hover:text-blue-600 hover:underline"
+                              >
                                 View
                               </li>
                               <li className="text-blue-600 hover:underline">
