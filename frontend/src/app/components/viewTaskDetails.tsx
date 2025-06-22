@@ -1,6 +1,10 @@
+"use client";
+
 import CancelIcon from "../../../public/cancel.svg";
 import Image from "next/image";
 import User from "../../../public/user.svg";
+import { useEffect, useState } from "react";
+import { getAuth } from "firebase/auth";
 
 type TaskUpdate = {
   comment: string;
@@ -23,6 +27,38 @@ interface Props {
 }
 
 export default function ViewTaskDetails({ onClose, task }: Props) {
+  const [createdByName, setcreatedByName] = useState("");
+
+  useEffect(() => {
+    const fetchCreatorName = async () => {
+      try {
+        const token = await getAuth().currentUser?.getIdToken();
+        if (!token || !task?.createdBy) return;
+
+        const API_BASE =
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
+        const res = await fetch(
+          `${API_BASE}/api/users/${task.createdBy}/profile`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const data = await res.json();
+        if (res.ok && data.name) {
+          setcreatedByName(data.name);
+        }
+      } catch (err) {
+        console.error("Failed to fetch creator name:", err);
+      }
+    };
+
+    fetchCreatorName();
+  }, [task?.createdBy]);
+
   return (
     <div>
       <div className="flex flex-row justify-between">
@@ -49,9 +85,11 @@ export default function ViewTaskDetails({ onClose, task }: Props) {
           <p className="text-sm text-gray-900 ">
             Description: {task?.description}
           </p>
-          <p className="text-sm">Created By: {task?.createdBy}</p>
+          <p className="text-sm">Created By: {createdByName || "Loading..."}</p>
           <p className="text-sm">Created At: {task?.createdAt}</p>
-          <p className="text-sm">Last Updated: {task?.updatedAt}</p>
+          <p className="text-sm">
+            Last Updated: {task?.updatedAt || task?.createdAt}
+          </p>
           <p className="text-sm">Comments: {task?.updates?.length || 0}</p>
         </div>
       </div>
