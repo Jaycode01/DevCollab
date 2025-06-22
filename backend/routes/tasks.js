@@ -1,4 +1,5 @@
 import express from "express";
+import admin from "firebase-admin";
 import { db } from "../firebase.js";
 import { authenticateToken } from "../middleware/auth.js";
 
@@ -27,6 +28,13 @@ router.post("/tasks", authenticateToken, async (req, res) => {
       createdBy: userId,
       assignedTo,
       createdAt: new Date().toISOString(),
+      updates: [
+        {
+          status,
+          comment: "Task Created",
+          updateAt: new Date().toISOString(),
+        },
+      ],
     };
 
     const docRef = await db.collection("tasks").add(newTask);
@@ -82,7 +90,11 @@ router.patch("/tasks/:id", authenticateToken, async (req, res) => {
 
     await taskRef.update({
       status,
-      comment: comment || "",
+      updates: admin.firestore.FieldValue.arrayUnion({
+        comment: comment || "",
+        status,
+        updatedAt: new Date().toISOString(),
+      }),
       updatedAt: new Date().toISOString(),
     });
 
@@ -93,7 +105,7 @@ router.patch("/tasks/:id", authenticateToken, async (req, res) => {
   }
 });
 
-router.delete("/tasks/;id", authenticateToken, async (req, res) => {
+router.delete("/tasks/:id", authenticateToken, async (req, res) => {
   const taskId = req.params.id;
 
   try {

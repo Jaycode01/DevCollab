@@ -78,7 +78,7 @@ export default function Tasks() {
 
   const handleDelete = async (taskId: string) => {
     const confirmed = window.confirm(
-      "Are you sure you want to dekte this task?"
+      "Are you sure you want to delete this task?"
     );
     if (!confirmed) return;
 
