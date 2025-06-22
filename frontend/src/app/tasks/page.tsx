@@ -76,6 +76,39 @@ export default function Tasks() {
     setactiveDropdownTaskId((prev) => (prev === taskId ? null : taskId));
   };
 
+  const handleDelete = async (taskId: string) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to dekte this task?"
+    );
+    if (!confirmed) return;
+
+    try {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const token = await user.getIdToken();
+      const API_BASE =
+        process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
+      const res = await fetch(`${API_BASE}/api/tasks/${taskId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw Error(data.error || "Delete failed.");
+
+      alert("Task deleted.");
+      settasks((prev) => prev.filter((task) => task.id !== taskId));
+    } catch (err) {
+      console.error("Delete task error:", err);
+      alert("Failed to delete task.");
+    }
+  };
+
   return (
     <>
       {showModal && (
@@ -156,12 +189,18 @@ export default function Tasks() {
                         </h2>
                       </div>
                       <div className="flex gap-1 relative">
-                        <Image
-                          src={DeleteIocn}
-                          alt="delete icon"
-                          width={19}
-                          height={19}
-                        />
+                        <button
+                          type="button"
+                          onClick={() => handleDelete(task.id)}
+                        >
+                          {" "}
+                          <Image
+                            src={DeleteIocn}
+                            alt="delete icon"
+                            width={19}
+                            height={19}
+                          />
+                        </button>
                         <button
                           type="button"
                           onClick={() => toggleDropDown(task.id)}
