@@ -48,8 +48,8 @@ export default function ViewTaskDetails({ onClose, task }: Props) {
         );
 
         const data = await res.json();
-        if (res.ok && data.name) {
-          setcreatedByName(data.name);
+        if (res.ok && data.user?.name) {
+          setcreatedByName(data.user.name);
         }
       } catch (err) {
         console.error("Failed to fetch creator name:", err);
@@ -86,9 +86,14 @@ export default function ViewTaskDetails({ onClose, task }: Props) {
             Description: {task?.description}
           </p>
           <p className="text-sm">Created By: {createdByName || "Loading..."}</p>
-          <p className="text-sm">Created At: {task?.createdAt}</p>
           <p className="text-sm">
-            Last Updated: {task?.updatedAt || task?.createdAt}
+            Created At:{" "}
+            {task?.createdAt && new Date(task.createdAt).toLocaleString()}
+          </p>
+          <p className="text-sm">
+            Last Updated:
+            {(task?.updatedAt || task?.createdAt) &&
+              new Date(task?.updatedAt || task?.createdAt).toLocaleString()}
           </p>
           <p className="text-sm">Comments: {task?.updates?.length || 0}</p>
         </div>
