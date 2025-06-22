@@ -10,6 +10,7 @@ import Image from "next/image";
 import AddTasksModal from "../components/addTasksModal";
 import UpdateTaskStatus from "../components/updateTaskStatus";
 import ViewTaskDetails from "../components/viewTaskDetails";
+import EditTaskModal from "../components/editTaskModal";
 
 const statusStyles = {
   "In Progress": {
@@ -51,6 +52,8 @@ export default function Tasks() {
     null
   );
   const [selectedTask, setselectedTask] = useState<Task | null>(null);
+  const [showEditModal, setshowEditModal] = useState(false);
+  const [taskToEdit, settaskToEdit] = useState<Task | null>(null);
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -147,6 +150,20 @@ export default function Tasks() {
           <ViewTaskDetails
             task={selectedTask}
             onClose={() => setselectedTask(null)}
+          />
+        </div>
+      )}
+      {showEditModal && taskToEdit && (
+        <div className="fixed top-[25%] left-[25%] w-1/2 shadow-md bg-white z-50 border rounded p-5">
+          <EditTaskModal
+            task={taskToEdit}
+            onClose={() => {
+              setshowEditModal(false);
+              settaskToEdit(null);
+            }}
+            onTaskUpdated={() => {
+              window.location.reload();
+            }}
           />
         </div>
       )}
@@ -255,7 +272,14 @@ export default function Tasks() {
                               >
                                 View
                               </li>
-                              <li className="text-blue-600 hover:underline">
+                              <li
+                                onClick={() => {
+                                  settaskToEdit(task);
+                                  setshowEditModal(true);
+                                  setactiveDropdownTaskId(null);
+                                }}
+                                className="text-blue-600 hover:underline"
+                              >
                                 Edit
                               </li>
                             </ul>
