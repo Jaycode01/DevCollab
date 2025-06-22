@@ -16,9 +16,9 @@ router.get("/users/:uid/profile", async (req, res) => {
 
     return res.status(200).json({
       user: {
-        name:
-          `${userData.firstName} ${userData.lastName || ""}` ||
-          `${userData.email.split("@")[0]}`,
+        name: userData.firstName
+          ? `${userData.firstName} ${userData.lastName || ""}`.trim()
+          : `${userData.email.split("@")[0]}`,
         email: userData.email,
         bio: userData.bio || "",
         github: userData.githubUrl || "",
