@@ -93,4 +93,29 @@ router.patch("/tasks/:id", authenticateToken, async (req, res) => {
   }
 });
 
+router.delete("/tasks/;id", authenticateToken, async (req, res) => {
+  const taskId = req.params.id;
+
+  try {
+    const taskRef = db.collection("tasks").doc(taskId);
+    const taskDoc = await taskRef.get();
+
+    if (!taskDoc.exists) {
+      return res.status(404).json({ error: "task not found." });
+    }
+
+    if (taskDoc.data().createdBy !== req.user.uid) {
+      return res
+        .status(403)
+        .json({ error: "Unauthorized to delete this task." });
+    }
+
+    await taskRef.delete();
+    res.status(200).json({ message: "task deleted successfully." });
+  } catch (err) {
+    console.error("Delete task error:", err);
+    res.status(500).json({ error: "Failed tp delete task." });
+  }
+});
+
 export default router;
