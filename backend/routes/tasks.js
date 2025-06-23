@@ -170,7 +170,8 @@ router.get("/teams/user-teams", authenticateToken, async (req, res) => {
 
     const memberTeamsSnap = await db
       .collection("teams")
-      .where("memberUids", "array-contains", userId);
+      .where("memberUids", "array-contains", userId)
+      .get();
 
     const createdTeams = createdTemsSnap.docs.map((doc) => ({
       id: doc.id,
@@ -180,7 +181,7 @@ router.get("/teams/user-teams", authenticateToken, async (req, res) => {
     // Filter out dupicates
     const memberTeams = memberTeamsSnap.docs
       .filter((doc) => doc.data().createdBy !== userId)
-      .mao((doc) => ({
+      .map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
