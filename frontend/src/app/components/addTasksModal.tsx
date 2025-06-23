@@ -14,7 +14,8 @@ type TaskPayload = {
   description: string;
   dueDate: string;
   status: "In Progress" | "Completed" | "Due";
-  assignedTo?: string;
+  assignedTo?: string[];
+  teamId?: string;
 };
 
 export default function AddTasksModal({ onClose }: Props) {
@@ -22,7 +23,8 @@ export default function AddTasksModal({ onClose }: Props) {
   const [name, setname] = useState("");
   const [description, setdescription] = useState("");
   const [dueDate, setdueDate] = useState("");
-  const [assignedTo, setassignedTo] = useState(""); //For team task
+  const [assignedTo, setassignedTo] = useState<string[]>([]); //For team task
+  const [teamId, setteamId] = useState("");
 
   const handlesubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,8 +41,9 @@ export default function AddTasksModal({ onClose }: Props) {
       status: "In Progress",
     };
 
-    if (taskMode === "team" && assignedTo) {
+    if (taskMode === "team" && assignedTo.length > 0 && teamId) {
       taskPayload.assignedTo = assignedTo;
+      taskPayload.teamId = teamId;
     }
 
     const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
@@ -135,8 +138,8 @@ export default function AddTasksModal({ onClose }: Props) {
           {taskMode === "team" && (
             <div className="mt-5 flex flex-col gap-3">
               <select
-                name=""
-                id=""
+                value={teamId}
+                onChange={(e) => setteamId(e.target.value)}
                 className="w-full border border-gray-900 px-4 py-2 text-sm"
               >
                 <option value="">Select Team</option>
@@ -145,10 +148,15 @@ export default function AddTasksModal({ onClose }: Props) {
                 <option value="team2">Team 2</option>
               </select>
               <select
+                multiple
                 name=""
                 id=""
                 value={assignedTo}
-                onChange={(e) => setassignedTo(e.target.value)}
+                onChange={(e) =>
+                  setassignedTo(
+                    Array.from(e.target.selectedOptions, (opt) => opt.value)
+                  )
+                }
                 className="w-full border border-gray-900 px-4 py-2 text-sm"
                 required
               >

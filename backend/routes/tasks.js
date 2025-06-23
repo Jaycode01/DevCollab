@@ -14,6 +14,7 @@ router.post("/tasks", authenticateToken, async (req, res) => {
       dueDate,
       status = "In Progress",
       assignedTo = null,
+      teamId = null,
     } = req.body;
 
     if (!name || !dueDate) {
@@ -27,12 +28,13 @@ router.post("/tasks", authenticateToken, async (req, res) => {
       status,
       createdBy: userId,
       assignedTo,
+      teamId,
       createdAt: new Date().toISOString(),
       updates: [
         {
           status,
           comment: "Task Created",
-          updateAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
         },
       ],
     };
@@ -53,17 +55,31 @@ router.get("/tasks", authenticateToken, async (req, res) => {
   try {
     const userId = req.user.uid;
 
-    const snapshot = await db
+    const personalTasksSnapshot = await db
       .collection("tasks")
       .where("createdBy", "==", userId)
       .get();
 
-    const tasks = snapshot.docs.map((doc) => ({
+    const teamTasksSnapshot = await db
+      .collection("tasks")
+      .where("assignedTo", "array-contains", userId)
+      .get();
+
+    const personalTasks = personalTasksSnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     }));
 
-    res.status(200).json({ tasks });
+    const teamTasks = teamTasksSnapshot.docs
+      .filter((doc) => doc.data().createdBy !== userId)
+      .map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+    const allTasks = [...personalTasks, ...teamTasks];
+
+    res.status(200).json({ tasks: allTasks });
   } catch (err) {
     console.error("Error fetching tasks:", err);
     res
