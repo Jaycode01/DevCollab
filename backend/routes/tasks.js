@@ -159,4 +159,25 @@ router.delete("/tasks/:id", authenticateToken, async (req, res) => {
   }
 });
 
+router.get("/teams/user-teams", authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.uid;
+
+    const snapshot = await db
+      .collection("teams")
+      .where("members", "array-contains", userId)
+      .get();
+
+    const teams = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    res.status(200).json({ teams });
+  } catch (err) {
+    console.error("Error fetching user teams:", err);
+    res.status(500).json({ error: "Failed to fetch user teams." });
+  }
+});
+
 export default router;

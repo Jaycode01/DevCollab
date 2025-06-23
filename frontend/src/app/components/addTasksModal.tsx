@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { getAuth } from "firebase/auth";
 import cancelIcon from "../../../public/cancel.svg";
 import Image from "next/image";
@@ -25,6 +25,7 @@ export default function AddTasksModal({ onClose }: Props) {
   const [dueDate, setdueDate] = useState("");
   const [assignedTo, setassignedTo] = useState<string[]>([]); //For team task
   const [teamId, setteamId] = useState("");
+  const [teams, setteams] = useState<{ id: string; name: string }[]>([]);
 
   const handlesubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,6 +69,35 @@ export default function AddTasksModal({ onClose }: Props) {
       alert("Error creating task.");
     }
   };
+
+  useEffect(() => {
+    const fetchTeams = async () => {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const token = await user.getIdToken();
+      const API_BASE =
+        process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
+      try {
+        const res = await fetch(`${API_BASE}/api/teams/user-teams`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Failed to fetch teams.");
+
+        setteams(data.teams);
+      } catch (err) {
+        console.error("Error fetching teams:", err);
+      }
+    };
+
+    fetchTeams();
+  }, []);
 
   return (
     <>
@@ -141,11 +171,15 @@ export default function AddTasksModal({ onClose }: Props) {
                 value={teamId}
                 onChange={(e) => setteamId(e.target.value)}
                 className="w-full border border-gray-900 px-4 py-2 text-sm"
+                required
               >
                 <option value="">Select Team</option>
                 {/* Dynamic Teams fetched */}
-                <option value="team1">Team 1</option>
-                <option value="team2">Team 2</option>
+                {teams.map((team) => (
+                  <option value={team.id} key={team.id}>
+                    {team.name}
+                  </option>
+                ))}
               </select>
               <select
                 multiple
