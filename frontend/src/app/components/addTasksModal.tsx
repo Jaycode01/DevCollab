@@ -90,6 +90,7 @@ export default function AddTasksModal({ onClose }: Props) {
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Failed to fetch teams.");
 
+        console.log("Fetched teams:", data.teams);
         setteams(data.teams);
       } catch (err) {
         console.error("Error fetching teams:", err);
