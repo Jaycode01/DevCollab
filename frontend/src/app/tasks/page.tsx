@@ -54,6 +54,9 @@ export default function Tasks() {
   const [selectedTask, setselectedTask] = useState<Task | null>(null);
   const [showEditModal, setshowEditModal] = useState(false);
   const [taskToEdit, settaskToEdit] = useState<Task | null>(null);
+  const [filterStatus, setfilterStatus] = useState<
+    "In Progress" | "Completed" | "Due" | "All"
+  >("All");
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -76,6 +79,7 @@ export default function Tasks() {
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Failed to fetch tasks");
 
+        console.log("fetched tasks:", data.tasks);
         settasks(data.tasks);
       } catch (error) {
         console.error("Fetch error:", error);
@@ -123,6 +127,11 @@ export default function Tasks() {
       alert("Failed to delete task.");
     }
   };
+
+  const filteredTasks =
+    filterStatus === "All"
+      ? tasks
+      : tasks.filter((task) => task.status === filterStatus);
 
   return (
     <>
@@ -175,19 +184,31 @@ export default function Tasks() {
               className="border px-5 py-3 rounded"
               onClick={() => setopen(!open)}
             >
-              All ▼
+              {filterStatus} ▼
             </button>
             {open && (
-              <div className="absolute mt-2 bg-white border rounded shadow w-40">
-                <div className="px-4 py-2 flex items-center gap-2 hover:bg-gray-100 cursor-pointer">
-                  <Circle className="text-yellow-500 w-4 h-4" /> In Progress
-                </div>
-                <div className="px-4 py-2 flex items-center gap-2 hover:bg-gray-100 cursor-pointer">
-                  <CheckCircle className="text-green-600 w-4 h-4" /> Completed
-                </div>
-                <div className="px-4 py-2 flex items-center gap-2 hover:bg-gray-100 cursor-pointer">
-                  <AlertCircle className="text-red-500 w-4 h-4" /> Due
-                </div>
+              <div className="absolute mt-2 bg-white border rounded shadow w-40 z-10">
+                {["All", "In Progress", "Completed", "Due"].map((status) => (
+                  <div
+                    key={status}
+                    onClick={() => {
+                      setfilterStatus(status as typeof filterStatus);
+                      setopen(false);
+                    }}
+                    className="px-4 py-2 flex items-center gap-2 hover:bg-gray-100 cursor-pointer"
+                  >
+                    {status === "In Progress" && (
+                      <Circle className="text-yellow-500 w-4 h-4" />
+                    )}
+                    {status === "Completed" && (
+                      <CheckCircle className="text-green-600 w-4 h-4" />
+                    )}
+                    {status === "Due" && (
+                      <AlertCircle className="text-red-500 w-4 h-4" />
+                    )}
+                    {status}
+                  </div>
+                ))}
               </div>
             )}
           </div>
@@ -207,11 +228,13 @@ export default function Tasks() {
             <p className="text-center text-sm text-gray-600">
               Loading tasks...
             </p>
-          ) : tasks.length === 0 ? (
-            <p className="text-center text-sm text-gray-600">No tasks yet.</p>
+          ) : filteredTasks.length === 0 ? (
+            <p className="text-center text-sm text-gray-600">
+              No tasks match selected status
+            </p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-              {tasks.map((task) => {
+              {filteredTasks.map((task) => {
                 const { icon: StatusIcon, color } = statusStyles[task.status];
 
                 return (
