@@ -207,19 +207,28 @@ router.get("/teams/:teamId/members", authenticateToken, async (req, res) => {
 
     const memberUids = teamDoc.data().memberUids || [];
 
-    const memberPromises = memberUids.map((uid) =>
-      admin
-        .auth()
-        .getUser(uid)
-        .then((user) => ({
-          uid: user.uid,
-          displayName: user.displayName || user.email || "No Name",
-          email: user.email,
-          photoURL: user.photoURL || null,
-        }))
-    );
+    const usersSnapshot = await db
+      .collection("users")
+      .where(admin.firestore.FieldPath.documentId(), "in", memberUids)
+      .get();
 
-    const members = await Promise.all(memberPromises);
+    const members = usersSnapshot.docs.map((doc) => {
+      const user = doc.data();
+      const emailPrefix = user.email?.split("@")[0] || "Unknown";
+
+      const displayName =
+        (user.firstName &&
+          user.lastName &&
+          `${user.firstName} ${user.lastName}`) ||
+        user.firstName ||
+        emailPrefix;
+
+      return {
+        uid: doc.id,
+        displayName,
+        email: user.email,
+      };
+    });
 
     res.status(200).json({ members });
   } catch (err) {
