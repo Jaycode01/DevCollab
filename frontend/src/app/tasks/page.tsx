@@ -37,6 +37,8 @@ type Task = {
     status: string;
     updatedAt: string;
   }[];
+  teamId?: string;
+  kind?: "personal" | "team";
 };
 
 export default function Tasks() {
@@ -54,9 +56,13 @@ export default function Tasks() {
   const [selectedTask, setselectedTask] = useState<Task | null>(null);
   const [showEditModal, setshowEditModal] = useState(false);
   const [taskToEdit, settaskToEdit] = useState<Task | null>(null);
+  const [openKind, setopenKind] = useState(false);
   const [filterStatus, setfilterStatus] = useState<
     "In Progress" | "Completed" | "Due" | "All"
   >("All");
+  const [filterKind, setfilterKind] = useState<"All" | "personal" | "team">(
+    "All"
+  );
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -128,10 +134,11 @@ export default function Tasks() {
     }
   };
 
-  const filteredTasks =
-    filterStatus === "All"
-      ? tasks
-      : tasks.filter((task) => task.status === filterStatus);
+  const filteredTasks = tasks
+    .filter((task) =>
+      filterStatus === "All" ? true : task.status === filterStatus
+    )
+    .filter((task) => (filterKind === "All" ? true : task.kind === filterKind));
 
   return (
     <>
@@ -179,6 +186,39 @@ export default function Tasks() {
       <div className="bg-gray-50 px-8 min-h-[100vh] border-t">
         {/* Header buttons */}
         <div className="w-full flex flex-row justify-end gap-5 pt-5 pr-5 items-center">
+          <div className="relative inline-block text-left text-sm">
+            <button
+              type="button"
+              className="border px-5 py-3 rounded"
+              onClick={() => setopenKind(!openKind)}
+            >
+              {filterKind === "All"
+                ? "All Tasks"
+                : filterKind === "personal"
+                ? "My Tasks"
+                : "Team Tasks"}
+            </button>
+            {openKind && (
+              <div className="absolute mt-2 bg-white border rounded shadow w-40 z-10">
+                {["All", "personal", "team"].map((kind) => (
+                  <div
+                    key={kind}
+                    onClick={() => {
+                      setfilterKind(kind as "All" | "personal" | "team");
+                      setopenKind(false);
+                    }}
+                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer capitalize"
+                  >
+                    {kind === "All"
+                      ? "All Tasks"
+                      : kind === "personal"
+                      ? "My Tasks"
+                      : "Team Tasks"}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
           <div className="relative inline-block text-left text-sm">
             <button
               className="border px-5 py-3 rounded"

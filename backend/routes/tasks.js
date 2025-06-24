@@ -29,6 +29,7 @@ router.post("/tasks", authenticateToken, async (req, res) => {
       createdBy: userId,
       assignedTo,
       teamId,
+      kind: teamId ? "team" : "personal",
       createdAt: new Date().toISOString(),
       updates: [
         {
