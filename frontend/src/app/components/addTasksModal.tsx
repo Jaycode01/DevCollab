@@ -26,6 +26,13 @@ export default function AddTasksModal({ onClose }: Props) {
   const [assignedTo, setassignedTo] = useState<string[]>([]); //For team task
   const [teamId, setteamId] = useState("");
   const [teams, setteams] = useState<{ id: string; name: string }[]>([]);
+  const [members, setmembers] = useState<
+    {
+      uid: string;
+      displayName: string;
+      email: string;
+    }[]
+  >([]);
 
   const handlesubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -100,6 +107,37 @@ export default function AddTasksModal({ onClose }: Props) {
     fetchTeams();
   }, []);
 
+  useEffect(() => {
+    const fetchMember = async () => {
+      if (!teamId) return;
+
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const token = await user.getIdToken();
+      const API_BASE =
+        process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
+      try {
+        const res = await fetch(`${API_BASE}/api/teams/${teamId}/members`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Failed to fetch members.");
+
+        setmembers(data.members);
+      } catch (err) {
+        console.error("Error fetching team members:", err);
+      }
+    };
+
+    fetchMember();
+  }, [teamId]);
+
   return (
     <>
       <div>
@@ -170,7 +208,10 @@ export default function AddTasksModal({ onClose }: Props) {
             <div className="mt-5 flex flex-col gap-3">
               <select
                 value={teamId}
-                onChange={(e) => setteamId(e.target.value)}
+                onChange={(e) => {
+                  setassignedTo([]);
+                  setteamId(e.target.value);
+                }}
                 className="w-full border border-gray-900 px-4 py-2 text-sm"
                 required
               >
@@ -184,8 +225,6 @@ export default function AddTasksModal({ onClose }: Props) {
               </select>
               <select
                 multiple
-                name=""
-                id=""
                 value={assignedTo}
                 onChange={(e) =>
                   setassignedTo(
@@ -195,10 +234,15 @@ export default function AddTasksModal({ onClose }: Props) {
                 className="w-full border border-gray-900 px-4 py-2 text-sm"
                 required
               >
-                <option value="">Assign to Member</option>
-                {/* Dynamically load members later */}
-                <option value="uid1">Member A</option>
-                <option value="uid2">Member B</option>
+                {members.length === 0 ? (
+                  <option disabled>No members in this team</option>
+                ) : (
+                  members.map((member) => (
+                    <option value={member.uid} key={member.uid}>
+                      {member.displayName || member.email}
+                    </option>
+                  ))
+                )}
               </select>
             </div>
           )}

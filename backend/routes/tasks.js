@@ -195,4 +195,36 @@ router.get("/teams/user-teams", authenticateToken, async (req, res) => {
   }
 });
 
+router.get("/teams/:teamId/members", authenticateToken, async (req, res) => {
+  try {
+    const { teamId } = req.params;
+    const teamDoc = await db.collection("teams").doc(teamId).get();
+
+    if (!teamDoc.exists) {
+      return res.status(404).json({ error: "Team nt found." });
+    }
+
+    const memberUids = teamDoc.data().memberUids || [];
+
+    const memberPromises = memberUids.map((uid) =>
+      admin
+        .auth()
+        .getUser(uid)
+        .then((user) => ({
+          uid: user.uid,
+          displayName: user.displayName || user.email || "No Name",
+          email: user.email,
+          photoURL: user.photoURL || null,
+        }))
+    );
+
+    const members = await Promise.all(memberPromises);
+
+    res.status(200).json({ members });
+  } catch (err) {
+    console.error("error fetching team members:", err);
+    res.status(500).json({ error: "Failed to fetch team members" });
+  }
+});
+
 export default router;
