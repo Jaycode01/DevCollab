@@ -42,6 +42,18 @@ router.post("/tasks", authenticateToken, async (req, res) => {
 
     const docRef = await db.collection("tasks").add(newTask);
 
+    const io = req.app.get("io");
+    if (Array.isArray(assignedTo)) {
+      assignedTo.forEach((uid) => {
+        req.io.to(uid).emit("notification", {
+          type: "task_assigned",
+          message: `You've been assigned to a new task: ${name}`,
+          taskId: docRef.id,
+          teamId,
+        });
+      });
+    }
+
     res.status(201).json({
       message: "Task created successfully",
       task: { id: docRef.id, ...newTask },
