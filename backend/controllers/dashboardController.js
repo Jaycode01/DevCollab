@@ -19,7 +19,7 @@ export const getDashboard = async (req, res) => {
 
     const assignedTasksSnap = await db
       .collection("tasks")
-      .where("createdBy", "array-contains", userId)
+      .where("assignedTo", "array-contains", userId)
       .get();
 
     const allTasks = [
