@@ -19,13 +19,13 @@ export const getDashboard = async (req, res) => {
 
     const assignedTasksSnap = await db
       .collection("tasks")
-      .where("createdBy", "==", userId)
+      .where("createdBy", "array-contains", userId)
       .get();
 
     const allTasks = [
       ...personalTasksSnap.docs.map((doc) => doc.data()),
       ...assignedTasksSnap.docs
-        .filter((docs) => doc.data().createdBy !== userId)
+        .filter((doc) => doc.data().createdBy !== userId)
         .map((doc) => doc.data()),
     ];
 
