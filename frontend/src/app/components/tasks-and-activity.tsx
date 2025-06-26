@@ -1,13 +1,72 @@
 "use client";
-import { useState } from "react";
-import { taskCards } from "@/lib/tasks";
+
+import { useState, useEffect } from "react";
+import { getAuth } from "firebase/auth";
+
+type Task = {
+  id: string;
+  name: string;
+  assignedTo?: string[];
+  dueDate: string;
+  teamId?: string;
+  kind?: "personal" | "team";
+  status: "In Progress" | "Completed" | "Due";
+  tag?: string;
+};
+
+type FormattedTask = {
+  id: string;
+  name: string;
+  assignee: string;
+  date: string;
+  tag: string;
+  status: string;
+};
 
 export default function TasksAndActivity() {
+  const [tasks, settasks] = useState<FormattedTask[]>([]);
   const [sorting, setSorting] = useState<string>("");
-
   const [filterStatus, setFilterStatus] = useState<string>("");
 
-  const sortedCards = [...taskCards]
+  useEffect(() => {
+    const fetchTasks = async () => {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const token = await user.getIdToken();
+      const API_BASE =
+        process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
+      const res = await fetch(`${API_BASE}/api/tasks`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        console.error("Failed to fetch tasks:", data.error);
+        return;
+      }
+
+      const formatted = data.tasks.map((task: Task) => ({
+        id: task.id,
+        name: task.name,
+        assignee: task.assignedTo?.[0] || "Unassigned",
+        date: task.dueDate || "N/A",
+        tag: task.kind === "team" ? "backend" : "frontend",
+        status:
+          task.status === "In Progress" ? "doing" : task.status.toLowerCase(),
+      }));
+
+      settasks(formatted);
+    };
+
+    fetchTasks();
+  }, []);
+
+  const sortedTasks = [...tasks]
     .filter((card) => {
       if (!filterStatus) return true;
       return card.status === filterStatus;
@@ -59,8 +118,6 @@ export default function TasksAndActivity() {
         <div>
           <div className="flex flex-row justify-between mt-3">
             <select
-              name="filter"
-              id="filter"
               className="bg-gray-200 p-2 outline-0 text-sm"
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
@@ -86,8 +143,8 @@ export default function TasksAndActivity() {
           </div>
 
           <div className="flex flex-col gap-5 mt-7">
-            {sortedCards.slice(0, 5).map((taskCard) => {
-              let bgColor = "";
+            {sortedTasks.slice(0, 5).map((taskCard) => {
+              let bgColor = "#eee";
               let textColor = "#000";
 
               if (taskCard.tag === "design") {
