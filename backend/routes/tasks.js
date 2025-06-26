@@ -91,8 +91,8 @@ router.get("/tasks", authenticateToken, async (req, res) => {
     const allTasks = [...personalTasks, ...teamTasks];
 
     const assignedUids = new Set();
-    allTasks.forEach((doc) => {
-      const assigned = doc.data().assignedTo || [];
+    allTasks.forEach((task) => {
+      const assigned = task.assignedTo || [];
       assigned.forEach((uid) => assignedUids.add(uid));
     });
 
@@ -119,14 +119,12 @@ router.get("/tasks", authenticateToken, async (req, res) => {
           emailPrefix;
       });
 
-      const formattedTasks = allTasks.map((doc) => {
-        const task = doc.data();
+      const formattedTasks = allTasks.map((task) => {
         const assignedNames = (task.assignedTo || []).map(
           (uid) => uidToNameMap[uid] || uid
         );
 
         return {
-          id: doc.id,
           ...task,
           assignedTo: assignedNames,
         };
