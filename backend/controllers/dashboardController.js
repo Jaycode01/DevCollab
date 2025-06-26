@@ -22,14 +22,19 @@ export const getDashboard = async (req, res) => {
       .where("assignedTo", "array-contains", userId)
       .get();
 
-    const allTasks = [
-      ...personalTasksSnap.docs.map((doc) => doc.data()),
-      ...assignedTasksSnap.docs
-        .filter((doc) => doc.data().createdBy !== userId)
-        .map((doc) => doc.data()),
-    ];
+    const allTasksMap = new Map();
 
-    console.log("fetched all tasks for dashboard:", allTasks);
+    personalTasksSnap.docs.forEach((doc) => {
+      allTasksMap.set(doc.id, doc.data());
+    });
+
+    assignedTasksSnap.docs.forEach((doc) => {
+      if (!allTasksMap.has(doc.id)) {
+        allTasksMap.set(doc.id, doc.data());
+      }
+    });
+
+    const allTasks = Array.from(allTasksMap.values());
 
     const pendingTasks = allTasks.filter(
       (task) => task.status === "In Progress"
