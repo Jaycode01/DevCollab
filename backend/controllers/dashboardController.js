@@ -29,6 +29,8 @@ export const getDashboard = async (req, res) => {
         .map((doc) => doc.data()),
     ];
 
+    console.log("fetched all tasks for dashboard:", allTasks);
+
     const pendingTasks = allTasks.filter(
       (task) => task.status === "In Progress"
     ).length;
