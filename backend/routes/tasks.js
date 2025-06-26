@@ -90,6 +90,49 @@ router.get("/tasks", authenticateToken, async (req, res) => {
 
     const allTasks = [...personalTasks, ...teamTasks];
 
+    const assignedUids = new Set();
+    allTasks.forEach((doc) => {
+      const assigned = doc.data().assignedTo || [];
+      assigned.forEach((uid) => assignedUids.add(uid));
+    });
+
+    let uidToNameMap = {};
+    if (assignedUids.size > 0) {
+      const usersSnap = await db
+        .collection("users")
+        .where(
+          admin.firestore.FieldPath.documentId(),
+          "in",
+          Array.from(assignedUids)
+        )
+        .get();
+
+      usersSnap.forEach((doc) => {
+        const user = doc.data();
+        const emailPrefix = user.email?.split("@")[0] || "Unknown";
+
+        uidToNameMap[doc.id] =
+          (user.firstName &&
+            user.lastName &&
+            `${user.firstName} ${user.lastName}`) ||
+          user.firstName ||
+          emailPrefix;
+      });
+
+      const formattedTasks = allTasks.map((doc) => {
+        const task = doc.data();
+        const assignedNames = (task.assignedTo || []).map(
+          (uid) => uidToNameMap[uid] || uid
+        );
+
+        return {
+          id: doc.id,
+          ...task,
+          assignedTo: assignedNames,
+        };
+      });
+    }
+
     res.status(200).json({ tasks: allTasks });
   } catch (err) {
     console.error("Error fetching tasks:", err);
