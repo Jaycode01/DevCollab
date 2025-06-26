@@ -64,6 +64,8 @@ export const getDashboard = async (req, res) => {
       dashboard: {
         ...doc.data(),
         totalTeams,
+        completedTasks,
+        pendingTasks,
       },
     });
   } catch (e) {
