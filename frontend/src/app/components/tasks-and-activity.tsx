@@ -53,7 +53,9 @@ export default function TasksAndActivity() {
       const formatted = data.tasks.map((task: Task) => ({
         id: task.id,
         name: task.name,
-        assignee: task.assignedTo?.[0] || "Unassigned",
+        assignee: Array.isArray(task.assignedTo)
+          ? task.assignedTo.join(", ")
+          : "Unassigned",
         date: task.dueDate || "N/A",
         tag: task.kind === "team" ? "backend" : "frontend",
         status:
