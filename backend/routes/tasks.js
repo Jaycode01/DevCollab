@@ -96,7 +96,8 @@ router.get("/tasks", authenticateToken, async (req, res) => {
       assigned.forEach((uid) => assignedUids.add(uid));
     });
 
-    let uidToNameMap = {};
+    let formattedTasks = allTasks;
+
     if (assignedUids.size > 0) {
       const usersSnap = await db
         .collection("users")
@@ -107,6 +108,7 @@ router.get("/tasks", authenticateToken, async (req, res) => {
         )
         .get();
 
+      let uidToNameMap = {};
       usersSnap.forEach((doc) => {
         const user = doc.data();
         const emailPrefix = user.email?.split("@")[0] || "Unknown";
@@ -119,7 +121,7 @@ router.get("/tasks", authenticateToken, async (req, res) => {
           emailPrefix;
       });
 
-      const formattedTasks = allTasks.map((task) => {
+      formattedTasks = allTasks.map((task) => {
         const assignedNames = (task.assignedTo || []).map(
           (uid) => uidToNameMap[uid] || uid
         );
@@ -131,7 +133,7 @@ router.get("/tasks", authenticateToken, async (req, res) => {
       });
     }
 
-    res.status(200).json({ tasks: allTasks });
+    res.status(200).json({ tasks: formattedTasks });
   } catch (err) {
     console.error("Error fetching tasks:", err);
     res
