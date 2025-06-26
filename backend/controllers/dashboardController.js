@@ -12,10 +12,35 @@ export const getDashboard = async (req, res) => {
       .get();
     const totalTeams = teamsSnapshot.size;
 
+    const personalTasksSnap = await db
+      .collection("tasks")
+      .where("createdBy", "==", userId)
+      .get();
+
+    const assignedTasksSnap = await db
+      .collection("tasks")
+      .where("createdBy", "==", userId)
+      .get();
+
+    const allTasks = [
+      ...personalTasksSnap.docs.map((doc) => doc.data()),
+      ...assignedTasksSnap.docs
+        .filter((docs) => doc.data().createdBy !== userId)
+        .map((doc) => doc.data()),
+    ];
+
+    const pendingTasks = allTasks.filter(
+      (task) => task.status === "In Progress"
+    ).length;
+
+    const completedTasks = allTasks.filter(
+      (task) => task.status === "Completed"
+    ).length;
+
     if (!doc.exists) {
       const defualtDashboard = {
-        completedTasks: 0,
-        pendingTasks: 0,
+        completedTasks,
+        pendingTasks,
         totalTeams,
         totalProjects: 0,
         totalHoursLogged: 0,
