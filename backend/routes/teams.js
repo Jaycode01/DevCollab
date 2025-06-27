@@ -1,4 +1,4 @@
-import express from "express";
+import express, { json } from "express";
 import { db, admin } from "../firebase.js";
 
 const router = express.Router();
@@ -90,33 +90,63 @@ router.delete("/teams/:teamId", async (req, res) => {
   }
 });
 
-router.get("/teams/random-members", async (req, res) => {
+router.get("/teams/random-team-members", async (req, res) => {
   try {
-    const snapshot = await db.collection("users").limit(5).get();
+    const { userUid } = req.query;
+    if (!userUid) {
+      return res.status(400).json({ error: "Missing userUid" });
+    }
 
-    const members = snapshot.docs.map((doc) => {
+    const teamsSnap = await db
+      .collection("teams")
+      .where("memberUids", "array-contains", userUid)
+      .get();
+
+    const memberUidsSet = new Set();
+
+    teamsSnap.forEach((doc) => {
       const data = doc.data();
-      const fullName =
-        (data.firstName &&
-          data.lastName &&
-          `${data.firstName} ${data.lastName}`) ||
-        data.firstName ||
-        data.email?.split("@")[0] ||
+      (data.memberUids || []).forEach((uid) => {
+        if (uid !== userUid) memberUidsSet.add(uid);
+      });
+    });
+
+    const allUids = Array.from(memberUidsSet);
+    if (allUids.length === 0) {
+      return res.status(200).json({ members: [] });
+    }
+
+    const shuffled = allUids.sort(() => 0.5 - Math.random());
+    const randomUids = shuffled.slice(0, 5);
+
+    const usersSnap = await db
+      .collection("users")
+      .where(admin.firestore.FieldPath.documentId(), "in", randomUids)
+      .get();
+
+    const members = usersSnap.docs.map((doc) => {
+      const user = doc.data();
+      const displayName =
+        (user.firstName &&
+          user.lastName &&
+          `${user.firstName} ${user.lastName}`) ||
+        user.firstName ||
+        user.email?.split("@")[0] ||
         "Unnamed";
 
       return {
         id: doc.id,
-        name: fullName,
-        role: data.role || "Team Member",
-        status: data.status || "offline",
-        image: data.profileImage || null,
+        name: displayName,
+        role: user.bio || "Team Members",
+        status: user.status || "offline",
+        Image: user.ImageURL || null,
       };
     });
 
     res.status(200).json({ members });
   } catch (error) {
-    console.error("Error fetching random members:", error);
-    res.status(500).json({ error: "failed to fetch team members" });
+    console.error("Error fetching random team members:", error);
+    res.status(500).json({ error: "Failed to fetch team members" });
   }
 });
 

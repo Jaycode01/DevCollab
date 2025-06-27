@@ -28,11 +28,14 @@ export default function Team() {
         process.env.NEXT_PUBLIC_AI_URL || "http://localhost:5000";
 
       try {
-        const res = await fetch(`${API_BASE}/api/teams/random-members`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const res = await fetch(
+          `${API_BASE}/api/teams/random-team-members?userUid=${user.uid}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Failed to fetch");
