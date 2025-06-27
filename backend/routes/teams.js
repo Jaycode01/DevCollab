@@ -90,4 +90,34 @@ router.delete("/teams/:teamId", async (req, res) => {
   }
 });
 
+router.get("/teams/random-members", async (req, res) => {
+  try {
+    const snapshot = await db.collection("users").limit(5).get();
+
+    const members = snapshot.docs.map((doc) => {
+      const data = doc.data();
+      const fullName =
+        (data.firstName &&
+          data.lastName &&
+          `${data.firstName} ${data.lastName}`) ||
+        data.firstName ||
+        data.email?.split("@")[0] ||
+        "Unnamed";
+
+      return {
+        id: doc.id,
+        name: fullName,
+        role: data.role || "Team Member",
+        status: data.status || "offline",
+        image: data.profileImage || null,
+      };
+    });
+
+    res.status(200).json({ members });
+  } catch (error) {
+    console.error("Error fetching random members:", error);
+    res.status(500).json({ error: "failed to fetch team members" });
+  }
+});
+
 export default router;

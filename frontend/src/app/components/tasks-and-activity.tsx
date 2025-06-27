@@ -24,12 +24,14 @@ type FormattedTask = {
 };
 
 export default function TasksAndActivity() {
-  const [tasks, settasks] = useState<FormattedTask[]>([]);
   const [sorting, setSorting] = useState<string>("");
   const [filterStatus, setFilterStatus] = useState<string>("");
+  const [loading, setloading] = useState<boolean>(true);
+  const [allTasks, setallTasks] = useState<FormattedTask[]>([]);
 
   useEffect(() => {
     const fetchTasks = async () => {
+      setloading(true);
       const auth = getAuth();
       const user = auth.currentUser;
       if (!user) return;
@@ -47,6 +49,7 @@ export default function TasksAndActivity() {
       const data = await res.json();
       if (!res.ok) {
         console.error("Failed to fetch tasks:", data.error);
+        setloading(false);
         return;
       }
 
@@ -57,28 +60,61 @@ export default function TasksAndActivity() {
           ? task.assignedTo.join(", ")
           : "Unassigned",
         date: task.dueDate || "N/A",
-        tag: task.kind === "team" ? "backend" : "frontend",
+        tag: task.kind === "team" ? "team" : "personal",
         status:
-          task.status === "In Progress" ? "doing" : task.status.toLowerCase(),
+          task.status === "In Progress"
+            ? "doing"
+            : task.status === "Due"
+            ? "due"
+            : task.status.toLowerCase(),
       }));
 
-      settasks(formatted);
+      setallTasks(formatted);
+      setloading(false);
     };
 
     fetchTasks();
   }, []);
 
-  const sortedTasks = [...tasks]
-    .filter((card) => {
-      if (!filterStatus) return true;
-      return card.status === filterStatus;
-    })
-    .sort((a, b) => {
-      if (!sorting) return 0;
-      if (a.tag === sorting && b.tag !== sorting) return -1;
-      if (a.tag !== sorting && b.tag === sorting) return 1;
-      return 0;
-    });
+  const filteredAndSorted = allTasks
+    .filter((task) => !filterStatus || task.status === filterStatus)
+    .filter((task) => !sorting || task.tag === sorting)
+    .slice(0, 6);
+
+  const renderTaskCard = (task: FormattedTask) => {
+    const bgColor =
+      task.tag === "personal"
+        ? "#ADD8E6"
+        : task.tag === "team"
+        ? "#90ee90"
+        : "#eee";
+
+    const textColor = "#fff";
+
+    return (
+      <div
+        key={task.id}
+        className="flex flex-col shadow-md rounded border p-3 gap-4 hover:curpoi'"
+      >
+        <div className="flex flex-row justify-between items-center">
+          <h3 className="text-[16.5px] font-medium">{task.name}</h3>
+          <p
+            className="text-[11px] px-2 py-1 rounded"
+            style={{
+              backgroundColor: bgColor,
+              color: textColor,
+            }}
+          >
+            {task.tag}
+          </p>
+        </div>
+        <div className="flex justify-between items-center">
+          <p className="text-[14px]">{task.assignee || "Unassigned"}</p>
+          <p className="text-[14px] text-gray-700">{task.date}</p>
+        </div>
+      </div>
+    );
+  };
 
   const activities = [
     {
@@ -116,7 +152,7 @@ export default function TasksAndActivity() {
   return (
     <div className="flex flex-col md:flex-row w-full p-4 gap-3 md:gap-5">
       <div className="w-full md:w-1/2 bg-white shadow-md rounded-md md:p-6 p-3">
-        <h3 className="md:text-[25px] text-[22px] font-bold">Recent Tasks</h3>
+        <h3 className="md:text-[25px] text-[22px]">Recent Tasks</h3>
         <div>
           <div className="flex flex-row justify-between mt-3">
             <select
@@ -124,9 +160,9 @@ export default function TasksAndActivity() {
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
             >
-              <option value="">Filter</option>
-              <option value="todo">Todo</option>
+              <option value="">All Status</option>
               <option value="doing">Doing</option>
+              <option value="due">Due</option>
               <option value="completed">Completed</option>
             </select>
 
@@ -135,55 +171,22 @@ export default function TasksAndActivity() {
               id="sort"
               className="bg-gray-200 p-2 outline-0 text-sm"
               onChange={(e) => setSorting(e.target.value)}
-              defaultValue="default"
+              value={sorting}
             >
-              <option value="default">Sort</option>
-              <option value="design">design</option>
-              <option value="frontend">frontend</option>
-              <option value="backend">backend</option>
+              <option value="">All</option>
+              <option value="personal">Personal</option>
+              <option value="team">Team</option>
             </select>
           </div>
 
           <div className="flex flex-col gap-5 mt-7">
-            {sortedTasks.slice(0, 5).map((taskCard) => {
-              let bgColor = "#eee";
-              let textColor = "#000";
-
-              if (taskCard.tag === "design") {
-                bgColor = "#ADD8E6";
-                textColor = "#fff";
-              } else if (taskCard.tag === "frontend") {
-                bgColor = "#90ee90";
-                textColor = "#fff";
-              } else if (taskCard.tag === "backend") {
-                bgColor = "#808080";
-                textColor = "#fff";
-              }
-
-              return (
-                <div
-                  key={taskCard.id}
-                  className="flex flex-col shadow-md rounded border p-3 gap-4 hover:cursor-pointer"
-                >
-                  <div className="flex flex-row justify-between items-center">
-                    <h3 className="text-[18px]">{taskCard.name}</h3>
-                    <p
-                      className="text-[11px] px-2 py-1 rounded"
-                      style={{
-                        backgroundColor: bgColor,
-                        color: textColor,
-                      }}
-                    >
-                      {taskCard.tag}
-                    </p>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <p>{taskCard.assignee}</p>
-                    <p className="text-[14px] text-gray-700">{taskCard.date}</p>
-                  </div>
-                </div>
-              );
-            })}
+            {loading ? (
+              <p className="text-sm text-gray-500">Loading recent tasks...</p>
+            ) : filteredAndSorted.length === 0 ? (
+              <p className="text-sm txt-gray-500">No tasks yet.</p>
+            ) : (
+              filteredAndSorted.map(renderTaskCard)
+            )}
           </div>
         </div>
       </div>
