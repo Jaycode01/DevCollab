@@ -26,6 +26,7 @@ type FormattedTask = {
 export default function TasksAndActivity() {
   const [sorting, setSorting] = useState<string>("");
   const [filterStatus, setFilterStatus] = useState<string>("");
+  const [loading, setloading] = useState<boolean>(true);
   const [groupedTasks, setgroupedTasks] = useState<{
     personal: FormattedTask[];
     team: FormattedTask[];
@@ -33,6 +34,7 @@ export default function TasksAndActivity() {
 
   useEffect(() => {
     const fetchTasks = async () => {
+      setloading(true);
       const auth = getAuth();
       const user = auth.currentUser;
       if (!user) return;
@@ -50,6 +52,7 @@ export default function TasksAndActivity() {
       const data = await res.json();
       if (!res.ok) {
         console.error("Failed to fetch tasks:", data.error);
+        setloading(false);
         return;
       }
 
@@ -76,6 +79,7 @@ export default function TasksAndActivity() {
       const team = formatted.filter((t: FormattedTask) => t.tag === "team");
 
       setgroupedTasks({ personal, team });
+      setloading(false);
     };
 
     fetchTasks();
@@ -129,10 +133,10 @@ export default function TasksAndActivity() {
     let bgColor = "#eee";
     let textColor = "#000";
 
-    if (taskCard.tag === "design") {
+    if (taskCard.tag === "personal") {
       bgColor = "#ADD8E6";
       textColor = "#fff";
-    } else if (taskCard.tag === "frontend") {
+    } else if (taskCard.tag === "team") {
       bgColor = "#90ee90";
       textColor = "#fff";
     } else if (taskCard.tag === "backend") {
@@ -141,8 +145,12 @@ export default function TasksAndActivity() {
     }
 
     return (
-      <div className="flex flex-col shadow-md rounded border p-3 gap-4 hover:curpoi'">
+      <div
+        key={taskCard.id}
+        className="flex flex-col shadow-md rounded border p-3 gap-4 hover:curpoi'"
+      >
         <div className="flex flex-row justify-between items-center">
+          <h3 className="text-[16.5px] font-medium">{taskCard.name}</h3>
           <p
             className="text-[11px] px-2 py-1 rounded"
             style={{
@@ -154,7 +162,7 @@ export default function TasksAndActivity() {
           </p>
         </div>
         <div className="flex justify-between items-center">
-          <p>{taskCard.assignee}</p>
+          <p className="text-[14px]">{taskCard.assignee || "Unassigned"}</p>
           <p className="text-[14px] text-gray-700">{taskCard.date}</p>
         </div>
       </div>
@@ -183,24 +191,47 @@ export default function TasksAndActivity() {
               id="sort"
               className="bg-gray-200 p-2 outline-0 text-sm"
               onChange={(e) => setSorting(e.target.value)}
-              defaultValue="default"
+              value={sorting}
             >
-              <option value="default">Sort</option>
-              <option value="design">design</option>
-              <option value="frontend">frontend</option>
-              <option value="backend">backend</option>
+              <option value="">All</option>
+              <option value="personal">Personal</option>
+              <option value="team">Team</option>
             </select>
           </div>
 
           <div className="flex flex-col gap-5 mt-7">
-            <h4 className="font-bold text-sm text-gray-700">Personal Tasks</h4>
-            {filteredAndSorted(groupedTasks.personal)
-              .slice(0, 3)
-              .map(renderTaskCard)}
+            {(sorting === "" || sorting === "personal") && (
+              <>
+                {loading ? (
+                  <p className="text-gray-500 text-sm">
+                    Loading Recent Tasks...
+                  </p>
+                ) : filteredAndSorted(groupedTasks.personal).length === 0 ? (
+                  <p className="text-sm text-gray-500">No tasks yet.</p>
+                ) : (
+                  filteredAndSorted(groupedTasks.personal)
+                    .slice(0, 6)
+                    .map(renderTaskCard)
+                )}
+              </>
+            )}
 
-            {filteredAndSorted(groupedTasks.team)
-              .slice(0, 3)
-              .map(renderTaskCard)}
+            {sorting === "" ||
+              (sorting === "team" && (
+                <>
+                  {loading ? (
+                    <p className="text-sm text-gray-500">
+                      Loading Recent Tasks...
+                    </p>
+                  ) : filteredAndSorted(groupedTasks.team).length === 0 ? (
+                    <p className="text-sm text-gray-500">No tasks yet.</p>
+                  ) : (
+                    filteredAndSorted(groupedTasks.team)
+                      .slice(0, 6)
+                      .map(renderTaskCard)
+                  )}
+                </>
+              ))}
           </div>
         </div>
       </div>
