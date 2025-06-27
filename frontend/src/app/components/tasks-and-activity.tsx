@@ -27,10 +27,7 @@ export default function TasksAndActivity() {
   const [sorting, setSorting] = useState<string>("");
   const [filterStatus, setFilterStatus] = useState<string>("");
   const [loading, setloading] = useState<boolean>(true);
-  const [groupedTasks, setgroupedTasks] = useState<{
-    personal: FormattedTask[];
-    team: FormattedTask[];
-  }>({ personal: [], team: [] });
+  const [allTasks, setallTasks] = useState<FormattedTask[]>([]);
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -59,7 +56,6 @@ export default function TasksAndActivity() {
       const formatted = data.tasks.map((task: Task) => ({
         id: task.id,
         name: task.name,
-        kind: task.kind || "personal",
         assignee: Array.isArray(task.assignedTo)
           ? task.assignedTo.join(", ")
           : "Unassigned",
@@ -73,27 +69,51 @@ export default function TasksAndActivity() {
             : task.status.toLowerCase(),
       }));
 
-      const personal = formatted.filter(
-        (t: FormattedTask) => t.tag === "personal"
-      );
-      const team = formatted.filter((t: FormattedTask) => t.tag === "team");
-
-      setgroupedTasks({ personal, team });
+      setallTasks(formatted);
       setloading(false);
     };
 
     fetchTasks();
   }, []);
 
-  const filteredAndSorted = (tasks: FormattedTask[]) => {
-    return tasks
-      .filter((task) => !filterStatus || task.status === filterStatus)
-      .sort((a, b) => {
-        if (!sorting) return 0;
-        if (a.tag === sorting && b.tag !== sorting) return -1;
-        if (a.tag !== sorting && b.tag === sorting) return 1;
-        return 0;
-      });
+  const filteredAndSorted = allTasks
+    .filter((task) => !filterStatus || task.status === filterStatus)
+    .filter((task) => !sorting || task.tag === sorting)
+    .slice(0, 6);
+
+  const renderTaskCard = (task: FormattedTask) => {
+    const bgColor =
+      task.tag === "personal"
+        ? "#ADD8E6"
+        : task.tag === "team"
+        ? "#90ee90"
+        : "#eee";
+
+    const textColor = "#fff";
+
+    return (
+      <div
+        key={task.id}
+        className="flex flex-col shadow-md rounded border p-3 gap-4 hover:curpoi'"
+      >
+        <div className="flex flex-row justify-between items-center">
+          <h3 className="text-[16.5px] font-medium">{task.name}</h3>
+          <p
+            className="text-[11px] px-2 py-1 rounded"
+            style={{
+              backgroundColor: bgColor,
+              color: textColor,
+            }}
+          >
+            {task.tag}
+          </p>
+        </div>
+        <div className="flex justify-between items-center">
+          <p className="text-[14px]">{task.assignee || "Unassigned"}</p>
+          <p className="text-[14px] text-gray-700">{task.date}</p>
+        </div>
+      </div>
+    );
   };
 
   const activities = [
@@ -129,50 +149,10 @@ export default function TasksAndActivity() {
     },
   ];
 
-  const renderTaskCard = (taskCard: FormattedTask) => {
-    let bgColor = "#eee";
-    let textColor = "#000";
-
-    if (taskCard.tag === "personal") {
-      bgColor = "#ADD8E6";
-      textColor = "#fff";
-    } else if (taskCard.tag === "team") {
-      bgColor = "#90ee90";
-      textColor = "#fff";
-    } else if (taskCard.tag === "backend") {
-      bgColor = "#808080";
-      textColor = "#fff";
-    }
-
-    return (
-      <div
-        key={taskCard.id}
-        className="flex flex-col shadow-md rounded border p-3 gap-4 hover:curpoi'"
-      >
-        <div className="flex flex-row justify-between items-center">
-          <h3 className="text-[16.5px] font-medium">{taskCard.name}</h3>
-          <p
-            className="text-[11px] px-2 py-1 rounded"
-            style={{
-              backgroundColor: bgColor,
-              color: textColor,
-            }}
-          >
-            {taskCard.tag}
-          </p>
-        </div>
-        <div className="flex justify-between items-center">
-          <p className="text-[14px]">{taskCard.assignee || "Unassigned"}</p>
-          <p className="text-[14px] text-gray-700">{taskCard.date}</p>
-        </div>
-      </div>
-    );
-  };
-
   return (
     <div className="flex flex-col md:flex-row w-full p-4 gap-3 md:gap-5">
       <div className="w-full md:w-1/2 bg-white shadow-md rounded-md md:p-6 p-3">
-        <h3 className="md:text-[25px] text-[22px] font-bold">Recent Tasks</h3>
+        <h3 className="md:text-[25px] text-[22px]">Recent Tasks</h3>
         <div>
           <div className="flex flex-row justify-between mt-3">
             <select
@@ -200,38 +180,13 @@ export default function TasksAndActivity() {
           </div>
 
           <div className="flex flex-col gap-5 mt-7">
-            {(sorting === "" || sorting === "personal") && (
-              <>
-                {loading ? (
-                  <p className="text-gray-500 text-sm">
-                    Loading Recent Tasks...
-                  </p>
-                ) : filteredAndSorted(groupedTasks.personal).length === 0 ? (
-                  <p className="text-sm text-gray-500">No tasks yet.</p>
-                ) : (
-                  filteredAndSorted(groupedTasks.personal)
-                    .slice(0, 6)
-                    .map(renderTaskCard)
-                )}
-              </>
+            {loading ? (
+              <p className="text-sm text-gray-500">Loading recent tasks...</p>
+            ) : filteredAndSorted.length === 0 ? (
+              <p className="text-sm txt-gray-500">No tasks yet.</p>
+            ) : (
+              filteredAndSorted.map(renderTaskCard)
             )}
-
-            {sorting === "" ||
-              (sorting === "team" && (
-                <>
-                  {loading ? (
-                    <p className="text-sm text-gray-500">
-                      Loading Recent Tasks...
-                    </p>
-                  ) : filteredAndSorted(groupedTasks.team).length === 0 ? (
-                    <p className="text-sm text-gray-500">No tasks yet.</p>
-                  ) : (
-                    filteredAndSorted(groupedTasks.team)
-                      .slice(0, 6)
-                      .map(renderTaskCard)
-                  )}
-                </>
-              ))}
           </div>
         </div>
       </div>
