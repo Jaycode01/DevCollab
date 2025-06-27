@@ -24,9 +24,12 @@ type FormattedTask = {
 };
 
 export default function TasksAndActivity() {
-  const [tasks, settasks] = useState<FormattedTask[]>([]);
   const [sorting, setSorting] = useState<string>("");
   const [filterStatus, setFilterStatus] = useState<string>("");
+  const [groupedTasks, setgroupedTasks] = useState<{
+    personal: FormattedTask[];
+    team: FormattedTask[];
+  }>({ personal: [], team: [] });
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -53,32 +56,41 @@ export default function TasksAndActivity() {
       const formatted = data.tasks.map((task: Task) => ({
         id: task.id,
         name: task.name,
+        kind: task.kind || "personal",
         assignee: Array.isArray(task.assignedTo)
           ? task.assignedTo.join(", ")
           : "Unassigned",
         date: task.dueDate || "N/A",
-        tag: task.kind === "team" ? "backend" : "frontend",
+        tag: task.kind === "team" ? "team" : "personal",
         status:
-          task.status === "In Progress" ? "doing" : task.status.toLowerCase(),
+          task.status === "In Progress"
+            ? "doing"
+            : task.status === "Due"
+            ? "due"
+            : task.status.toLowerCase(),
       }));
 
-      settasks(formatted);
+      const personal = formatted.filter(
+        (t: FormattedTask) => t.tag === "personal"
+      );
+      const team = formatted.filter((t: FormattedTask) => t.tag === "team");
+
+      setgroupedTasks({ personal, team });
     };
 
     fetchTasks();
   }, []);
 
-  const sortedTasks = [...tasks]
-    .filter((card) => {
-      if (!filterStatus) return true;
-      return card.status === filterStatus;
-    })
-    .sort((a, b) => {
-      if (!sorting) return 0;
-      if (a.tag === sorting && b.tag !== sorting) return -1;
-      if (a.tag !== sorting && b.tag === sorting) return 1;
-      return 0;
-    });
+  const filteredAndSorted = (tasks: FormattedTask[]) => {
+    return tasks
+      .filter((task) => !filterStatus || task.status === filterStatus)
+      .sort((a, b) => {
+        if (!sorting) return 0;
+        if (a.tag === sorting && b.tag !== sorting) return -1;
+        if (a.tag !== sorting && b.tag === sorting) return 1;
+        return 0;
+      });
+  };
 
   const activities = [
     {
@@ -113,6 +125,42 @@ export default function TasksAndActivity() {
     },
   ];
 
+  const renderTaskCard = (taskCard: FormattedTask) => {
+    let bgColor = "#eee";
+    let textColor = "#000";
+
+    if (taskCard.tag === "design") {
+      bgColor = "#ADD8E6";
+      textColor = "#fff";
+    } else if (taskCard.tag === "frontend") {
+      bgColor = "#90ee90";
+      textColor = "#fff";
+    } else if (taskCard.tag === "backend") {
+      bgColor = "#808080";
+      textColor = "#fff";
+    }
+
+    return (
+      <div className="flex flex-col shadow-md rounded border p-3 gap-4 hover:curpoi'">
+        <div className="flex flex-row justify-between items-center">
+          <p
+            className="text-[11px] px-2 py-1 rounded"
+            style={{
+              backgroundColor: bgColor,
+              color: textColor,
+            }}
+          >
+            {taskCard.tag}
+          </p>
+        </div>
+        <div className="flex justify-between items-center">
+          <p>{taskCard.assignee}</p>
+          <p className="text-[14px] text-gray-700">{taskCard.date}</p>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="flex flex-col md:flex-row w-full p-4 gap-3 md:gap-5">
       <div className="w-full md:w-1/2 bg-white shadow-md rounded-md md:p-6 p-3">
@@ -124,9 +172,9 @@ export default function TasksAndActivity() {
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
             >
-              <option value="">Filter</option>
-              <option value="todo">Todo</option>
+              <option value="">All Status</option>
               <option value="doing">Doing</option>
+              <option value="due">Due</option>
               <option value="completed">Completed</option>
             </select>
 
@@ -145,45 +193,14 @@ export default function TasksAndActivity() {
           </div>
 
           <div className="flex flex-col gap-5 mt-7">
-            {sortedTasks.slice(0, 5).map((taskCard) => {
-              let bgColor = "#eee";
-              let textColor = "#000";
+            <h4 className="font-bold text-sm text-gray-700">Personal Tasks</h4>
+            {filteredAndSorted(groupedTasks.personal)
+              .slice(0, 3)
+              .map(renderTaskCard)}
 
-              if (taskCard.tag === "design") {
-                bgColor = "#ADD8E6";
-                textColor = "#fff";
-              } else if (taskCard.tag === "frontend") {
-                bgColor = "#90ee90";
-                textColor = "#fff";
-              } else if (taskCard.tag === "backend") {
-                bgColor = "#808080";
-                textColor = "#fff";
-              }
-
-              return (
-                <div
-                  key={taskCard.id}
-                  className="flex flex-col shadow-md rounded border p-3 gap-4 hover:cursor-pointer"
-                >
-                  <div className="flex flex-row justify-between items-center">
-                    <h3 className="text-[18px]">{taskCard.name}</h3>
-                    <p
-                      className="text-[11px] px-2 py-1 rounded"
-                      style={{
-                        backgroundColor: bgColor,
-                        color: textColor,
-                      }}
-                    >
-                      {taskCard.tag}
-                    </p>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <p>{taskCard.assignee}</p>
-                    <p className="text-[14px] text-gray-700">{taskCard.date}</p>
-                  </div>
-                </div>
-              );
-            })}
+            {filteredAndSorted(groupedTasks.team)
+              .slice(0, 3)
+              .map(renderTaskCard)}
           </div>
         </div>
       </div>
