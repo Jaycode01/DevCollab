@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { getAuth } from "firebase/auth";
+import { formatDistanceToNow } from "date-fns";
 
 type Activity = {
   id: string;
@@ -33,11 +34,6 @@ type FormattedTask = {
   date: string;
   tag: string;
   status: string;
-};
-
-type FirestoreTimestamp = {
-  seconds: number;
-  nanoseconds: number;
 };
 
 export default function TasksAndActivity() {
@@ -165,9 +161,10 @@ export default function TasksAndActivity() {
     fetchActivities();
   }, []);
 
-  const formattedTimestamp = (timestamp: FirestoreTimestamp) => {
-    if (!timestamp?.seconds) return "Invalid time";
-    return new Date(timestamp.seconds * 1000).toLocaleString();
+  const formatRelativeTime = (timestamp: { seconds: number }) => {
+    if (!timestamp || !timestamp.seconds) return "Just now";
+    const date = new Date(timestamp.seconds * 1000);
+    return formatDistanceToNow(date, { addSuffix: true });
   };
 
   return (
@@ -227,7 +224,7 @@ export default function TasksAndActivity() {
               className="flex flex-col pb-3 gap-3 md:gap-0 md:flex-row justify-between mt-10 border-b-2  hover:text-blue-600"
             >
               <div className="w-full md:w-[20%] text-sm">
-                {formattedTimestamp(activity.timestamp)}
+                {formatRelativeTime(activity.timestamp)}
               </div>
               <div className="w-full md:w-[60%] text-sm">
                 {activity.message}

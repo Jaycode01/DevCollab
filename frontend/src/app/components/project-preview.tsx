@@ -4,7 +4,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useEffect, useRef } from "react";
 import Image from "next/image";
-import PreviewImage from "../../../public/images/fake-decollab-preview.png";
+import PreviewImage from "../../../public/images/devcollab-dashboard.png";
 
 gsap.registerPlugin(ScrollTrigger);
 
