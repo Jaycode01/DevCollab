@@ -92,11 +92,22 @@ router.delete("/teams/:teamId", async (req, res) => {
 
     await teamRef.delete();
 
+    const userDoc = await db.collection("users").doc(userId).get();
+    const userData = userDoc.data();
+
+    const displayName =
+      (userData?.firstName && userData.lastName
+        ? `${userData.firstName} ${userData.lastName}`
+        : userData?.firstName) ||
+      userData?.email?.splt("@")[0] ||
+      "Unnamed";
+
     await db.collection("activities").add({
       type: "team",
       action: "deleted",
       userId: requesterUid,
       teamId,
+      username: displayName,
       message: `Deleted the team: "${teamData.name}"`,
       timestamp: admin.firestore.FieldValue.serverTimestamp(),
     });

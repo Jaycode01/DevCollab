@@ -8,6 +8,7 @@ type Activity = {
   type: string;
   action: string;
   message: string;
+  username: string;
   timestamp: {
     seconds: number;
     nanoseconds: number;
@@ -32,6 +33,11 @@ type FormattedTask = {
   date: string;
   tag: string;
   status: string;
+};
+
+type FirestoreTimestamp = {
+  seconds: number;
+  nanoseconds: number;
 };
 
 export default function TasksAndActivity() {
@@ -159,6 +165,11 @@ export default function TasksAndActivity() {
     fetchActivities();
   }, []);
 
+  const formattedTimestamp = (timestamp: FirestoreTimestamp) => {
+    if (!timestamp?.seconds) return "Invalid time";
+    return new Date(timestamp.seconds * 1000).toLocaleString();
+  };
+
   return (
     <div className="flex flex-col md:flex-row w-full p-4 gap-3 md:gap-5">
       <div className="w-full md:w-1/2 bg-white shadow-md rounded-md md:p-6 p-3">
@@ -215,13 +226,14 @@ export default function TasksAndActivity() {
               key={activity.id}
               className="flex flex-col pb-3 gap-3 md:gap-0 md:flex-row justify-between mt-10 border-b-2  hover:text-blue-600"
             >
-              <div className="w-full md:w-[30%] text-sm">
-                {new Date(
-                  activity.timestamp.seconds * 1000
-                ).toLocaleTimeString()}
+              <div className="w-full md:w-[20%] text-sm">
+                {formattedTimestamp(activity.timestamp)}
               </div>
-              <div className="w-full md:w-[70%] text-sm">
+              <div className="w-full md:w-[60%] text-sm">
                 {activity.message}
+              </div>
+              <div className="w-full md:w-[20%] text-sm">
+                {activity.username || "unknown"}
               </div>
             </div>
           ))

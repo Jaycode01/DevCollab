@@ -52,10 +52,21 @@ router.post("/tasks", authenticateToken, async (req, res) => {
       });
     }
 
+    const userDoc = await db.collection("users").doc(userId).get();
+    const userData = userDoc.data();
+
+    const displayName =
+      (userData?.firstName && userData.lastName
+        ? `${userData.firstName} ${userData.lastName}`
+        : userData?.firstName) ||
+      userData?.email?.splt("@")[0] ||
+      "Unnamed";
+
     await db.collection("activities").add({
       type: "task",
       action: "created",
       userId,
+      username: displayName,
       taskId: docRef.id,
       message: `Created a new task: "${name}"`,
       timestamp: admin.firestore.FieldValue.serverTimestamp(),

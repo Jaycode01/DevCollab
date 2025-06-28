@@ -35,10 +35,21 @@ router.post("/projects", authenticateToken, async (req, res) => {
       { merge: true }
     );
 
+    const userDoc = await db.collection("users").doc(userId).get();
+    const userData = userDoc.data();
+
+    const displayName =
+      (userData?.firstName && userData.lastName
+        ? `${userData.firstName} ${userData.lastName}`
+        : userData?.firstName) ||
+      userData?.email?.splt("@")[0] ||
+      "Unnamed";
+
     await db.collection("activities").add({
       type: "project",
       action: "created",
       userId,
+      username: displayName,
       projectId: projectRef.id,
       message: `Created a new project: "${name}"`,
       timestamp: admin.firestore.FieldValue.serverTimestamp(),
