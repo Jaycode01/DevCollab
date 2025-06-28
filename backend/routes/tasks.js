@@ -52,6 +52,15 @@ router.post("/tasks", authenticateToken, async (req, res) => {
       });
     }
 
+    await db.collection("activities").add({
+      type: "task",
+      action: "created",
+      userId,
+      taskId: docRef.id,
+      message: `Created a new task: "${name}"`,
+      timestamp: admin.firestore.FieldValue.serverTimestamp(),
+    });
+
     res.status(201).json({
       message: "Task created successfully",
       task: { id: docRef.id, ...newTask },

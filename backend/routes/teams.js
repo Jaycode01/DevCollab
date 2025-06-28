@@ -22,6 +22,15 @@ router.post("/teams", async (req, res) => {
       memberUids: [userUid],
     });
 
+    await db.collection("activities").add({
+      type: "team",
+      action: "created",
+      userId: userUid,
+      teamId: teamRef.id,
+      message: `Created a new task: "${name}"`,
+      timestamp: admin.firestore.FieldValue.serverTimestamp(),
+    });
+
     res.status(201).json({ message: "Team created", teamId: teamRef.id });
   } catch (error) {
     console.error("Error creating team:", error);
@@ -82,6 +91,15 @@ router.delete("/teams/:teamId", async (req, res) => {
     }
 
     await teamRef.delete();
+
+    await db.collection("activities").add({
+      type: "team",
+      action: "deleted",
+      userId: requesterUid,
+      teamId,
+      message: `Deleted the team: "${teamData.name}"`,
+      timestamp: admin.firestore.FieldValue.serverTimestamp(),
+    });
 
     res.status(200).json({ message: "Team deleted successfuly" });
   } catch (err) {

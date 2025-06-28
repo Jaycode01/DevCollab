@@ -35,6 +35,15 @@ router.post("/projects", authenticateToken, async (req, res) => {
       { merge: true }
     );
 
+    await db.collection("activities").add({
+      type: "project",
+      action: "created",
+      userId,
+      projectId: projectRef.id,
+      message: `Created a new project: "${name}"`,
+      timestamp: admin.firestore.FieldValue.serverTimestamp(),
+    });
+
     req.io.emit("project:created", {
       id: projectRef.id,
       ...newProject,
@@ -107,6 +116,15 @@ router.delete("/projects/:projectId", authenticateToken, async (req, res) => {
         merge: true,
       }
     );
+
+    await db.collection("activities").add({
+      type: "project",
+      action: "deleted",
+      userId,
+      projectId,
+      message: `Deleted the project: "${projectName}"`,
+      timestamp: admin.firestore.FieldValue.serverTimestamp(),
+    });
 
     req.io.emit("project:deleted", { id: projectId });
 
