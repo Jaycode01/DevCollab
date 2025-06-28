@@ -3,6 +3,17 @@
 import { useState, useEffect } from "react";
 import { getAuth } from "firebase/auth";
 
+type Activity = {
+  id: string;
+  type: string;
+  action: string;
+  message: string;
+  timestamp: {
+    seconds: number;
+    nanoseconds: number;
+  };
+};
+
 type Task = {
   id: string;
   name: string;
@@ -28,6 +39,8 @@ export default function TasksAndActivity() {
   const [filterStatus, setFilterStatus] = useState<string>("");
   const [loading, setloading] = useState<boolean>(true);
   const [allTasks, setallTasks] = useState<FormattedTask[]>([]);
+  const [activities, setactivities] = useState<Activity[]>([]);
+  const [activityLoading, setactivityLoading] = useState(true);
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -115,6 +128,12 @@ export default function TasksAndActivity() {
       </div>
     );
   };
+
+  useEffect(() => {
+    const fetchActivities = async () => {
+      setactivityLoading(true);
+    };
+  });
 
   const activities = [
     {
