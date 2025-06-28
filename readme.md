@@ -2,14 +2,20 @@
 
 **DevCollab is a modern project and team collaboration web application built with _Next.js_, _Tailwind CSS_, and _other powerful tools_. It helps developers and teams manage projects, track tasks, and collaborate in real time.**
 
-### Features
+> Designed for productivity. Built for dev teams.
 
-- 🧑‍💻 User Authentication (Sign In, Sign Up)
-- 🗂 Project Management (Create, View, Delete projects)
-- ✅ Task Tracking (To-do, In Progress, completed)
-- 👥 Team Collaboration
-- 📊 Dashboard Overview
-- 📱💻 Responsive UI
+---
+
+### 🔑 Features
+
+- 🔐 **Authentication** — Secure login & signup via Firebase
+- 📁 **Project Management** — Create, update, and delete projects
+- ✅ **Task Tracking** — Manage personal & team tasks with status updates
+- 👥 **Team Collaboration** — Add members, manage roles, and work together
+- 📊 **Dashboard Overview** — Real-time insights into projects and tasks
+- 🔔 **Notifications** — Stay updated with real-time alerts via Socket.IO
+- 🧠 **Activity Feed** — Track all important actions (projects, tasks, teams)
+- 📱 **Responsive Design** — Fully functional across devices
 
 ---
 
@@ -19,22 +25,22 @@
 
 - [Next.js](https://nextjs.org)
 - [Tailwind CSS](https://tailwindcss.com)
-- [Typescript](https://www.typescriptlang.org)
-- [Heroicons](https://heroicons.com) & [React Icons](https://react-icons.github.io/react-icons)
+- [TypeScript](https://www.typescriptlang.org)
+- [React Icons](https://react-icons.github.io/react-icons)
+- [Heroicons](https://heroicons.com)
 
 #### Backend
 
-- [Nextjs API Routes]()
-- [Node Js]()
-- [Express Js]()
-- [Firebase/FireStore]()
-- [Socket.IO]()
+- [Node.js](https://nodejs.org)
+- [Express.js](https://expressjs.com)
+- [Firebase / Firestore](https://firebase.google.com)
+- [Socket.IO](https://socket.io)
+- [Next.js API Routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes)
 
 #### Authentication
 
-- [Firebase](https://firebase.google.com)
+- [Firebase Authentication](https://firebase.google.com/products/auth)
 
-<br>
-<br>
-<br>
+---
+
 Made by <a href="mailto:josephlamidijoslam@gmail.com">Nexon</a>

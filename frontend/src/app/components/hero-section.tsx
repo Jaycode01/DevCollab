@@ -42,14 +42,14 @@ export default function HeroSection() {
             dynamic environment grow — all in one place.
           </h4>
           <div className="flex gap-5  md:gap-8 items-center mt-5">
-            <button
-              type="button"
+            <Link
+              href="../getstarted"
               className=" bg-blue-600 opacity-80 hover:opacity-100 text-white py-3 px-5 text-sm md:text-[1rem]"
             >
               Join Free
-            </button>
-            <button
-              type="button"
+            </Link>
+            <Link
+              href="../docs"
               className="group flex items-center text-sm md:text-[1rem]"
             >
               Learn More
@@ -58,10 +58,10 @@ export default function HeroSection() {
                 src={AngleRightIcon}
                 className="ml-2 transform transition-transform duration-500 group-hover:translate-x-2"
               />
-            </button>
+            </Link>
           </div>
           <Link
-            href="https://i-dontknow.com"
+            href="https://youtube.com"
             className="group text-blue-600 flex items-center gap-2.5 capitalize md:text-lg mt-2.5 text-sm"
           >
             watch video{" "}
