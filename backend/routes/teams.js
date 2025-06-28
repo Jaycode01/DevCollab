@@ -90,63 +90,48 @@ router.delete("/teams/:teamId", async (req, res) => {
   }
 });
 
-router.get("/teams/random-team-members", async (req, res) => {
+router.get("/teams/random-app-users", async (req, res) => {
   try {
     const { userUid } = req.query;
+
     if (!userUid) {
       return res.status(400).json({ error: "Missing userUid" });
     }
 
-    const teamsSnap = await db
-      .collection("teams")
-      .where("memberUids", "array-contains", userUid)
-      .get();
+    const allUsersSnap = await db.collection("users").get();
 
-    const memberUidsSet = new Set();
+    const otherUsers = allUsersSnap.docs
+      .filter((doc) => doc.id !== userUid)
+      .map((doc) => {
+        const user = doc.data();
+        const displayName =
+          (user.firstName &&
+            user.lastName &&
+            `${user.firstName} ${user.lastName}`) ||
+          user.firstName ||
+          user.email?.split("@"[0]) ||
+          "Unnamed";
 
-    teamsSnap.forEach((doc) => {
-      const data = doc.data();
-      (data.memberUids || []).forEach((uid) => {
-        if (uid !== userUid) memberUidsSet.add(uid);
+        return {
+          id: doc.id,
+          name: displayName,
+          role: user.bio || "DevCollab User",
+          status: user.status || "offline",
+          image: user.imageURL || null,
+        };
       });
-    });
 
-    const allUids = Array.from(memberUidsSet);
-    if (allUids.length === 0) {
-      return res.status(200).json({ members: [] });
+    if (otherUsers.length === 0) {
+      return res.status(200).json({ appUsers: [] });
     }
 
-    const shuffled = allUids.sort(() => 0.5 - Math.random());
-    const randomUids = shuffled.slice(0, 5);
+    const shuffled = otherUsers.sort(() => 0.5 - Math.random());
+    const randomUsers = shuffled.slice(0, 5);
 
-    const usersSnap = await db
-      .collection("users")
-      .where(admin.firestore.FieldPath.documentId(), "in", randomUids)
-      .get();
-
-    const members = usersSnap.docs.map((doc) => {
-      const user = doc.data();
-      const displayName =
-        (user.firstName &&
-          user.lastName &&
-          `${user.firstName} ${user.lastName}`) ||
-        user.firstName ||
-        user.email?.split("@")[0] ||
-        "Unnamed";
-
-      return {
-        id: doc.id,
-        name: displayName,
-        role: user.bio || "Team Members",
-        status: user.status || "offline",
-        Image: user.ImageURL || null,
-      };
-    });
-
-    res.status(200).json({ members });
+    res.status(200).json({ appUsers: randomUsers });
   } catch (error) {
-    console.error("Error fetching random team members:", error);
-    res.status(500).json({ error: "Failed to fetch team members" });
+    console.error("Error fetching random users:", error);
+    res.status(500).json({ error: "Failed to fetch users." });
   }
 });
 
