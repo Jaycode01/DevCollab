@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { getAuth } from "firebase/auth";
-import { formatDistanceToNow } from "date-fns";
 
 type Activity = {
   id: string;
@@ -161,12 +160,6 @@ export default function TasksAndActivity() {
     fetchActivities();
   }, []);
 
-  const formatRelativeTime = (timestamp: { seconds: number }) => {
-    if (!timestamp || !timestamp.seconds) return "Just now";
-    const date = new Date(timestamp.seconds * 1000);
-    return formatDistanceToNow(date, { addSuffix: true });
-  };
-
   return (
     <div className="flex flex-col md:flex-row w-full p-4 gap-3 md:gap-5">
       <div className="w-full md:w-1/2 bg-white shadow-md rounded-md md:p-6 p-3">
@@ -223,9 +216,6 @@ export default function TasksAndActivity() {
               key={activity.id}
               className="flex flex-col pb-3 gap-3 md:gap-0 md:flex-row justify-between mt-10 border-b-2  hover:text-blue-600"
             >
-              <div className="w-full md:w-[20%] text-sm">
-                {formatRelativeTime(activity.timestamp)}
-              </div>
               <div className="w-full md:w-[60%] text-sm">
                 {activity.message}
               </div>
