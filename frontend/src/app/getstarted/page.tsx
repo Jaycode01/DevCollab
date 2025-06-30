@@ -62,15 +62,19 @@ export default function SignUp() {
           }
 
           if (user.user) {
-            await setDoc(doc(db, "users", user.user.uid), {
+            const userData = {
               uid: user.user.uid,
+              email: user.user.email,
               firstName: firstName || "",
               lastName: lastName || "",
               username: username || user.user.email?.split("@")[0] || "",
-              email: user.user.email,
-              createdAt: new Date().toISOString(),
               provider: user.user.providerData[0]?.providerId || "password",
-            });
+              createdAt: new Date().toISOString(),
+            };
+
+            await setDoc(doc(db, "users", user.user.uid), userData);
+
+            localStorage.setItem("userData", JSON.stringify(userData));
           }
 
           // Redirecting to dashboard
