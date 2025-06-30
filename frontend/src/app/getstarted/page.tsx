@@ -263,7 +263,8 @@ export default function SignUp() {
 
         <div className="flex flex-row-reverse items-center gap-2">
           <label className="w-11/12 text-[12px]">
-            By clicking on this checkbox, you agree to our terms and conditions.
+            By clicking on this checkbox, you agree to our{" "}
+            <Link href="/terms-and-condition"> terms and conditions</Link>.
           </label>
           <input type="checkbox" required />
         </div>
