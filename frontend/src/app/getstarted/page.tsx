@@ -62,19 +62,23 @@ export default function SignUp() {
           }
 
           if (user.user) {
-            await setDoc(doc(db, "users", user.user.uid), {
+            const userData = {
               uid: user.user.uid,
+              email: user.user.email,
               firstName: firstName || "",
               lastName: lastName || "",
               username: username || user.user.email?.split("@")[0] || "",
-              email: user.user.email,
-              createdAt: new Date().toISOString(),
               provider: user.user.providerData[0]?.providerId || "password",
-            });
+              createdAt: new Date().toISOString(),
+            };
+
+            await setDoc(doc(db, "users", user.user.uid), userData);
+
+            localStorage.setItem("userData", JSON.stringify(userData));
           }
 
           // Redirecting to dashboard
-          router.push("/login");
+          router.push("/dashboard");
         } catch (err) {
           console.error("Error saving user data: ", err);
           setError(
@@ -259,7 +263,8 @@ export default function SignUp() {
 
         <div className="flex flex-row-reverse items-center gap-2">
           <label className="w-11/12 text-[12px]">
-            By clicking on this checkbox, you agree to our terms and conditions.
+            By clicking on this checkbox, you agree to our{" "}
+            <Link href="/terms-and-condition"> terms and conditions</Link>.
           </label>
           <input type="checkbox" required />
         </div>
