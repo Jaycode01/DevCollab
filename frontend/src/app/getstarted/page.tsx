@@ -74,7 +74,7 @@ export default function SignUp() {
           }
 
           // Redirecting to dashboard
-          router.push("/login");
+          router.push("/dashboard");
         } catch (err) {
           console.error("Error saving user data: ", err);
           setError(

@@ -2,8 +2,8 @@
 @import "tw-animate-css";
 
 @font-face {
-  font-family: "Josefin";
-  src: url("../../public/JosefinSans-Regular.woff2");
+  font-family: "Delius";
+  src: url("../../public/Delius-Regular.woff2");
 }
 
 .hide-scrollbar {
@@ -16,7 +16,7 @@
 }
 
 * {
-  font-family: "Josefin", sans-serif;
+  font-family: "Delius", sans-serif;
 }
 
 @custom-variant dark (&:is(.dark *));
