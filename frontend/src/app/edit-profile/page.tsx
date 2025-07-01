@@ -162,7 +162,7 @@ export default function EditProfile() {
         if (firebaseError.code === "auth/requires-recent-login") {
           alert("Please reauthenticate before deleting your account.");
         } else {
-          alert("Something went wrong. Try again.");
+          alert("Incorrect Password.");
         }
       } else {
         console.error("Unknown error occurred:", error);
