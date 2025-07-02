@@ -17,6 +17,7 @@
 
 * {
   font-family: "Delius", sans-serif;
+  font-weight: bold;
 }
 
 @custom-variant dark (&:is(.dark *));
