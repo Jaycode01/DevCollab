@@ -22,6 +22,8 @@ import ActivitiesFeedDoc from "../../../public/images/activities-feed.png";
 import MayKnowDoc from "../../../public/images/may-know-people.png";
 import NotificationDoc from "../../../public/images/notification-doc.png";
 import CalendarDoc from "../../../public/images/calendar-doc.png";
+import ProjectTopLineDoc from "../../../public/images/project-page-top-doc.png";
+import ProjectCardDoc from "../../../public/images/project-card-doc.png";
 
 export default function Docs() {
   const [openBox, setOpenBox] = useState<string | null>(null);
@@ -71,7 +73,7 @@ export default function Docs() {
           </button>
         </div>
       </div>
-      <div className="mt-5 p-5 grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="mt-5 p-5 grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
         {" "}
         <div className="border p-5 rounded-sm mb-5">
           <div
@@ -314,7 +316,35 @@ export default function Docs() {
           </p>
 
           {openBox === "projects" && (
-            <div className="mt-4 text-sm text-gray-800 space-y-2 transition-all duration-300"></div>
+            <div className="mt-4 text-sm text-gray-800 space-y-2 transition-all duration-300">
+              <div className="border p-2.5 rounded">
+                <Image
+                  src={ProjectTopLineDoc}
+                  alt="project top section doc image"
+                />
+                <p>
+                  This section of the <em>project page</em> helps you navigate
+                  through the page easily, it includes the search section the
+                  filtering section and also a button to add new project.
+                </p>
+              </div>
+              <div className="border rounded p-2.5">
+                <Image src={ProjectCardDoc} alt="project card doc image" />
+                <p>
+                  This project card shows/display all info user needs to know
+                  about their projects. The project card contains:
+                </p>
+                <ul>
+                  <li>- Project name</li>
+                  <li>- Project live link</li>
+                  <li>- Date.Time the project was created</li>
+                  <li>
+                    - A more icon(dots) which shows the modal, and the modal
+                    include an edit and delete button.
+                  </li>
+                </ul>
+              </div>
+            </div>
           )}
         </div>
         <div className="border p-5 rounded-sm mb-5">
