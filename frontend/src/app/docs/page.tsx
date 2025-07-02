@@ -9,6 +9,11 @@ import playSmooth from "../../../public/play-smooth.svg";
 import User from "../../../public/user.svg";
 import AngleDown from "../../../public/angle-down.svg";
 import AngleUp from "../../../public/angle-up.svg";
+import TotalProjectDoc from "../../../public/images/total-projects-doc.jpeg";
+import PendingTasksDoc from "../../../public/images/pending-tasks-doc.jpeg";
+import CompletedTasksDoc from "../../../public/images/completed-tasks-doc.png";
+import TotalTeamsDoc from "../../../public/images/total-teams-docs.png";
+import TotalHoursLogged from "../../../public/images/total-hours-logged-doc.png";
 
 export default function Docs() {
   const [openBox, setOpenBox] = useState<string | null>(null);
@@ -80,7 +85,77 @@ export default function Docs() {
           </p>
 
           {openBox === "dashboard" && (
-            <div className="mt-4 text-sm text-gray-800 space-y-2 transition-all duration-300"></div>
+            <div className="mt-4 text-sm text-gray-800 space-y-2 transition-all duration-300">
+              <div className="border p-2.5 rounded">
+                <Image src={TotalProjectDoc} alt="total project doc image" />
+                <p className="">
+                  The <em>total project</em> count box shows the number of
+                  projects you have created on the webapp(for a specific
+                  user/account)
+                </p>
+                <p>
+                  It is also where all your projects and progress go live. With
+                  a clear count of what {`you've`} built.
+                </p>
+              </div>
+              <div className="border p-2.5 rounded">
+                <Image src={PendingTasksDoc} alt="pending tasks doc image" />
+                <p className="">
+                  The <em>pending tasks</em> box shows the number of projects{" "}
+                  {`you're`} still working on(Todo).
+                </p>
+                <p className="">
+                  It’s where all your to-dos and reminders stay, with everything
+                  waiting for your action.
+                </p>
+              </div>
+              <div className="border p-2.5 rounded">
+                <Image
+                  src={CompletedTasksDoc}
+                  alt="completed tasks doc image"
+                />
+                <p className="">
+                  This box shows all tasks(projects) {`you've`} worked on and
+                  done with it, but can make changes if ther is anything to
+                  update.
+                </p>
+                <p>
+                  It’s where all your closed tasks and completed goals live,
+                  with every tick counting.
+                </p>
+              </div>
+              <div className="border p-2.5 rounded">
+                <Image src={TotalTeamsDoc} alt="total teams doc image" />
+                <p>
+                  This box of summary shows the number of teams {`you're`}{" "}
+                  invited to, created teams and also teams other users added you
+                  directly.
+                </p>
+                <p>
+                  Gives you a quick overview of how many active teams {`you’re`}
+                  part of across the platform, it help you track collaboration
+                  at a glance.
+                </p>
+              </div>
+              <div className="border rounded p-2.5">
+                <Image
+                  src={TotalHoursLogged}
+                  alt="total hours logged doc image"
+                />
+                <p>
+                  THis box shows the calculated total hours(time) {`you've`}{" "}
+                  logged on the webapp which will also inspire you to spend more
+                  time collaborating with others.
+                </p>
+                <p>
+                  Displays the total time you’ve spent working across all
+                  projects and tasks.
+                </p>
+              </div>
+              <div className="border p-2.5 rounded">
+                <Image />
+              </div>
+            </div>
           )}
         </div>
         <div className="border p-5 rounded-sm mb-5">
