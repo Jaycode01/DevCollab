@@ -1,19 +1,26 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
+
 import AngleRight from "../../../public/angle-right.svg";
 import playSmooth from "../../../public/play-smooth.svg";
 import User from "../../../public/user.svg";
-import { useRouter } from "next/navigation";
+import AngleDown from "../../../public/angle-down.svg";
+import AngleUp from "../../../public/angle-up.svg";
 
 export default function Docs() {
-  const [isOpen, setisOpen] = useState(false);
+  const [openBox, setOpenBox] = useState<string | null>(null);
 
   const router = useRouter();
 
   const startedOnclick = () => {
     router.push("/profile");
+  };
+
+  const toggleBox = (boxId: string) => {
+    setOpenBox((prev) => (prev === boxId ? null : boxId));
   };
   return (
     <>
@@ -49,6 +56,101 @@ export default function Docs() {
             Start by setting up profile
             <Image src={AngleRight} alt="angle right" />
           </button>
+        </div>
+      </div>
+      <div className="mt-5 p-5 grid grid-cols-1 md:grid-cols-2 gap-6">
+        {" "}
+        <div className="border p-5 rounded-sm mb-5">
+          <div
+            onClick={() => toggleBox("dashboard")}
+            className="flex justify-between items-center cursor-pointer"
+          >
+            <h2 className="text-[22px] font-semibold">Dashboard</h2>
+            <Image
+              src={openBox === "dashboard" ? AngleUp : AngleDown}
+              alt="toggle chevron"
+              width={20}
+              height={20}
+            />
+          </div>
+
+          <p className="text-sm text-gray-600 mt-1 flex flex-col gap-1">
+            <span>Your whole workspace, simplified and summarized.</span>
+            <span>Track stuff, manage things, and stay on top of it all.</span>
+          </p>
+
+          {openBox === "dashboard" && (
+            <div className="mt-4 text-sm text-gray-800 space-y-2 transition-all duration-300"></div>
+          )}
+        </div>
+        <div className="border p-5 rounded-sm mb-5">
+          <div
+            onClick={() => setOpenBox("projects")}
+            className="flex justify-between items-center cursor-pointer"
+          >
+            <h2 className="text-[22px] font-semibold">Projects</h2>
+            <Image
+              src={openBox === "projects" ? AngleUp : AngleDown}
+              alt="toggle chevron"
+              width={20}
+              height={20}
+            />
+          </div>
+
+          <p className="text-sm text-gray-600 mt-1 flex flex-col gap-1">
+            <span>Start something new or pick up where you left off.</span>
+            <span>Your workspace for building cool stuff.</span>
+          </p>
+
+          {openBox === "projects" && (
+            <div className="mt-4 text-sm text-gray-800 space-y-2 transition-all duration-300"></div>
+          )}
+        </div>
+        <div className="border p-5 rounded-sm mb-5">
+          <div
+            onClick={() => setOpenBox("teams")}
+            className="flex justify-between items-center cursor-pointer"
+          >
+            <h2 className="text-[22px] font-semibold">Teams</h2>
+            <Image
+              src={openBox === "teams" ? AngleUp : AngleDown}
+              alt="toggle chevron"
+              width={20}
+              height={20}
+            />
+          </div>
+
+          <p className="text-sm text-gray-600 mt-1 flex flex-col gap-1">
+            <span>Bring people together and get things done.</span>
+            <span>Because great things happen when you work together.</span>
+          </p>
+
+          {openBox === "tasks" && (
+            <div className="mt-4 text-sm text-gray-800 space-y-2 transition-all duration-300"></div>
+          )}
+        </div>
+        <div className="border p-5 rounded-sm mb-5">
+          <div
+            onClick={() => setOpenBox("tasks")}
+            className="flex justify-between items-center cursor-pointer"
+          >
+            <h2 className="text-[22px] font-semibold">Tasks</h2>
+            <Image
+              src={openBox === "tasks" ? AngleUp : AngleDown}
+              alt="toggle chevron"
+              width={20}
+              height={20}
+            />
+          </div>
+
+          <p className="text-sm text-gray-600 mt-1 flex flex-col gap-1">
+            <span>Plan it. Do it. Done.</span>
+            <span>All your to-dos, totally under control.</span>
+          </p>
+
+          {openBox === "tasks" && (
+            <div className="mt-4 text-sm text-gray-800 space-y-2 transition-all duration-300"></div>
+          )}
         </div>
       </div>
     </>
