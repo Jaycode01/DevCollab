@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 
 import AngleRight from "../../../public/angle-right.svg";
 import playSmooth from "../../../public/play-smooth.svg";
@@ -14,6 +15,13 @@ import PendingTasksDoc from "../../../public/images/pending-tasks-doc.jpeg";
 import CompletedTasksDoc from "../../../public/images/completed-tasks-doc.png";
 import TotalTeamsDoc from "../../../public/images/total-teams-docs.png";
 import TotalHoursLogged from "../../../public/images/total-hours-logged-doc.png";
+import ProjectSummaryDoc from "../../../public/images/projects-summary-doc.png";
+import LoggedTimeDoc from "../../../public/images/logged-time-doc.png";
+import RecentTasksDoc from "../../../public/images/recent-task-doc.png";
+import ActivitiesFeedDoc from "../../../public/images/activities-feed.png";
+import MayKnowDoc from "../../../public/images/may-know-people.png";
+import NotificationDoc from "../../../public/images/notification-doc.png";
+import CalendarDoc from "../../../public/images/calendar-doc.png";
 
 export default function Docs() {
   const [openBox, setOpenBox] = useState<string | null>(null);
@@ -153,7 +161,135 @@ export default function Docs() {
                 </p>
               </div>
               <div className="border p-2.5 rounded">
-                <Image />
+                <Image
+                  src={ProjectSummaryDoc}
+                  alt="project summary doc image"
+                />
+                <p>
+                  Summarizes key details of your projects so you can stay
+                  focused and on track.
+                </p>
+                <br />
+                <p>
+                  This section/box shows <em>quick details</em> about all
+                  projects {`you've`} created. The details it shows about
+                  project are:
+                </p>
+                <ul>
+                  <li>- Id(The first three characters).</li>
+                  <li>- The project name.</li>
+                  <li>- The date the project was created.</li>
+                  <li>- The date it was last updated.</li>
+                  <li>
+                    - When clicked on, it show a few more details about the
+                    project.
+                  </li>
+                </ul>
+                <p>
+                  You want to create one?{" "}
+                  <Link href="/add-project" className="text-blue-600 underline">
+                    Try out...
+                  </Link>
+                </p>
+              </div>
+              <div className="border rounded p-2.5">
+                <Image src={LoggedTimeDoc} alt="logged time doc image" />
+                <p>
+                  This section shows your logegd time, weekly streak and hours
+                  spent/day.
+                </p>
+                <p>
+                  The number + fire icon is where your weekly streak will
+                  display. The progress bar increases {`it's`} color as your
+                  h=logged time increases and when it get to higher by higher
+                  level the color of the progress bar changes to other type of
+                  color.
+                </p>
+              </div>
+              <div className="border rounded p-2.5">
+                <Image src={RecentTasksDoc} alt="recent task doc image" />
+                <p>
+                  This <em>recent tasks</em> section shows the top 6 recent
+                  tasks both the one you are asigned to... and the ones you
+                  created for your personal purpose.
+                </p>
+                <p>
+                  What each project shows in the <em>recent tasks</em> section
+                  are:
+                </p>
+                <ul>
+                  <li>- Project Name</li>
+                  <li>
+                    - An indicator which shows if task is{" "}
+                    {`"personal" or for "team"`}
+                  </li>
+                  <li>- Task due date</li>
+                  <li>- Users assigned to the tasks.</li>
+                </ul>
+              </div>
+              <div className="border rounded p-2.5">
+                <Image
+                  src={ActivitiesFeedDoc}
+                  alt="activities feed doc image"
+                />
+                <p>
+                  The <em>activities feed</em> section shows few activities
+                  carried out on the webapp as a whole. it will show the
+                  activity and also the user name who carried out the activity.
+                </p>
+                <p>
+                  Check it out...{" "}
+                  <Link href="/dashboard" className="text-blue-600 underline">
+                    here
+                  </Link>
+                </p>
+              </div>
+              <div className="border rounded p-2.5">
+                <Image src={MayKnowDoc} alt="people-you-may-know doc image" />
+                <p>
+                  This section contains random users info to also now about
+                  users who also use the web application.
+                  <br />
+                  What this section include:
+                </p>
+                <ul>
+                  <li>- User name (Firstname and Lastname)</li>
+                  <li>- Status (either {`"online" or "offline"`})</li>
+                  <li>- User role on the webapp</li>
+                </ul>
+              </div>
+              <div className="border p-2.5 rounded">
+                <Image src={NotificationDoc} alt="notification doc image" />
+                <p>
+                  This <em>notification</em> section show the notification for
+                  user(you).
+                  <br />
+                  Notifications which this section can include or display are:
+                </p>
+                <ul>
+                  <li>- Notification concerning task assignment.</li>
+                  <li>
+                    - Notification about project (creation, edit, deletion).
+                  </li>
+                  <li>- Notification about time logged.</li>
+                  <li>
+                    - Notification about tasks (updated, edit info, creation,
+                    deletion).
+                  </li>
+                  <li>
+                    - Notification about teams (creation, addition, invitation,
+                    edit, deletion).
+                  </li>
+                </ul>
+              </div>
+              <div className="rounded border p-2.5">
+                <Image src={CalendarDoc} alt="calender doc image" />
+                <p>
+                  This section show a calender of the current date(day, month,
+                  year) we are, which will help you check dates of tasks which
+                  will due soon instead of gettting to use other application to
+                  chek out the dates.
+                </p>
               </div>
             </div>
           )}
