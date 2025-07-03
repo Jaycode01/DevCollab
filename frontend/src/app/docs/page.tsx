@@ -428,7 +428,35 @@ export default function Docs() {
           </p>
 
           {openBox === "tasks" && (
-            <div className="mt-4 text-sm text-gray-800 space-y-2 transition-all duration-300"></div>
+            <div className="mt-4 text-sm text-gray-800 space-y-2 transition-all duration-300">
+              <p>
+                {" "}
+                The{" "}
+                <b>
+                  <em>tasks page</em>
+                </b>{" "}
+                of <b>devcollab</b> is one of the main features of the
+                application.
+              </p>
+              <p>
+                At the page top, there are buttons and sections for filtering
+                tasks by:
+              </p>
+              <ul>
+                <li>- Task kind({`"team tasks", "personal tasks"`})</li>
+                <li>- Task status({`"in progress", "completed", "due"`})</li>
+              </ul>
+              <p>
+                The top section also include a <b>button to add new task</b> to
+                user profile
+              </p>
+              <br />
+              <p>
+                The task cards which are shown in the main task page display few
+                details about each tasks and also{" "}
+                <b>a button to see more of action.</b>
+              </p>
+            </div>
           )}
         </div>
       </div>
