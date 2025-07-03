@@ -24,6 +24,8 @@ import NotificationDoc from "../../../public/images/notification-doc.png";
 import CalendarDoc from "../../../public/images/calendar-doc.png";
 import ProjectTopLineDoc from "../../../public/images/project-page-top-doc.png";
 import ProjectCardDoc from "../../../public/images/project-card-doc.png";
+import TeamsTopDoc from "../../../public/images/teams-top-doc.png";
+import MainTeamsDoc from "../../../public/images/main-teams-doc.png";
 
 export default function Docs() {
   const [openBox, setOpenBox] = useState<string | null>(null);
@@ -366,8 +368,44 @@ export default function Docs() {
             <span>Because great things happen when you work together.</span>
           </p>
 
-          {openBox === "tasks" && (
-            <div className="mt-4 text-sm text-gray-800 space-y-2 transition-all duration-300"></div>
+          {openBox === "teams" && (
+            <div className="mt-4 text-sm text-gray-800 space-y-2 transition-all duration-300">
+              <div className="mt-5 border rounded p-3">
+                <Image src={TeamsTopDoc} alt="team tp section doc image" />
+                <p>
+                  This section is one of the key section of the teams page, it
+                  includes:
+                </p>
+                <ul>
+                  <li>- The open sidebar button</li>
+                  <li>- The Team name</li>
+                  <li>- Search field + button</li>
+                  <li>- Adding new member to the selected team button</li>
+                </ul>
+
+                <p>
+                  So in this section, after clicking on the icon to open
+                  sidebar, the side bar contains a button to create new team and
+                  lists of teams created and added to with a {`"more"`} icon to
+                  carry out more action on the team.
+                </p>
+              </div>
+              <div className="p-3 mt-7 border rounded">
+                <Image
+                  src={MainTeamsDoc}
+                  alt="main team content documentation image"
+                />
+                <p>
+                  {" "}
+                  This section of the teams page is where the{" "}
+                  <b>main content</b> of a team are. When you click on the team
+                  you want to carry out activity on, content of the team will be
+                  displayed...content like <b>the admin of the team</b>,{" "}
+                  <b>members of team</b>, and also{" "}
+                  <b>an action button to view details about members.</b>
+                </p>
+              </div>
+            </div>
           )}
         </div>
         <div className="border p-5 rounded-sm mb-5">

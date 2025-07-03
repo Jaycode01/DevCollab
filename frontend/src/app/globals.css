@@ -1,11 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@font-face {
-  font-family: "Delius";
-  src: url("../../public/Delius-Regular.woff2");
-}
-
 .hide-scrollbar {
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE 10+ */
@@ -13,11 +8,6 @@
 
 .hide-scrollbar::-webkit-scrollbar {
   display: none; /* Safari and Chrome */
-}
-
-* {
-  font-family: "Delius", sans-serif;
-  font-weight: bold;
 }
 
 @custom-variant dark (&:is(.dark *));

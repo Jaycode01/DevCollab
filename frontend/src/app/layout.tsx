@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { Aclonica } from "next/font/google";
+import { Comic_Neue } from "next/font/google";
 import "./globals.css";
 import Navbar from "./navbar/page";
 import { AuthProvider } from "./auth/auth-provider";
 import UsageTrackerWrapper from "./components/UsageTrackerWrapper";
 import React from "react";
 
-const aclonica = Aclonica({
+const comic_neue = Comic_Neue({
   subsets: ["latin"],
   weight: ["400"],
   variable: "--font-aclonica",
@@ -27,7 +27,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={aclonica.className}>
+      <body className={comic_neue.className}>
         <Navbar />
         <AuthProvider>
           <UsageTrackerWrapper>{children}</UsageTrackerWrapper>
