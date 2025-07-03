@@ -44,7 +44,7 @@ export default function Docs() {
       <div className="pt-5 md:pt-10 px-[7%] flex md:flex-row gap-5 md:gap-0 flex-col w-full justify-between border-b border-gray-500 pb-5 md:pb-10">
         <div className="flex gap-1.5 md:gap-3 items-center w-full md:w-[40%]">
           <div className="flex flex-col gap-1">
-            <h1 className="text-[22px] md:text-[30px]">
+            <h1 className="text-[22px] md:text-[30px] font-semibold">
               DevCollab Documentation
             </h1>
             <p className="text-[14px] md:text-[16px]">
