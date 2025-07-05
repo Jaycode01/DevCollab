@@ -34,7 +34,7 @@ export default function Preview() {
   return (
     <div className="">
       <div
-        className="mt-14 bg-gray-50 w-11/12 mx-auto rounded-md"
+        className="mt-14 bg-gray-50 w-11/12 mx-auto rounded-md mb-10"
         ref={previewScaling}
       >
         <Image
